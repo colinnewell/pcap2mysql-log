@@ -16,15 +16,17 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 	copied := 0
 	n, err := rdr.Read(read[:])
 
-	for err == nil {
+	for err == nil && n > 0 {
 		buf.Write(read[:n])
 		w, err := m.Write(buf.Bytes())
 
 		copied += w
-		if errors.Cause(err) != ErrIncompletePacket {
-			buf.Reset()
-		} else if err != nil {
+		if err != nil && errors.Cause(err) != ErrIncompletePacket {
 			return copied, err
+		}
+		if w > 0 {
+			// suck up the data
+			buf.Next(w)
 		}
 
 		n, err = rdr.Read(read[:])

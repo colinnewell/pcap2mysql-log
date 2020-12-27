@@ -31,7 +31,7 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 	length := binary.LittleEndian.Uint32(lengthBuffer[:])
 
 	for length > 0 {
-		if int(length) <= len(data) {
+		if int(length)+4 <= len(data) {
 			wrote, err := w.Receiver.Write(data[:4+length])
 			written = written + wrote
 			if err != nil {
