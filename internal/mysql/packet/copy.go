@@ -7,6 +7,9 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Copy transfer from a reader to a writer expecting to receive a packet of
+// MySQL data at a time.  Makes use of the MySQLPacketWriter to even out the
+// data.
 func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 	var read [2048]byte
 	var buf bytes.Buffer
