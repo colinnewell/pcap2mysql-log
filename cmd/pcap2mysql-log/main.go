@@ -8,6 +8,8 @@ import (
 
 	"github.com/orderbynull/lottip/protocol"
 	"github.com/spf13/pflag"
+
+	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 )
 
 func main() {
@@ -42,17 +44,24 @@ func main() {
 		log.Fatal(err)
 	}
 	defer f.Close()
+	mysql := mySQLinterpretter{}
+	packet.Copy(f, &mysql)
 }
 
-func Ingest(p []byte) {
+type mySQLinterpretter struct {
+}
+
+func (m *mySQLinterpretter) Write(p []byte) (int, error) {
 	switch protocol.GetPacketType(p) {
 	case protocol.ComStmtPrepare:
 	case protocol.ComQuery:
 		decoded, err := protocol.DecodeQueryRequest(p)
 		fmt.Printf("%#v: %v\n", decoded, err)
+		fmt.Println(decoded.Query)
 	case protocol.ComQuit:
 		fmt.Println("quit")
 	}
+	return len(p), nil
 }
 
 // func
