@@ -1,14 +1,30 @@
 package packet
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	er "errors"
+	"io"
 
-// SplitPacket takes a blob of data and divides it up into MySQL packets.  This
-// allows for data captured to be sent to regular parsing routines in a way
-// that allows them to just consider a packet at a time.  Note that it doesn't
-// really do any validation.
-// Returns a list of packets, plus whatever data appears to remain.
-func SplitPacket(data []byte) ([][]byte, []byte) {
-	var packets [][]byte
+	"github.com/pkg/errors"
+)
+
+// MySQLPacketWriter wraps a writer expecting MySQL packets and ensures that
+// writer receives single MySQL packets for each Write call.  Will return an
+// error if it can't, or if the underlying writer errors.
+type MySQLPacketWriter struct {
+	Receiver io.Writer
+}
+
+// ErrIncompletePacket the data being written didn't form a complete set of
+// packets.  Call aborted when it reached the incomplete packet.
+var ErrIncompletePacket = er.New("packet: incomplete packet")
+
+// Write sends complete packets through as individual calls to Write on the
+// Receiver.  If there is incomplete data at the end it will return an
+// ErrIncompletePacket and the number of bytes it did write.
+// Note that the Receiver can also return an error.
+func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
+	var written int
 
 	var lengthBuffer [4]byte
 	copy(lengthBuffer[:], data[:3])
@@ -16,19 +32,22 @@ func SplitPacket(data []byte) ([][]byte, []byte) {
 
 	for length > 0 {
 		if int(length) <= len(data) {
-			packet := data[:4+length]
+			wrote, err := w.Receiver.Write(data[:4+length])
+			written = written + wrote
+			if err != nil {
+				return written, errors.Wrap(err, "packet write failed")
+			}
 			data = data[4+length:]
-			packets = append(packets, packet)
 		} else {
-			break
+			return written, ErrIncompletePacket
 		}
 
 		if len(data) < 4 {
-			break
+			return written, ErrIncompletePacket
 		}
 		copy(lengthBuffer[:], data[:3])
 		length = binary.LittleEndian.Uint32(lengthBuffer[:])
 	}
 
-	return packets, data
+	return written, nil
 }

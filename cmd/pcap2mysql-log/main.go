@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime/debug"
 
+	"github.com/orderbynull/lottip/protocol"
 	"github.com/spf13/pflag"
 )
 
@@ -41,10 +42,18 @@ func main() {
 		log.Fatal(err)
 	}
 	defer f.Close()
-
 }
 
-func Write
+func Ingest(p []byte) {
+	switch protocol.GetPacketType(p) {
+	case protocol.ComStmtPrepare:
+	case protocol.ComQuery:
+		decoded, err := protocol.DecodeQueryRequest(p)
+		fmt.Printf("%#v: %v\n", decoded, err)
+	case protocol.ComQuit:
+		fmt.Println("quit")
+	}
+}
 
 // func
 // Parser
