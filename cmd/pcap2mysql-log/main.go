@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"runtime/debug"
 
 	"github.com/spf13/pflag"
@@ -9,8 +11,11 @@ import (
 
 func main() {
 	var displayVersion bool
+	var to, from string
 
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
+	pflag.StringVar(&to, "to", "", "Traffic to the mysql server")
+	pflag.StringVar(&from, "from", "", "Traffic from the mysql server")
 	pflag.Parse()
 
 	buildVersion := "unknown"
@@ -26,4 +31,26 @@ func main() {
 		return
 	}
 
+	// FIXME: check to and from are specified
+	if to == "" || from == "" {
+		log.Fatal("Must specify --to and --from files with traffic")
+	}
+
+	f, err := os.Open(to)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
 }
+
+func Write
+
+// func
+// Parser
+//go io.Copy(io.MultiWriter(server, &RequestPacketParser{connId, &queryId, p.cmdChan, p.connStateChan, &timer}), client)
+
+// Copy bytes from server to client and responseParser
+//io.Copy(io.MultiWriter(client, &ResponsePacketParser{connId, &queryId, p.cmdResultChan, &timer}), server)
+//}
+// go get github.com/orderbynull/lottip
