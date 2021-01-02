@@ -90,6 +90,14 @@ func (m *mySQLresponse) Write(p []byte) (int, error) {
 		case 3:
 			fmt.Println("Field definition")
 			fmt.Printf("%#v\n", p)
+			//sorry
+			i := byte(4)
+			for a := 0; a < 6; a++ {
+				l := p[i]
+				i = i + 1
+				fmt.Printf("%s\n", p[i:i+l])
+				i = i + l
+			}
 		case 0xfe:
 			fmt.Println("EOF")
 			m.EOFCount = m.EOFCount + 1
