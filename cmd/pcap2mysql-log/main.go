@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"runtime/debug"
@@ -40,22 +41,55 @@ func main() {
 	}
 
 	fmt.Println("---- To")
-	dumpFile(to)
+	dumpFile(to, &mySQLinterpretter{})
 	fmt.Println("---- From")
-	dumpFile(from)
+	dumpFile(from, &mySQLresponse{})
 }
 
-func dumpFile(filename string) {
+func dumpFile(filename string, mysql io.Writer) {
 	f, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	mysql := mySQLinterpretter{}
-	packet.Copy(f, &mysql)
+	packet.Copy(f, mysql)
 }
 
+//Build response
+//Fields
+// Detect the fields & what the types are
+// Read the data
+//Build request
+
 type mySQLinterpretter struct {
+}
+
+type mySQLtypes struct {
+	Name string
+}
+
+type mySQLresponse struct {
+	Fields []mySQLtypes
+}
+
+func (m *mySQLresponse) Write(p []byte) (int, error) {
+	switch t := protocol.GetPacketType(p); t {
+	case protocol.ResponseErr:
+		decoded, err := protocol.DecodeErrResponse(p)
+		fmt.Printf("%#v: %v\n", decoded, err)
+	case protocol.ResponseOk:
+		decoded, err := protocol.DecodeOkResponse(p)
+		fmt.Printf("%#v: %v\n", decoded, err)
+	case 0x04:
+		fmt.Println("Field list")
+		fmt.Printf("%#v\n", p)
+		// should expect a bunch of fields followed by an EOF
+		// specifies number of fields to expect
+	default:
+		fmt.Printf("Unrecognised packet: %x\n", t)
+	}
+
+	return len(p), nil
 }
 
 func (m *mySQLinterpretter) Write(p []byte) (int, error) {
@@ -71,6 +105,7 @@ func (m *mySQLinterpretter) Write(p []byte) (int, error) {
 		}
 	case protocol.ComQuit:
 		fmt.Println("quit")
+		fmt.Printf("%#v\n", p)
 	case protocol.ResponseErr:
 		decoded, err := protocol.DecodeErrResponse(p)
 		fmt.Printf("%#v: %v\n", decoded, err)
