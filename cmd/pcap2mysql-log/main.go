@@ -69,26 +69,41 @@ type mySQLtypes struct {
 }
 
 type mySQLresponse struct {
-	Fields []mySQLtypes
+	Fields     []mySQLtypes
+	InResponse bool
+	EOFCount   int
 }
 
 func (m *mySQLresponse) Write(p []byte) (int, error) {
-	switch t := protocol.GetPacketType(p); t {
-	case protocol.ResponseErr:
-		decoded, err := protocol.DecodeErrResponse(p)
-		fmt.Printf("%#v: %v\n", decoded, err)
-	case protocol.ResponseOk:
-		decoded, err := protocol.DecodeOkResponse(p)
-		fmt.Printf("%#v: %v\n", decoded, err)
-	case 0x04:
-		fmt.Println("Field list")
-		fmt.Printf("%#v\n", p)
-		// should expect a bunch of fields followed by an EOF
-		// specifies number of fields to expect
-	case 0xfe:
-		fmt.Println("EOF")
-	default:
-		fmt.Printf("Unrecognised packet: %x\n", t)
+	if m.InResponse {
+		switch t := protocol.GetPacketType(p); t {
+		case protocol.ResponseErr:
+			decoded, err := protocol.DecodeErrResponse(p)
+			fmt.Printf("%#v: %v\n", decoded, err)
+		case protocol.ResponseOk:
+			decoded, err := protocol.DecodeOkResponse(p)
+			fmt.Printf("%#v: %v\n", decoded, err)
+		case 1:
+			//assuming this is the data
+			fmt.Println("Response Data")
+			fmt.Printf("%#v\n", p)
+		case 3:
+			fmt.Println("Field definition")
+			fmt.Printf("%#v\n", p)
+		case 0xfe:
+			fmt.Println("EOF")
+			m.EOFCount = m.EOFCount + 1
+
+			if m.EOFCount >= 2 {
+				m.InResponse = false
+				m.EOFCount = 0
+			}
+		default:
+			fmt.Printf("Unrecognised packet: %x\n", t)
+		}
+	} else {
+		fmt.Printf("Expecting: %d fields\n", p[4])
+		m.InResponse = true
 	}
 
 	return len(p), nil
