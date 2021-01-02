@@ -85,6 +85,8 @@ func (m *mySQLresponse) Write(p []byte) (int, error) {
 		fmt.Printf("%#v\n", p)
 		// should expect a bunch of fields followed by an EOF
 		// specifies number of fields to expect
+	case 0xfe:
+		fmt.Println("EOF")
 	default:
 		fmt.Printf("Unrecognised packet: %x\n", t)
 	}
