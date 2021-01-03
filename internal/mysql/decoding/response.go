@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strings"
 )
 
 type mySQLtypes struct {
@@ -21,7 +22,7 @@ type mySQLfieldinfo struct {
 	CharacterSetNumber  uint16
 	MaxColumnSize       uint32
 	FieldTypes          fieldType
-	FieldDetail         uint16
+	FieldDetail         fieldDetail
 	Decimals            byte
 	Unused              uint16
 }
@@ -34,6 +35,7 @@ type MySQLresponse struct {
 
 type readState byte
 type fieldType byte
+type fieldDetail uint16
 
 const (
 	start readState = iota
@@ -71,7 +73,56 @@ const (
 	VAR_STRING            = 253
 	STRING                = 254
 	GEOMETRY              = 255
+
+	DETAIL_NOT_NULL              fieldDetail = 1
+	DETAIL_PRIMARY_KEY                       = 2
+	DETAIL_UNIQUE_KEY                        = 4
+	DETAIL_MULTIPLE_KEY                      = 8
+	DETAIL_BLOB                              = 16
+	DETAIL_UNSIGNED                          = 32
+	DETAIL_ZEROFILL_FLAG                     = 64
+	DETAIL_BINARY_COLLATION                  = 128
+	DETAIL_ENUM                              = 256
+	DETAIL_AUTO_INCREMENT                    = 512
+	DETAIL_TIMESTAMP                         = 1024
+	DETAIL_SET                               = 2048
+	DETAIL_NO_DEFAULT_VALUE_FLAG             = 4096
+	DETAIL_ON_UPDATE_NOW_FLAG                = 8192
+	DETAIL_NUM_FLAG                          = 32768
 )
+
+func (d fieldDetail) String() string {
+	var b strings.Builder
+	if d&32768 == 32768 {
+		b.WriteString("NUM_FLAG")
+	}
+	for _, flag := range []string{
+		"NOT_NULL",
+		"PRIMARY_KEY",
+		"UNIQUE_KEY",
+		"MULTIPLE_KEY",
+		"BLOB",
+		"UNSIGNED",
+		"ZEROFILL_FLAG",
+		"BINARY_COLLATION",
+		"ENUM",
+		"AUTO_INCREMENT",
+		"TIMESTAMP",
+		"SET",
+		"NO_DEFAULT_VALUE_FLAG",
+		"ON_UPDATE_NOW_FLAG",
+	} {
+		if d&1 == 1 {
+			if b.Len() > 0 {
+				b.WriteString("|")
+			}
+			b.WriteString(flag)
+		}
+		d = d >> 1
+	}
+
+	return b.String()
+}
 
 func (f fieldType) String() string {
 	switch f {
