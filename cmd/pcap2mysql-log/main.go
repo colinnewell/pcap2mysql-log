@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -89,15 +90,18 @@ func (m *mySQLresponse) Write(p []byte) (int, error) {
 			fmt.Printf("%#v\n", p)
 		case 3:
 			fmt.Println("Field definition")
-			fmt.Printf("%#v\n", p)
-			//sorry
-			i := byte(4)
+			buf := bytes.NewBuffer(p[4:])
+
 			for a := 0; a < 6; a++ {
-				l := p[i]
-				i = i + 1
-				fmt.Printf("%s\n", p[i:i+l])
-				i = i + l
+				s, err := readString(buf)
+
+				if err != nil {
+					return 0, err
+				}
+
+				fmt.Printf("%s\n", s)
 			}
+
 		case 0xfe:
 			fmt.Println("EOF")
 			m.EOFCount = m.EOFCount + 1
@@ -148,6 +152,22 @@ func (m *mySQLinterpretter) Write(p []byte) (int, error) {
 		fmt.Printf("Unrecognised packet: %x\n", t)
 	}
 	return len(p), nil
+}
+
+func readString(buf *bytes.Buffer) (string, error) {
+	count, err := buf.ReadByte()
+
+	if err != nil {
+		return "", err
+	}
+
+	s := string(buf.Next(int(count)))
+
+	if len(s) < int(count) {
+		return "", fmt.Errorf("Only read %d bytes", len(s))
+	}
+
+	return s, nil
 }
 
 // func
