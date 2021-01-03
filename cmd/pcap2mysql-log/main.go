@@ -66,7 +66,12 @@ type mySQLinterpretter struct {
 }
 
 type mySQLtypes struct {
-	Name string
+	Catalog     string
+	TableAlias  string
+	Table       string
+	Schema      string
+	Column      string
+	ColumnAlias string
 }
 
 type mySQLresponse struct {
@@ -91,16 +96,26 @@ func (m *mySQLresponse) Write(p []byte) (int, error) {
 		case 3:
 			fmt.Println("Field definition")
 			buf := bytes.NewBuffer(p[4:])
+			field := mySQLtypes{}
 
-			for a := 0; a < 6; a++ {
+			for _, val := range []*string{
+				&field.Catalog,
+				&field.Schema,
+				&field.TableAlias,
+				&field.Table,
+				&field.ColumnAlias,
+				&field.Column,
+			} {
 				s, err := readString(buf)
 
 				if err != nil {
 					return 0, err
 				}
 
-				fmt.Printf("%s\n", s)
+				*val = s
 			}
+
+			fmt.Printf("%#v\n", field)
 
 		case 0xfe:
 			fmt.Println("EOF")
