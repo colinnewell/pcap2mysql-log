@@ -20,7 +20,7 @@ type mySQLfieldinfo struct {
 	LengthOfFixesFields byte
 	CharacterSetNumber  uint16
 	MaxColumnSize       uint32
-	FieldTypes          byte
+	FieldTypes          fieldType
 	FieldDetail         uint16
 	Decimals            byte
 	Unused              uint16
@@ -33,12 +33,113 @@ type MySQLresponse struct {
 }
 
 type readState byte
+type fieldType byte
 
 const (
 	start readState = iota
 	fieldInfo
 	data
+
+	DECIMAL     fieldType = 0
+	TINY                  = 1
+	SHORT                 = 2
+	LONG                  = 3
+	FLOAT                 = 4
+	DOUBLE                = 5
+	NULL                  = 6
+	TIMESTAMP             = 7
+	LONGLONG              = 8
+	INT24                 = 9
+	DATE                  = 10
+	TIME                  = 11
+	DATETIME              = 12
+	YEAR                  = 13
+	NEWDATE               = 14
+	VARCHAR               = 15
+	BIT                   = 16
+	TIMESTAMP2            = 17
+	DATETIME2             = 18
+	TIME2                 = 19
+	JSON                  = 245
+	NEWDECIMAL            = 246
+	ENUM                  = 247
+	SET                   = 248
+	TINY_BLOB             = 249
+	MEDIUM_BLOB           = 250
+	LONG_BLOB             = 251
+	BLOB                  = 252
+	VAR_STRING            = 253
+	STRING                = 254
+	GEOMETRY              = 255
 )
+
+func (f fieldType) String() string {
+	switch f {
+	case 0:
+		return "MYSQL_TYPE_DECIMAL"
+	case 1:
+		return "MYSQL_TYPE_TINY"
+	case 2:
+		return "MYSQL_TYPE_SHORT"
+	case 3:
+		return "MYSQL_TYPE_LONG"
+	case 4:
+		return "MYSQL_TYPE_FLOAT"
+	case 5:
+		return "MYSQL_TYPE_DOUBLE"
+	case 6:
+		return "MYSQL_TYPE_NULL"
+	case 7:
+		return "MYSQL_TYPE_TIMESTAMP"
+	case 8:
+		return "MYSQL_TYPE_LONGLONG"
+	case 9:
+		return "MYSQL_TYPE_INT24"
+	case 10:
+		return "MYSQL_TYPE_DATE"
+	case 11:
+		return "MYSQL_TYPE_TIME"
+	case 12:
+		return "MYSQL_TYPE_DATETIME"
+	case 13:
+		return "MYSQL_TYPE_YEAR"
+	case 14:
+		return "MYSQL_TYPE_NEWDATE"
+	case 15:
+		return "MYSQL_TYPE_VARCHAR"
+	case 16:
+		return "MYSQL_TYPE_BIT"
+	case 17:
+		return "MYSQL_TYPE_TIMESTAMP2"
+	case 18:
+		return "MYSQL_TYPE_DATETIME2"
+	case 19:
+		return "MYSQL_TYPE_TIME2"
+	case 245:
+		return "MYSQL_TYPE_JSON"
+	case 246:
+		return "MYSQL_TYPE_NEWDECIMAL"
+	case 247:
+		return "MYSQL_TYPE_ENUM"
+	case 248:
+		return "MYSQL_TYPE_SET"
+	case 249:
+		return "MYSQL_TYPE_TINY_BLOB"
+	case 250:
+		return "MYSQL_TYPE_MEDIUM_BLOB"
+	case 251:
+		return "MYSQL_TYPE_LONG_BLOB"
+	case 252:
+		return "MYSQL_TYPE_BLOB"
+	case 253:
+		return "MYSQL_TYPE_VAR_STRING"
+	case 254:
+		return "MYSQL_TYPE_STRING"
+	case 255:
+		return "MYSQL_TYPE_GEOMETRY"
+	}
+	return "UNRECOGNISED"
+}
 
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	switch m.State {
@@ -87,7 +188,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 
 		m.Fields = append(m.Fields, field)
 
-		fmt.Printf("%#v\n", field)
+		fmt.Printf("%+v\n", field)
 	default:
 		fmt.Printf("Unrecognised packet: %x\n", p[0])
 	}
