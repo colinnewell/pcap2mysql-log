@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"log"
@@ -72,6 +73,17 @@ type mySQLtypes struct {
 	Schema      string
 	Column      string
 	ColumnAlias string
+	FieldInfo   mySQLfieldinfo
+}
+
+type mySQLfieldinfo struct {
+	LengthOfFixesFields byte
+	CharacterSetNumber  uint16
+	MaxColumnSize       uint32
+	FieldTypes          byte
+	FieldDetail         uint16
+	Decimals            byte
+	Unused              uint16
 }
 
 type mySQLresponse struct {
@@ -114,6 +126,12 @@ func (m *mySQLresponse) Write(p []byte) (int, error) {
 
 				*val = s
 			}
+
+			if err := binary.Read(buf, binary.LittleEndian, &field.FieldInfo); err != nil {
+				return 0, err
+			}
+
+			m.Fields = append(m.Fields, field)
 
 			fmt.Printf("%#v\n", field)
 
