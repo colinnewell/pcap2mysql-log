@@ -195,9 +195,25 @@ func (f fieldType) String() string {
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	switch m.State {
 	case start:
-		fmt.Printf("Expecting: %d fields\n", p[4])
-		m.State = fieldInfo
-		m.Fields = []mySQLtypes{}
+		fmt.Printf("%#v\n", p[0:])
+		switch p[4] {
+		//err
+		case 0xff:
+			fmt.Println("error state")
+		//eof
+		case 0xfe:
+			fmt.Println("eof state")
+		//ok
+		case 0x00:
+			fmt.Println("ok state")
+		//local in-file
+		case 0xfb:
+			fmt.Println("In file")
+		default:
+			fmt.Printf("Expecting: %d fields\n", p[4])
+			m.State = fieldInfo
+			m.Fields = []mySQLtypes{}
+		}
 	case data:
 		if p[4] == 0xfe {
 			m.State = start
