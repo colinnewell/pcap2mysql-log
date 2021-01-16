@@ -193,6 +193,11 @@ func (f fieldType) String() string {
 }
 
 func (m *MySQLresponse) Write(p []byte) (int, error) {
+	fmt.Println("---------Packet-----------")
+	fmt.Printf("input := []byte{\n")
+	hexDumpFile(p)
+	fmt.Printf("}\n")
+	fmt.Println("---------END-----------")
 	switch m.State {
 	case start:
 		fmt.Printf("%#v\n", p[0:])
@@ -279,6 +284,33 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 	}
 
 	return len(p), nil
+}
+
+const maxLine = 8
+
+func hexDumpFile(b []byte) {
+	for {
+		lineLen := len(b)
+		if lineLen > maxLine {
+			lineLen = maxLine
+		} else if lineLen == 0 {
+			break
+		}
+		line := b[0:lineLen]
+		b = b[lineLen:]
+		for _, c := range line {
+			fmt.Printf("0x%.2x, ", c)
+		}
+		fmt.Printf(" // ")
+		for _, c := range line {
+			if c >= 0x20 && c < 128 {
+				fmt.Printf("%c", c)
+			} else {
+				fmt.Printf(".")
+			}
+		}
+		fmt.Println()
+	}
 }
 
 func readString(buf *bytes.Buffer) (string, error) {
