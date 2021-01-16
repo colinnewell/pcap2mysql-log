@@ -88,14 +88,12 @@ const (
 	DETAIL_SET                               = 2048
 	DETAIL_NO_DEFAULT_VALUE_FLAG             = 4096
 	DETAIL_ON_UPDATE_NOW_FLAG                = 8192
+	DETAIL_PART_KEY_FLAG                     = 16384
 	DETAIL_NUM_FLAG                          = 32768
 )
 
 func (d fieldDetail) String() string {
 	var b strings.Builder
-	if d&32768 == 32768 {
-		b.WriteString("NUM_FLAG")
-	}
 	for _, flag := range []string{
 		"NOT_NULL",
 		"PRIMARY_KEY",
@@ -111,6 +109,8 @@ func (d fieldDetail) String() string {
 		"SET",
 		"NO_DEFAULT_VALUE_FLAG",
 		"ON_UPDATE_NOW_FLAG",
+		"PART_KEY_FLAG",
+		"NUM_FLAG",
 	} {
 		if d&1 == 1 {
 			if b.Len() > 0 {

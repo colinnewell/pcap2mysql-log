@@ -67,7 +67,7 @@ func TestDecodeReponse(t *testing.T) {
 				CharacterSetNumber:  63,
 				MaxColumnSize:       11,
 				FieldTypes:          LONG,
-				//FieldDetail:         DETAIL_NOT_NULL | DETAIL_PRIMARY_KEY | DETAIL_AUTO_INCREMENT,
+				FieldDetail:         DETAIL_NOT_NULL | DETAIL_PRIMARY_KEY | DETAIL_AUTO_INCREMENT | DETAIL_PART_KEY_FLAG,
 			},
 		},
 		{
@@ -96,7 +96,7 @@ func TestDecodeReponse(t *testing.T) {
 				CharacterSetNumber:  8,
 				MaxColumnSize:       255,
 				FieldTypes:          VAR_STRING,
-				FieldDetail:         DETAIL_UNIQUE_KEY,
+				FieldDetail:         DETAIL_UNIQUE_KEY | DETAIL_PART_KEY_FLAG,
 			},
 		},
 	}
