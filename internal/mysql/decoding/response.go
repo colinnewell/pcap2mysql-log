@@ -194,7 +194,7 @@ func (f fieldType) String() string {
 
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	fmt.Println("---------Packet-----------")
-	fmt.Printf("input := []byte{\n")
+	fmt.Printf("[]byte{\n")
 	hexDumpFile(p)
 	fmt.Printf("}\n")
 	fmt.Println("---------END-----------")
