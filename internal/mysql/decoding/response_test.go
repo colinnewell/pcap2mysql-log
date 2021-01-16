@@ -103,4 +103,5 @@ func TestDecodeReponse(t *testing.T) {
 	if diff := cmp.Diff(r.Fields, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
+	// FIXME: should check we decode the data in the packets too.
 }
