@@ -14,6 +14,12 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 )
 
+// MySQLConnection is for reading the two sides of the connection
+type MySQLConnection struct {
+	Request  io.Reader
+	Response io.Reader
+}
+
 func main() {
 	var displayVersion bool
 	var to, from string
@@ -41,10 +47,41 @@ func main() {
 		log.Fatal("Must specify --to and --from files with traffic")
 	}
 
+	c := MySQLConnection{}
+
+	f, err := os.Open(to)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	c.Request = f
+
+	t, err := os.Open(from)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer t.Close()
+
+	c.Response = t
+
+	c.Read()
+}
+
+func (m *MySQLConnection) Read() error {
 	fmt.Println("---- To")
-	dumpFile(to, &mySQLinterpretter{})
+
+	interpretter := mySQLinterpretter{}
+
+	packet.Copy(m.Request, &interpretter)
+
 	fmt.Println("---- From")
-	dumpFile(from, &decoding.MySQLresponse{})
+
+	response := decoding.MySQLresponse{}
+
+	packet.Copy(m.Response, &response)
+
+	return nil
 }
 
 func dumpFile(filename string, mysql io.Writer) {
