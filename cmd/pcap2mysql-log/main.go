@@ -84,15 +84,6 @@ func (m *MySQLConnection) Read() error {
 	return nil
 }
 
-func dumpFile(filename string, mysql io.Writer) {
-	f, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-	packet.Copy(f, mysql)
-}
-
 //Build response
 //Fields
 // Detect the fields & what the types are
