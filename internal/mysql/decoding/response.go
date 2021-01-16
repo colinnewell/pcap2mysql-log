@@ -197,6 +197,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 	case start:
 		fmt.Printf("Expecting: %d fields\n", p[4])
 		m.State = fieldInfo
+		m.Fields = []mySQLtypes{}
 	case data:
 		if p[4] == 0xfe {
 			m.State = start
@@ -204,7 +205,24 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		}
 
 		fmt.Println("Response Data")
-		fmt.Printf("%#v\n", p)
+		r := make([]string, len(m.Fields))
+
+		b := bytes.NewBuffer(p[4:])
+
+		for i := range r {
+			var err error
+
+			r[i], err = readString(b)
+
+			if err != nil {
+				return 0, err
+			}
+		}
+
+		for i, v := range r {
+			fmt.Printf("%s(%s.%s): %s\n", m.Fields[i].ColumnAlias, m.Fields[i].Table, m.Fields[i].Column, v)
+		}
+
 	case fieldInfo:
 		if p[4] == 0xfe {
 			m.State = data
