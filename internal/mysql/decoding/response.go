@@ -128,67 +128,67 @@ func (d fieldDetail) String() string {
 //nolint:funlen,gocyclo
 func (f fieldType) String() string {
 	switch f {
-	case 0:
+	case DECIMAL:
 		return "MYSQL_TYPE_DECIMAL"
-	case 1:
+	case TINY:
 		return "MYSQL_TYPE_TINY"
-	case 2:
+	case SHORT:
 		return "MYSQL_TYPE_SHORT"
-	case 3:
+	case LONG:
 		return "MYSQL_TYPE_LONG"
-	case 4:
+	case FLOAT:
 		return "MYSQL_TYPE_FLOAT"
-	case 5:
+	case DOUBLE:
 		return "MYSQL_TYPE_DOUBLE"
-	case 6:
+	case NULL:
 		return "MYSQL_TYPE_NULL"
-	case 7:
+	case TIMESTAMP:
 		return "MYSQL_TYPE_TIMESTAMP"
-	case 8:
+	case LONGLONG:
 		return "MYSQL_TYPE_LONGLONG"
-	case 9:
+	case INT24:
 		return "MYSQL_TYPE_INT24"
-	case 10:
+	case DATE:
 		return "MYSQL_TYPE_DATE"
-	case 11:
+	case TIME:
 		return "MYSQL_TYPE_TIME"
-	case 12:
+	case DATETIME:
 		return "MYSQL_TYPE_DATETIME"
-	case 13:
+	case YEAR:
 		return "MYSQL_TYPE_YEAR"
-	case 14:
+	case NEWDATE:
 		return "MYSQL_TYPE_NEWDATE"
-	case 15:
+	case VARCHAR:
 		return "MYSQL_TYPE_VARCHAR"
-	case 16:
+	case BIT:
 		return "MYSQL_TYPE_BIT"
-	case 17:
+	case TIMESTAMP2:
 		return "MYSQL_TYPE_TIMESTAMP2"
-	case 18:
+	case DATETIME2:
 		return "MYSQL_TYPE_DATETIME2"
-	case 19:
+	case TIME2:
 		return "MYSQL_TYPE_TIME2"
-	case 245:
+	case JSON:
 		return "MYSQL_TYPE_JSON"
-	case 246:
+	case NEWDECIMAL:
 		return "MYSQL_TYPE_NEWDECIMAL"
-	case 247:
+	case ENUM:
 		return "MYSQL_TYPE_ENUM"
-	case 248:
+	case SET:
 		return "MYSQL_TYPE_SET"
-	case 249:
+	case TINY_BLOB:
 		return "MYSQL_TYPE_TINY_BLOB"
-	case 250:
+	case MEDIUM_BLOB:
 		return "MYSQL_TYPE_MEDIUM_BLOB"
-	case 251:
+	case LONG_BLOB:
 		return "MYSQL_TYPE_LONG_BLOB"
-	case 252:
+	case BLOB:
 		return "MYSQL_TYPE_BLOB"
-	case 253:
+	case VAR_STRING:
 		return "MYSQL_TYPE_VAR_STRING"
-	case 254:
+	case STRING:
 		return "MYSQL_TYPE_STRING"
-	case 255:
+	case GEOMETRY:
 		return "MYSQL_TYPE_GEOMETRY"
 	}
 	return "UNRECOGNISED"
