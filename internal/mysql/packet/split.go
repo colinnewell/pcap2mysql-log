@@ -44,6 +44,10 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 			return written, ErrIncompletePacket
 		}
 
+		if len(data) == 0 {
+			// hit the end
+			break
+		}
 		if len(data) < HeaderLen {
 			return written, ErrIncompletePacket
 		}
