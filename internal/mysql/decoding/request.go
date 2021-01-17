@@ -118,6 +118,11 @@ type MySQLRequest struct {
 
 func (m *MySQLRequest) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
+	fmt.Println("---------Request Packet-----------")
+	fmt.Printf("[]byte{\n")
+	hexDumpFile(p)
+	fmt.Printf("}\n")
+	fmt.Println("---------END-----------")
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
 		fmt.Println("Prepare")
