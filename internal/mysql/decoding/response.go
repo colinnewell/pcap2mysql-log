@@ -37,7 +37,7 @@ type readState byte
 type fieldType byte
 type fieldDetail uint16
 
-//nolint:golint
+//nolint:golint,stylecheck
 const (
 	start readState = iota
 	fieldInfo
