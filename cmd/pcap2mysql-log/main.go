@@ -65,7 +65,9 @@ func main() {
 
 	c.Response = t
 
-	c.Read()
+	if err := c.Read(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (m *MySQLConnection) Read() error {
@@ -73,13 +75,17 @@ func (m *MySQLConnection) Read() error {
 
 	interpretter := mySQLinterpretter{}
 
-	packet.Copy(m.Request, &interpretter)
+	if _, err := packet.Copy(m.Request, &interpretter); err != nil {
+		return err
+	}
 
 	fmt.Println("---- From")
 
 	response := decoding.MySQLresponse{}
 
-	packet.Copy(m.Response, &response)
+	if _, err := packet.Copy(m.Response, &response); err != nil {
+		return err
+	}
 
 	return nil
 }

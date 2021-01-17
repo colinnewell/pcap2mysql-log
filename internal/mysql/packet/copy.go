@@ -32,6 +32,8 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 			buf.Next(w)
 		}
 
+		// err checked as we come back around in the for loop.
+		//nolint:ineffassign,staticcheck
 		n, err = rdr.Read(read[:])
 	}
 

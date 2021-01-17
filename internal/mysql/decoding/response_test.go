@@ -51,7 +51,10 @@ func TestDecodeReponse(t *testing.T) {
 	}
 	r := MySQLresponse{}
 	for _, p := range packets {
-		r.Write(p)
+		_, err := r.Write(p)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	expected := []mySQLtypes{
