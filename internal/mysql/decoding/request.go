@@ -3,7 +3,7 @@ package decoding
 import (
 	"fmt"
 
-	"github.com/orderbynull/lottip/protocol"
+	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 )
 
 type CommandCode byte
@@ -118,16 +118,12 @@ type MySQLRequest struct {
 
 func (m *MySQLRequest) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
-	switch t := CommandCode(p[4]); t {
+	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
 		fmt.Println("Prepare")
 	case reqQuery:
-		decoded, err := protocol.DecodeQueryRequest(p)
-		if err != nil {
-			fmt.Printf("%v: %#v\n", err, p)
-		} else {
-			fmt.Printf("%#v\n", decoded)
-		}
+		query := p[packet.HeaderLen+1:]
+		fmt.Printf("Query: %s\n", query)
 	case reqQuit:
 		fmt.Println("quit")
 		fmt.Printf("%#v\n", p)

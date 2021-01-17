@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const headerLen = 4
+const HeaderLen = 4
 
 // MySQLPacketWriter wraps a writer expecting MySQL packets and ensures that
 // writer receives single MySQL packets for each Write call.  Will return an
@@ -28,23 +28,23 @@ var ErrIncompletePacket = er.New("packet: incomplete packet")
 func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 	var written int
 
-	var lengthBuffer [headerLen]byte
+	var lengthBuffer [HeaderLen]byte
 	copy(lengthBuffer[:], data[:3])
 	length := binary.LittleEndian.Uint32(lengthBuffer[:])
 
 	for length > 0 {
-		if int(length)+headerLen <= len(data) {
-			wrote, err := w.Receiver.Write(data[:headerLen+length])
+		if int(length)+HeaderLen <= len(data) {
+			wrote, err := w.Receiver.Write(data[:HeaderLen+length])
 			written += wrote
 			if err != nil {
 				return written, errors.Wrap(err, "packet write failed")
 			}
-			data = data[headerLen+length:]
+			data = data[HeaderLen+length:]
 		} else {
 			return written, ErrIncompletePacket
 		}
 
-		if len(data) < headerLen {
+		if len(data) < HeaderLen {
 			return written, ErrIncompletePacket
 		}
 		copy(lengthBuffer[:], data[:3])
