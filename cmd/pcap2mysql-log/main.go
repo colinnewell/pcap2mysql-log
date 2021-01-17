@@ -7,7 +7,6 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/orderbynull/lottip/protocol"
 	"github.com/spf13/pflag"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
@@ -73,7 +72,7 @@ func main() {
 func (m *MySQLConnection) Read() error {
 	fmt.Println("---- To")
 
-	interpreter := mySQLinterpreter{}
+	interpreter := decoding.MySQLRequest{}
 
 	if _, err := packet.Copy(m.Request, &interpreter); err != nil {
 		log.Println(err)
@@ -89,54 +88,3 @@ func (m *MySQLConnection) Read() error {
 
 	return nil
 }
-
-//Build response
-//Fields
-// Detect the fields & what the types are
-// Read the data
-//Build request
-
-type mySQLinterpreter struct {
-}
-
-func (m *mySQLinterpreter) Write(p []byte) (int, error) {
-	switch t := protocol.GetPacketType(p); t {
-	case protocol.ComStmtPrepare:
-		fmt.Println("Prepare")
-	case protocol.ComQuery:
-		decoded, err := protocol.DecodeQueryRequest(p)
-		if err != nil {
-			fmt.Printf("%v: %#v\n", err, p)
-		} else {
-			fmt.Printf("%#v\n", decoded)
-		}
-	case protocol.ComQuit:
-		fmt.Println("quit")
-		fmt.Printf("%#v\n", p)
-	case protocol.ResponseErr:
-		decoded, err := protocol.DecodeErrResponse(p)
-		fmt.Printf("%#v: %v\n", decoded, err)
-	case protocol.ResponseOk:
-		decoded, err := protocol.DecodeOkResponse(p)
-		fmt.Printf("%#v: %v\n", decoded, err)
-	case 0x04:
-		fmt.Println("Field list")
-		fmt.Printf("%#v\n", p)
-		// should expect a bunch of fields followed by an EOF
-		// specifies number of fields to expect
-	case 0xfe:
-		fmt.Println("EOF")
-	default:
-		fmt.Printf("Unrecognised packet: %x\n", t)
-	}
-	return len(p), nil
-}
-
-// func
-// Parser
-//go io.Copy(io.MultiWriter(server, &RequestPacketParser{connId, &queryId, p.cmdChan, p.connStateChan, &timer}), client)
-
-// Copy bytes from server to client and responseParser
-//io.Copy(io.MultiWriter(client, &ResponsePacketParser{connId, &queryId, p.cmdResultChan, &timer}), server)
-//}
-// go get github.com/orderbynull/lottip
