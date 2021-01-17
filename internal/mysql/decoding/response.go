@@ -29,7 +29,7 @@ type MySQLfieldinfo struct {
 	Unused              uint16
 }
 
-//MySQLresponse - dealing with the response.
+// MySQLresponse - dealing with the response.
 type MySQLresponse struct {
 	Fields []MySQLtypes
 	State  readState

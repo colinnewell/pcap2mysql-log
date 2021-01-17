@@ -58,6 +58,9 @@ func main() {
 
 	t, err := os.Open(from)
 	if err != nil {
+		// NOTE: complains about fatal + defer.  This code isn't great, but is
+		// more for testing so not going to worry right now.
+		//nolint:gocritic
 		log.Fatal(err)
 	}
 	defer t.Close()
