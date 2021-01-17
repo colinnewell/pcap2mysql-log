@@ -5,19 +5,21 @@ import (
 	"encoding/binary"
 	"fmt"
 	"strings"
+
+	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 )
 
-type mySQLtypes struct {
+type MySQLtypes struct {
 	Catalog     string
 	TableAlias  string
 	Table       string
 	Schema      string
 	Column      string
 	ColumnAlias string
-	FieldInfo   mySQLfieldinfo
+	FieldInfo   MySQLfieldinfo
 }
 
-type mySQLfieldinfo struct {
+type MySQLfieldinfo struct {
 	LengthOfFixesFields byte
 	CharacterSetNumber  uint16
 	MaxColumnSize       uint32
@@ -27,69 +29,78 @@ type mySQLfieldinfo struct {
 	Unused              uint16
 }
 
-//MySQLresponse - dealing with the response
+// MySQLresponse - dealing with the response.
 type MySQLresponse struct {
-	Fields []mySQLtypes
+	Fields []MySQLtypes
 	State  readState
 }
 
 type readState byte
 type fieldType byte
 type fieldDetail uint16
+type responseType byte
 
 const (
 	start readState = iota
 	fieldInfo
 	data
 
+	MySQLError       responseType = 0xff
+	MySQLEOF         responseType = 0xfe
+	MySQLOK          responseType = 0
+	MySQLLocalInfile responseType = 0xfb
+)
+
+//nolint:golint,stylecheck
+const (
 	DECIMAL     fieldType = 0
-	TINY                  = 1
-	SHORT                 = 2
-	LONG                  = 3
-	FLOAT                 = 4
-	DOUBLE                = 5
-	NULL                  = 6
-	TIMESTAMP             = 7
-	LONGLONG              = 8
-	INT24                 = 9
-	DATE                  = 10
-	TIME                  = 11
-	DATETIME              = 12
-	YEAR                  = 13
-	NEWDATE               = 14
-	VARCHAR               = 15
-	BIT                   = 16
-	TIMESTAMP2            = 17
-	DATETIME2             = 18
-	TIME2                 = 19
-	JSON                  = 245
-	NEWDECIMAL            = 246
-	ENUM                  = 247
-	SET                   = 248
-	TINY_BLOB             = 249
-	MEDIUM_BLOB           = 250
-	LONG_BLOB             = 251
-	BLOB                  = 252
-	VAR_STRING            = 253
-	STRING                = 254
-	GEOMETRY              = 255
+	TINY        fieldType = 1
+	SHORT       fieldType = 2
+	LONG        fieldType = 3
+	FLOAT       fieldType = 4
+	DOUBLE      fieldType = 5
+	NULL        fieldType = 6
+	TIMESTAMP   fieldType = 7
+	LONGLONG    fieldType = 8
+	INT24       fieldType = 9
+	DATE        fieldType = 10
+	TIME        fieldType = 11
+	DATETIME    fieldType = 12
+	YEAR        fieldType = 13
+	NEWDATE     fieldType = 14
+	VARCHAR     fieldType = 15
+	BIT         fieldType = 16
+	TIMESTAMP2  fieldType = 17
+	DATETIME2   fieldType = 18
+	TIME2       fieldType = 19
+	JSON        fieldType = 245
+	NEWDECIMAL  fieldType = 246
+	ENUM        fieldType = 247
+	SET         fieldType = 248
+	TINY_BLOB   fieldType = 249
+	MEDIUM_BLOB fieldType = 250
+	LONG_BLOB   fieldType = 251
+	BLOB        fieldType = 252
+	VAR_STRING  fieldType = 253
+	STRING      fieldType = 254
+	GEOMETRY    fieldType = 255
 
 	DETAIL_NOT_NULL              fieldDetail = 1
-	DETAIL_PRIMARY_KEY                       = 2
-	DETAIL_UNIQUE_KEY                        = 4
-	DETAIL_MULTIPLE_KEY                      = 8
-	DETAIL_BLOB                              = 16
-	DETAIL_UNSIGNED                          = 32
-	DETAIL_ZEROFILL_FLAG                     = 64
-	DETAIL_BINARY_COLLATION                  = 128
-	DETAIL_ENUM                              = 256
-	DETAIL_AUTO_INCREMENT                    = 512
-	DETAIL_TIMESTAMP                         = 1024
-	DETAIL_SET                               = 2048
-	DETAIL_NO_DEFAULT_VALUE_FLAG             = 4096
-	DETAIL_ON_UPDATE_NOW_FLAG                = 8192
-	DETAIL_PART_KEY_FLAG                     = 16384
-	DETAIL_NUM_FLAG                          = 32768
+	DETAIL_PRIMARY_KEY           fieldDetail = 2
+	DETAIL_UNIQUE_KEY            fieldDetail = 4
+	DETAIL_MULTIPLE_KEY          fieldDetail = 8
+	DETAIL_BLOB                  fieldDetail = 16
+	DETAIL_UNSIGNED              fieldDetail = 32
+	DETAIL_ZEROFILL_FLAG         fieldDetail = 64
+	DETAIL_BINARY_COLLATION      fieldDetail = 128
+	DETAIL_ENUM                  fieldDetail = 256
+	DETAIL_AUTO_INCREMENT        fieldDetail = 512
+	DETAIL_TIMESTAMP             fieldDetail = 1024
+	DETAIL_SET                   fieldDetail = 2048
+	DETAIL_NO_DEFAULT_VALUE_FLAG fieldDetail = 4096
+	DETAIL_ON_UPDATE_NOW_FLAG    fieldDetail = 8192
+	DETAIL_PART_KEY_FLAG         fieldDetail = 16384
+	DETAIL_NUM_FLAG              fieldDetail = 32768
 )
 
 func (d fieldDetail) String() string {
@@ -118,109 +129,108 @@ func (d fieldDetail) String() string {
 			}
 			b.WriteString(flag)
 		}
-		d = d >> 1
+		d >>= 1
 	}
 
 	return b.String()
 }
 
+//nolint:funlen,gocyclo
 func (f fieldType) String() string {
 	switch f {
-	case 0:
+	case DECIMAL:
 		return "MYSQL_TYPE_DECIMAL"
-	case 1:
+	case TINY:
 		return "MYSQL_TYPE_TINY"
-	case 2:
+	case SHORT:
 		return "MYSQL_TYPE_SHORT"
-	case 3:
+	case LONG:
 		return "MYSQL_TYPE_LONG"
-	case 4:
+	case FLOAT:
 		return "MYSQL_TYPE_FLOAT"
-	case 5:
+	case DOUBLE:
 		return "MYSQL_TYPE_DOUBLE"
-	case 6:
+	case NULL:
 		return "MYSQL_TYPE_NULL"
-	case 7:
+	case TIMESTAMP:
 		return "MYSQL_TYPE_TIMESTAMP"
-	case 8:
+	case LONGLONG:
 		return "MYSQL_TYPE_LONGLONG"
-	case 9:
+	case INT24:
 		return "MYSQL_TYPE_INT24"
-	case 10:
+	case DATE:
 		return "MYSQL_TYPE_DATE"
-	case 11:
+	case TIME:
 		return "MYSQL_TYPE_TIME"
-	case 12:
+	case DATETIME:
 		return "MYSQL_TYPE_DATETIME"
-	case 13:
+	case YEAR:
 		return "MYSQL_TYPE_YEAR"
-	case 14:
+	case NEWDATE:
 		return "MYSQL_TYPE_NEWDATE"
-	case 15:
+	case VARCHAR:
 		return "MYSQL_TYPE_VARCHAR"
-	case 16:
+	case BIT:
 		return "MYSQL_TYPE_BIT"
-	case 17:
+	case TIMESTAMP2:
 		return "MYSQL_TYPE_TIMESTAMP2"
-	case 18:
+	case DATETIME2:
 		return "MYSQL_TYPE_DATETIME2"
-	case 19:
+	case TIME2:
 		return "MYSQL_TYPE_TIME2"
-	case 245:
+	case JSON:
 		return "MYSQL_TYPE_JSON"
-	case 246:
+	case NEWDECIMAL:
 		return "MYSQL_TYPE_NEWDECIMAL"
-	case 247:
+	case ENUM:
 		return "MYSQL_TYPE_ENUM"
-	case 248:
+	case SET:
 		return "MYSQL_TYPE_SET"
-	case 249:
+	case TINY_BLOB:
 		return "MYSQL_TYPE_TINY_BLOB"
-	case 250:
+	case MEDIUM_BLOB:
 		return "MYSQL_TYPE_MEDIUM_BLOB"
-	case 251:
+	case LONG_BLOB:
 		return "MYSQL_TYPE_LONG_BLOB"
-	case 252:
+	case BLOB:
 		return "MYSQL_TYPE_BLOB"
-	case 253:
+	case VAR_STRING:
 		return "MYSQL_TYPE_VAR_STRING"
-	case 254:
+	case STRING:
 		return "MYSQL_TYPE_STRING"
-	case 255:
+	case GEOMETRY:
 		return "MYSQL_TYPE_GEOMETRY"
 	}
 	return "UNRECOGNISED"
 }
 
+//nolint:funlen
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	fmt.Println("---------Packet-----------")
 	fmt.Printf("[]byte{\n")
 	hexDumpFile(p)
 	fmt.Printf("}\n")
 	fmt.Println("---------END-----------")
+	// FIXME: check how much data we have
 	switch m.State {
 	case start:
 		fmt.Printf("%#v\n", p[0:])
-		switch p[4] {
-		//err
-		case 0xff:
+		switch responseType(p[4]) {
+		case MySQLError:
 			fmt.Println("error state")
-		//eof
-		case 0xfe:
+		case MySQLEOF:
 			fmt.Println("eof state")
-		//ok
-		case 0x00:
+		case MySQLOK:
 			fmt.Println("ok state")
-		//local in-file
-		case 0xfb:
+		case MySQLLocalInfile:
 			fmt.Println("In file")
 		default:
 			fmt.Printf("Expecting: %d fields\n", p[4])
 			m.State = fieldInfo
-			m.Fields = []mySQLtypes{}
+			m.Fields = []MySQLtypes{}
 		}
 	case data:
-		if p[4] == 0xfe {
+		if responseType(p[packet.HeaderLen]) == MySQLEOF {
 			m.State = start
 			break
 		}
@@ -228,7 +238,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		fmt.Println("Response Data")
 		r := make([]string, len(m.Fields))
 
-		b := bytes.NewBuffer(p[4:])
+		b := bytes.NewBuffer(p[packet.HeaderLen:])
 
 		for i := range r {
 			var err error
@@ -245,15 +255,15 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		}
 
 	case fieldInfo:
-		if p[4] == 0xfe {
+		if responseType(p[packet.HeaderLen]) == MySQLEOF {
 			m.State = data
 			break
 		}
 
 		fmt.Println("Field definition")
 
-		buf := bytes.NewBuffer(p[4:])
-		field := mySQLtypes{}
+		buf := bytes.NewBuffer(p[packet.HeaderLen:])
+		field := MySQLtypes{}
 
 		for _, val := range []*string{
 			&field.Catalog,
@@ -323,7 +333,7 @@ func readString(buf *bytes.Buffer) (string, error) {
 	s := string(buf.Next(int(count)))
 
 	if len(s) < int(count) {
-		return "", fmt.Errorf("Only read %d bytes", len(s))
+		return "", fmt.Errorf("only read %d bytes", len(s))
 	}
 
 	return s, nil

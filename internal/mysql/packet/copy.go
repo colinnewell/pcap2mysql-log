@@ -24,7 +24,7 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 		w, err := m.Write(buf.Bytes())
 
 		copied += w
-		if err != nil && errors.Cause(err) != ErrIncompletePacket {
+		if err != nil && errors.Is(err, ErrIncompletePacket) {
 			return copied, err
 		}
 		if w > 0 {
@@ -32,6 +32,8 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 			buf.Next(w)
 		}
 
+		// err checked as we come back around in the for loop.
+		//nolint:ineffassign,staticcheck
 		n, err = rdr.Read(read[:])
 	}
 
