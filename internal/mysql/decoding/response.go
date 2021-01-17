@@ -36,13 +36,21 @@ type MySQLresponse struct {
 type readState byte
 type fieldType byte
 type fieldDetail uint16
+type responseType byte
 
-//nolint:golint,stylecheck
 const (
 	start readState = iota
 	fieldInfo
 	data
 
+	MySQLError       responseType = 0xff
+	MySQLEOF         responseType = 0xfe
+	MySQLOK          responseType = 0
+	MySQLLocalInfile responseType = 0xfb
+)
+
+//nolint:golint,stylecheck
+const (
 	DECIMAL     fieldType = 0
 	TINY        fieldType = 1
 	SHORT       fieldType = 2
@@ -199,18 +207,14 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 	switch m.State {
 	case start:
 		fmt.Printf("%#v\n", p[0:])
-		switch p[4] {
-		//err
-		case 0xff:
+		switch responseType(p[4]) {
+		case MySQLError:
 			fmt.Println("error state")
-		//eof
-		case 0xfe:
+		case MySQLEOF:
 			fmt.Println("eof state")
-		//ok
-		case 0x00:
+		case MySQLOK:
 			fmt.Println("ok state")
-		//local in-file
-		case 0xfb:
+		case MySQLLocalInfile:
 			fmt.Println("In file")
 		default:
 			fmt.Printf("Expecting: %d fields\n", p[4])
@@ -294,7 +298,7 @@ func readString(buf *bytes.Buffer) (string, error) {
 	s := string(buf.Next(int(count)))
 
 	if len(s) < int(count) {
-		return "", fmt.Errorf("Only read %d bytes", len(s))
+		return "", fmt.Errorf("only read %d bytes", len(s))
 	}
 
 	return s, nil
