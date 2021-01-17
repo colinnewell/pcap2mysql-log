@@ -11,11 +11,11 @@ type CommandCode byte
 const (
 	reqSleep CommandCode = iota
 	reqQuit
-	reqInitDb
+	reqInitDB
 	reqQuery
 	reqFieldList
-	reqCreateDb
-	reqDropDb
+	reqCreateDB
+	reqDropDB
 	reqRefresh
 	reqShutdown
 	reqStatistics
@@ -49,15 +49,15 @@ func (c CommandCode) String() string {
 		return "MYSQL_SLEEP"
 	case reqQuit:
 		return "MYSQL_QUIT"
-	case reqInitDb:
+	case reqInitDB:
 		return "MYSQL_INIT_DB"
 	case reqQuery:
 		return "MYSQL_QUERY"
 	case reqFieldList:
 		return "MYSQL_FIELD_LIST"
-	case reqCreateDb:
+	case reqCreateDB:
 		return "MYSQL_CREATE_DB"
-	case reqDropDb:
+	case reqDropDB:
 		return "MYSQL_DROP_DB"
 	case reqRefresh:
 		return "MYSQL_REFRESH"

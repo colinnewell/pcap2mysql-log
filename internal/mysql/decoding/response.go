@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"strings"
+
+	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 )
 
 type MySQLtypes struct {
@@ -204,6 +206,7 @@ func (f fieldType) String() string {
 
 //nolint:funlen
 func (m *MySQLresponse) Write(p []byte) (int, error) {
+	// FIXME: check how much data we have
 	switch m.State {
 	case start:
 		fmt.Printf("%#v\n", p[0:])
@@ -222,7 +225,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 			m.Fields = []MySQLtypes{}
 		}
 	case data:
-		if p[4] == 0xfe {
+		if responseType(p[packet.HeaderLen]) == MySQLEOF {
 			m.State = start
 			break
 		}
@@ -230,7 +233,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		fmt.Println("Response Data")
 		r := make([]string, len(m.Fields))
 
-		b := bytes.NewBuffer(p[4:])
+		b := bytes.NewBuffer(p[packet.HeaderLen:])
 
 		for i := range r {
 			var err error
@@ -247,14 +250,14 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		}
 
 	case fieldInfo:
-		if p[4] == 0xfe {
+		if responseType(p[packet.HeaderLen]) == MySQLEOF {
 			m.State = data
 			break
 		}
 
 		fmt.Println("Field definition")
 
-		buf := bytes.NewBuffer(p[4:])
+		buf := bytes.NewBuffer(p[packet.HeaderLen:])
 		field := MySQLtypes{}
 
 		for _, val := range []*string{
