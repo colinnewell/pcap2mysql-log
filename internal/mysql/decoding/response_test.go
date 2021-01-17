@@ -1,14 +1,18 @@
-package decoding
+package decoding_test
 
 import (
 	"testing"
 
+	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestDecodeReponse(t *testing.T) {
-	// from ../pcap2har-go/3306->48508.test
-	packets := [][]byte{
+//nolint:gochecknoglobals
+var packets [][]byte
+
+//nolint:gochecknoinits
+func init() {
+	packets = [][]byte{
 		{0x1, 0x0, 0x0, 0x1, 0x3},
 		{
 			0x28, 0x00, 0x00, 0x02, 0x03, 0x64, 0x65, 0x66, // (....def
@@ -49,7 +53,11 @@ func TestDecodeReponse(t *testing.T) {
 			0x00, // .
 		},
 	}
-	r := MySQLresponse{}
+}
+
+func TestDecodeReponse(t *testing.T) {
+	// from ../pcap2har-go/3306->48508.test
+	r := decoding.MySQLresponse{}
 	for _, p := range packets {
 		_, err := r.Write(p)
 		if err != nil {
@@ -57,7 +65,7 @@ func TestDecodeReponse(t *testing.T) {
 		}
 	}
 
-	expected := []mySQLtypes{
+	expected := []decoding.MySQLtypes{
 		{
 			Catalog:     "def",
 			TableAlias:  "users",
@@ -65,12 +73,15 @@ func TestDecodeReponse(t *testing.T) {
 			Schema:      "demo",
 			Column:      "id",
 			ColumnAlias: "id",
-			FieldInfo: mySQLfieldinfo{
+			FieldInfo: decoding.MySQLfieldinfo{
 				LengthOfFixesFields: 12,
 				CharacterSetNumber:  63,
 				MaxColumnSize:       11,
-				FieldTypes:          LONG,
-				FieldDetail:         DETAIL_NOT_NULL | DETAIL_PRIMARY_KEY | DETAIL_AUTO_INCREMENT | DETAIL_PART_KEY_FLAG,
+				FieldTypes:          decoding.LONG,
+				FieldDetail: decoding.DETAIL_NOT_NULL |
+					decoding.DETAIL_PRIMARY_KEY |
+					decoding.DETAIL_AUTO_INCREMENT |
+					decoding.DETAIL_PART_KEY_FLAG,
 			},
 		},
 		{
@@ -80,11 +91,11 @@ func TestDecodeReponse(t *testing.T) {
 			Schema:      "demo",
 			Column:      "name",
 			ColumnAlias: "name",
-			FieldInfo: mySQLfieldinfo{
+			FieldInfo: decoding.MySQLfieldinfo{
 				LengthOfFixesFields: 12,
 				CharacterSetNumber:  8,
 				MaxColumnSize:       255,
-				FieldTypes:          VAR_STRING,
+				FieldTypes:          decoding.VAR_STRING,
 			},
 		},
 		{
@@ -94,12 +105,12 @@ func TestDecodeReponse(t *testing.T) {
 			Schema:      "demo",
 			Column:      "username",
 			ColumnAlias: "username",
-			FieldInfo: mySQLfieldinfo{
+			FieldInfo: decoding.MySQLfieldinfo{
 				LengthOfFixesFields: 12,
 				CharacterSetNumber:  8,
 				MaxColumnSize:       255,
-				FieldTypes:          VAR_STRING,
-				FieldDetail:         DETAIL_UNIQUE_KEY | DETAIL_PART_KEY_FLAG,
+				FieldTypes:          decoding.VAR_STRING,
+				FieldDetail:         decoding.DETAIL_UNIQUE_KEY | decoding.DETAIL_PART_KEY_FLAG,
 			},
 		},
 	}

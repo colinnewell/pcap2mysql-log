@@ -19,8 +19,8 @@ func TestSplit(t *testing.T) {
 	if diff := cmp.Diff(split, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
-	expected_remainder := []byte{5}
-	if diff := cmp.Diff(remainder, expected_remainder); diff != "" {
+	expectedRemainder := []byte{5}
+	if diff := cmp.Diff(remainder, expectedRemainder); diff != "" {
 		t.Fatalf("Remainder doesn't match (-got +expected):\n%s\n", diff)
 	}
 }
@@ -36,8 +36,8 @@ func TestSplit2(t *testing.T) {
 	if diff := cmp.Diff(split, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
-	expected_remainder := []byte{0xf0, 0, 0, 0, 0}
-	if diff := cmp.Diff(remainder, expected_remainder); diff != "" {
+	expectedRemainder := []byte{0xf0, 0, 0, 0, 0}
+	if diff := cmp.Diff(remainder, expectedRemainder); diff != "" {
 		t.Fatalf("Remainder doesn't match (-got +expected):\n%s\n", diff)
 	}
 }
@@ -53,8 +53,8 @@ func TestSplitNoRemainder(t *testing.T) {
 	if diff := cmp.Diff(split, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
-	expected_remainder := []byte{}
-	if diff := cmp.Diff(remainder, expected_remainder); diff != "" {
+	expectedRemainder := []byte{}
+	if diff := cmp.Diff(remainder, expectedRemainder); diff != "" {
 		t.Fatalf("Remainder doesn't match (-got +expected):\n%s\n", diff)
 	}
 }

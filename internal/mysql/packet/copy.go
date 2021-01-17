@@ -24,7 +24,7 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 		w, err := m.Write(buf.Bytes())
 
 		copied += w
-		if err != nil && errors.Cause(err) != ErrIncompletePacket {
+		if err != nil && errors.Is(err, ErrIncompletePacket) {
 			return copied, err
 		}
 		if w > 0 {

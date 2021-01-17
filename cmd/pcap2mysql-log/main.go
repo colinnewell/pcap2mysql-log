@@ -14,7 +14,7 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 )
 
-// MySQLConnection is for reading the two sides of the connection
+// MySQLConnection is for reading the two sides of the connection.
 type MySQLConnection struct {
 	Request  io.Reader
 	Response io.Reader
@@ -73,9 +73,9 @@ func main() {
 func (m *MySQLConnection) Read() error {
 	fmt.Println("---- To")
 
-	interpretter := mySQLinterpretter{}
+	interpreter := mySQLinterpreter{}
 
-	if _, err := packet.Copy(m.Request, &interpretter); err != nil {
+	if _, err := packet.Copy(m.Request, &interpreter); err != nil {
 		return err
 	}
 
@@ -96,10 +96,10 @@ func (m *MySQLConnection) Read() error {
 // Read the data
 //Build request
 
-type mySQLinterpretter struct {
+type mySQLinterpreter struct {
 }
 
-func (m *mySQLinterpretter) Write(p []byte) (int, error) {
+func (m *mySQLinterpreter) Write(p []byte) (int, error) {
 	switch t := protocol.GetPacketType(p); t {
 	case protocol.ComStmtPrepare:
 		fmt.Println("Prepare")

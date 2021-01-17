@@ -7,17 +7,17 @@ import (
 	"strings"
 )
 
-type mySQLtypes struct {
+type MySQLtypes struct {
 	Catalog     string
 	TableAlias  string
 	Table       string
 	Schema      string
 	Column      string
 	ColumnAlias string
-	FieldInfo   mySQLfieldinfo
+	FieldInfo   MySQLfieldinfo
 }
 
-type mySQLfieldinfo struct {
+type MySQLfieldinfo struct {
 	LengthOfFixesFields byte
 	CharacterSetNumber  uint16
 	MaxColumnSize       uint32
@@ -27,9 +27,9 @@ type mySQLfieldinfo struct {
 	Unused              uint16
 }
 
-//MySQLresponse - dealing with the response
+//MySQLresponse - dealing with the response.
 type MySQLresponse struct {
-	Fields []mySQLtypes
+	Fields []MySQLtypes
 	State  readState
 }
 
@@ -37,6 +37,7 @@ type readState byte
 type fieldType byte
 type fieldDetail uint16
 
+//nolint:golint
 const (
 	start readState = iota
 	fieldInfo
@@ -118,12 +119,13 @@ func (d fieldDetail) String() string {
 			}
 			b.WriteString(flag)
 		}
-		d = d >> 1
+		d >>= 1
 	}
 
 	return b.String()
 }
 
+//nolint:funlen,gocyclo
 func (f fieldType) String() string {
 	switch f {
 	case 0:
@@ -192,6 +194,7 @@ func (f fieldType) String() string {
 	return "UNRECOGNISED"
 }
 
+//nolint:funlen
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	switch m.State {
 	case start:
@@ -212,7 +215,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		default:
 			fmt.Printf("Expecting: %d fields\n", p[4])
 			m.State = fieldInfo
-			m.Fields = []mySQLtypes{}
+			m.Fields = []MySQLtypes{}
 		}
 	case data:
 		if p[4] == 0xfe {
@@ -248,7 +251,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		fmt.Println("Field definition")
 
 		buf := bytes.NewBuffer(p[4:])
-		field := mySQLtypes{}
+		field := MySQLtypes{}
 
 		for _, val := range []*string{
 			&field.Catalog,
