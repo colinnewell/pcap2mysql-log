@@ -12,6 +12,7 @@ var packets [][]byte
 
 //nolint:gochecknoinits
 func init() {
+	// from ../pcap2har-go/3306->48508.test
 	packets = [][]byte{
 		{0x1, 0x0, 0x0, 0x1, 0x3},
 		{
@@ -56,7 +57,6 @@ func init() {
 }
 
 func TestDecodeReponse(t *testing.T) {
-	// from ../pcap2har-go/3306->48508.test
 	r := decoding.MySQLresponse{}
 	for _, p := range packets {
 		_, err := r.Write(p)
