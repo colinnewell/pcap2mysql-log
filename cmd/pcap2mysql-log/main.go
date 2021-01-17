@@ -76,7 +76,7 @@ func (m *MySQLConnection) Read() error {
 	interpreter := mySQLinterpreter{}
 
 	if _, err := packet.Copy(m.Request, &interpreter); err != nil {
-		return err
+		log.Println(err)
 	}
 
 	fmt.Println("---- From")
