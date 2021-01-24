@@ -212,7 +212,31 @@ func (m *MySQLresponse) decodeGreeting(p []byte) error {
 		return err
 	}
 	fmt.Printf("Protocol: %d\nVersion: %s\n", protocol, version)
-	// server version is a null terminated string
+	// not really interested in all the data here right now.
+	// skipping connection id
+	b.Next(9 + 4)
+	capabilityBytes := [4]byte{}
+	if n, err := b.Read(capabilityBytes[0:2]); err != nil || n < 2 {
+		if err != nil {
+			return err
+		} else {
+			return fmt.Errorf("only read %d bytes", b.Len())
+		}
+	}
+	collation, err := b.ReadByte()
+	if err != nil {
+		return err
+	}
+	if n, err := b.Read(capabilityBytes[2:4]); err != nil || n < 2 {
+		if err != nil {
+			return err
+		} else {
+			return fmt.Errorf("only read %d bytes", b.Len())
+		}
+	}
+	// FIXME: not sure if this is the best way to decode the capability info
+	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
+	fmt.Printf("Collation: %x\nCapabilities: %b - %x\n", collation, capabilities, capabilities)
 	return nil
 }
 
