@@ -207,11 +207,10 @@ func (f fieldType) String() string {
 func (m *MySQLresponse) decodeGreeting(p []byte) error {
 	protocol := p[0]
 	b := bytes.NewBuffer(p[1:])
-	vb, err := b.ReadBytes(0)
+	version, err := readNulString(b)
 	if err != nil {
 		return err
 	}
-	version := string(vb[:len(vb)-1])
 	fmt.Printf("Protocol: %d\nVersion: %s\n", protocol, version)
 	// server version is a null terminated string
 	return nil
@@ -260,7 +259,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		for i := range r {
 			var err error
 
-			r[i], err = readString(b)
+			r[i], err = readLenEncString(b)
 
 			if err != nil {
 				return 0, err
@@ -290,7 +289,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 			&field.ColumnAlias,
 			&field.Column,
 		} {
-			s, err := readString(buf)
+			s, err := readLenEncString(buf)
 
 			if err != nil {
 				return 0, err
@@ -313,7 +312,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func readString(buf *bytes.Buffer) (string, error) {
+func readLenEncString(buf *bytes.Buffer) (string, error) {
 	count, err := buf.ReadByte()
 
 	if err != nil {
@@ -327,4 +326,20 @@ func readString(buf *bytes.Buffer) (string, error) {
 	}
 
 	return s, nil
+}
+
+func readNulString(buf *bytes.Buffer) (string, error) {
+	vb, err := buf.ReadBytes(0)
+	if err != nil {
+		return "", err
+	}
+	return string(vb[:len(vb)-1]), nil
+}
+
+func readFixedString(buf *bytes.Buffer, length int) (string, error) {
+	b := buf.Next(length)
+	if len(b) < length {
+		return "", fmt.Errorf("only read %d bytes", len(b))
+	}
+	return string(b), nil
 }
