@@ -204,6 +204,19 @@ func (f fieldType) String() string {
 	return "UNRECOGNISED"
 }
 
+func (m *MySQLresponse) decodeGreeting(p []byte) error {
+	protocol := p[0]
+	b := bytes.NewBuffer(p[1:])
+	vb, err := b.ReadBytes(0)
+	if err != nil {
+		return err
+	}
+	version := string(vb[:len(vb)-1])
+	fmt.Printf("Protocol: %d\nVersion: %s\n", protocol, version)
+	// server version is a null terminated string
+	return nil
+}
+
 //nolint:funlen
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
@@ -211,9 +224,13 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 	case start:
 		if p[packet.PacketNo] == 0 {
 			fmt.Printf("Greeting\n%#v\n", p)
+			err := m.decodeGreeting(p[packet.HeaderLen:])
+			if err != nil {
+				return 0, err
+			}
 			break
 		}
-		switch responseType(p[4]) {
+		switch responseType(p[packet.HeaderLen]) {
 		case MySQLError:
 			fmt.Println("error state")
 		case MySQLEOF:
@@ -225,7 +242,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 			// check if it's really an EOF
 			fmt.Println("In file")
 		default:
-			fmt.Printf("Expecting: %d fields\n", p[4])
+			fmt.Printf("Expecting: %d fields\n", p[packet.HeaderLen])
 			m.State = fieldInfo
 			m.Fields = []MySQLtypes{}
 		}
