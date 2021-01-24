@@ -9,6 +9,7 @@ import (
 )
 
 const HeaderLen = 4
+const PacketNo = 3
 
 // MySQLPacketWriter wraps a writer expecting MySQL packets and ensures that
 // writer receives single MySQL packets for each Write call.  Will return an

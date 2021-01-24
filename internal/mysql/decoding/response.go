@@ -209,15 +209,20 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
 	switch m.State {
 	case start:
-		fmt.Printf("%#v\n", p[0:])
+		if p[packet.PacketNo] == 0 {
+			fmt.Printf("Greeting\n%#v\n", p)
+			break
+		}
 		switch responseType(p[4]) {
 		case MySQLError:
 			fmt.Println("error state")
 		case MySQLEOF:
+			// check if it's really an EOF
 			fmt.Println("eof state")
 		case MySQLOK:
 			fmt.Println("ok state")
 		case MySQLLocalInfile:
+			// check if it's really an EOF
 			fmt.Println("In file")
 		default:
 			fmt.Printf("Expecting: %d fields\n", p[4])
