@@ -212,16 +212,17 @@ func (m *MySQLresponse) decodeGreeting(p []byte) error {
 		return err
 	}
 	fmt.Printf("Protocol: %d\nVersion: %s\n", protocol, version)
+
 	// not really interested in all the data here right now.
-	// skipping connection id
+	// skipping connection id + various other bits.
+	//nolint:gomnd
 	b.Next(9 + 4)
 	capabilityBytes := [4]byte{}
 	if n, err := b.Read(capabilityBytes[0:2]); err != nil || n < 2 {
 		if err != nil {
 			return err
-		} else {
-			return fmt.Errorf("only read %d bytes", b.Len())
 		}
+		return fmt.Errorf("only read %d bytes", b.Len())
 	}
 	collation, err := b.ReadByte()
 	if err != nil {
@@ -230,9 +231,8 @@ func (m *MySQLresponse) decodeGreeting(p []byte) error {
 	if n, err := b.Read(capabilityBytes[2:4]); err != nil || n < 2 {
 		if err != nil {
 			return err
-		} else {
-			return fmt.Errorf("only read %d bytes", b.Len())
 		}
+		return fmt.Errorf("only read %d bytes", b.Len())
 	}
 	// FIXME: not sure if this is the best way to decode the capability info
 	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
@@ -360,10 +360,10 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 	return string(vb[:len(vb)-1]), nil
 }
 
-func readFixedString(buf *bytes.Buffer, length int) (string, error) {
-	b := buf.Next(length)
-	if len(b) < length {
-		return "", fmt.Errorf("only read %d bytes", len(b))
-	}
-	return string(b), nil
-}
+// func readFixedString(buf *bytes.Buffer, length int) (string, error) {
+// 	b := buf.Next(length)
+// 	if len(b) < length {
+// 		return "", fmt.Errorf("only read %d bytes", len(b))
+// 	}
+// 	return string(b), nil
+// }
