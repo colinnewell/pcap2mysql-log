@@ -14,14 +14,6 @@ libraries.  With MySQL we need to do the same kind of thing, looking at both
 sides of the communication, but libraries tend to be sending one way, and
 receiving the other, rather than reading both ways.
 
-A bit of googling found [lottip](https://github.com/orderbynull/lottip) which
-appears to be a proxy for monitoring MySQL connections.  That does some degree
-of looking at what's going over the wire so I thought I was in luck and could
-essentially just wire up some libraries again.
-
-I've started to do that, but it looks like that library doesn't do everything I
-need, so I may well need to parse the details myself.
-
 Where is the program so far?  The current goal is to read a file containing the
 packet data and emit a quick transcript that demonstrates we've grokked it's
 contents correctly.  It's very crude so far, but seems to be heading in the
@@ -36,6 +28,8 @@ connection data, but this could be generated in various ways.
 
 Wireshark is as ever a useful reference for looking at what's going on.  Both
 by looking at packet captures, and by looking at it's code.
+
+## References
 
 * Wireshark's [packet-mysql.c](https://github.com/wireshark/wireshark/blob/master/epan/dissectors/packet-mysql.c)
 * https://github.com/orderbynull/lottip it's code got me started.
