@@ -59,11 +59,17 @@ func drain(spr *SavePointReader, _ *TimeCaptureReader, _, _ gopacket.Flow) error
 func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
 	t := NewTimeCaptureReader(r)
 	spr := NewSavePointReader(t)
-	decoders := []streamDecoder{
-		h.ReadMySQLRequest,
-		h.ReadMySQLResponse,
-		drain,
+	src, dest := b.Endpoints()
+	decoders := [2]streamDecoder{}
+	if src.LessThan(dest) {
+		// assume response
+		decoders[0] = h.ReadMySQLResponse
+	} else {
+		// assume request
+		decoders[0] = h.ReadMySQLRequest
 	}
+	decoders[1] = drain
+
 	for {
 		for i, decode := range decoders {
 			spr.SavePoint()
