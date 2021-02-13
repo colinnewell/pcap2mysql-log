@@ -28,10 +28,12 @@ type MySQLConnection struct {
 func main() {
 	var displayVersion bool
 	var to, from string
+	var serverPorts []int32
 
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
 	pflag.StringVar(&to, "to", "", "Traffic to the mysql server")
 	pflag.StringVar(&from, "from", "", "Traffic from the mysql server")
+	pflag.Int32SliceVar(&serverPorts, "server-ports", []int32{}, "Server ports")
 	pflag.Parse()
 
 	buildVersion := "unknown"
@@ -50,7 +52,7 @@ func main() {
 	files := pflag.Args()
 
 	if len(files) > 0 {
-		processHarFiles(files)
+		processHarFiles(serverPorts, files)
 		return
 	}
 
@@ -85,7 +87,7 @@ func main() {
 	}
 }
 
-func processHarFiles(files []string) {
+func processHarFiles(serverPorts []int32, files []string) {
 	streamFactory := &streamfactory.MySQLStreamFactory{
 		Reader: reader.New(),
 	}
@@ -104,15 +106,32 @@ func processHarFiles(files []string) {
 				// NOTE: just pushing all TCP through it on the basis it might
 				// be http.
 				if tcp, ok := packet.TransportLayer().(*layers.TCP); ok {
-					assembler.AssembleWithTimestamp(
-						packet.NetworkLayer().NetworkFlow(),
-						tcp, packet.Metadata().Timestamp)
+					if allowPort(serverPorts, tcp) {
+						assembler.AssembleWithTimestamp(
+							packet.NetworkLayer().NetworkFlow(),
+							tcp, packet.Metadata().Timestamp)
+					}
 				}
 			}
 		}
 	}
 
 	assembler.FlushAll()
+}
+
+func allowPort(serverPorts []int32, packet *layers.TCP) bool {
+	if len(serverPorts) == 0 {
+		return true
+	}
+
+	for _, port := range serverPorts {
+		if packet.SrcPort == layers.TCPPort(port) ||
+			packet.DstPort == layers.TCPPort(port) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m *MySQLConnection) Read() error {
