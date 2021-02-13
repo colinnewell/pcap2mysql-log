@@ -47,7 +47,7 @@ func main() {
 		return
 	}
 
-	files := os.Args[1:]
+	files := pflag.Args()
 
 	if len(files) > 0 {
 		processHarFiles(files)
