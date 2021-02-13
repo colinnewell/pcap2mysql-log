@@ -90,6 +90,7 @@ func (r *TCPReaderStream) stripEmpty() {
 
 // DataLost is returned by the TCPReaderStream's Read function when it encounters
 // a Reassembly with Skip != 0.
+//nolint:gochecknoglobals
 var DataLost = errors.New("lost data")
 
 // Read implements io.Reader's Read function.

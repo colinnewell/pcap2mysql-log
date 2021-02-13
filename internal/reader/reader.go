@@ -86,7 +86,9 @@ func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
 }
 
 // ReadMySQLResponse try to read the stream as an MySQL response.
-func (h *MySQLConversationReaders) ReadMySQLResponse(spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow) error {
+func (h *MySQLConversationReaders) ReadMySQLResponse(
+	spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow,
+) error {
 	interpreter := decoding.MySQLresponse{}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
@@ -98,7 +100,9 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(spr *SavePointReader, t *Ti
 }
 
 // ReadMySQLRequest try to read the stream as an MySQL request.
-func (h *MySQLConversationReaders) ReadMySQLRequest(spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow) error {
+func (h *MySQLConversationReaders) ReadMySQLRequest(
+	spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow,
+) error {
 	interpreter := decoding.MySQLRequest{}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
