@@ -7,10 +7,16 @@ import (
 	"os"
 	"runtime/debug"
 
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
+	"github.com/google/gopacket/pcap"
+	"github.com/google/gopacket/tcpassembly"
 	"github.com/spf13/pflag"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
+	"github.com/colinnewell/pcap2mysql-log/internal/reader"
+	"github.com/colinnewell/pcap2mysql-log/internal/streamfactory"
 )
 
 // MySQLConnection is for reading the two sides of the connection.
@@ -41,8 +47,15 @@ func main() {
 		return
 	}
 
+	files := os.Args[1:]
+
+	if len(files) > 0 {
+		processHarFiles(files)
+		return
+	}
+
 	// FIXME: check to and from are specified
-	if to == "" || from == "" {
+	if len(files) == 0 && (to == "" || from == "") {
 		log.Fatal("Must specify --to and --from files with traffic")
 	}
 
@@ -70,6 +83,36 @@ func main() {
 	if err := c.Read(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func processHarFiles(files []string) {
+	streamFactory := &streamfactory.MySQLStreamFactory{
+		Reader: reader.New(),
+	}
+	streamPool := tcpassembly.NewStreamPool(streamFactory)
+	assembler := tcpassembly.NewAssembler(streamPool)
+
+	for _, filename := range files {
+		if handle, err := pcap.OpenOffline(filename); err != nil {
+			log.Fatal(err)
+		} else {
+			defer handle.Close()
+			packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+
+			for packet := range packetSource.Packets() {
+				// FIXME: could discriminate here to minimise issues with processing.
+				// NOTE: just pushing all TCP through it on the basis it might
+				// be http.
+				if tcp, ok := packet.TransportLayer().(*layers.TCP); ok {
+					assembler.AssembleWithTimestamp(
+						packet.NetworkLayer().NetworkFlow(),
+						tcp, packet.Metadata().Timestamp)
+				}
+			}
+		}
+	}
+
+	assembler.FlushAll()
 }
 
 func (m *MySQLConnection) Read() error {
