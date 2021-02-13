@@ -1,6 +1,3 @@
-github.com/colinnewell/pcap2har-go v0.0.0-20210209191717-47ca3638c7cc h1:/hybiC/r/tyNK/Wyg+MTxMrkFQ8GOUVPZ5J1KFF+uOM=
-github.com/colinnewell/pcap2har-go v0.0.0-20210209191717-47ca3638c7cc/go.mod h1:DCSxoW7n9rade77O3Kx0kt+c23Hn6MkbYm7J3pCi+ho=
-github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.4 h1:L8R9j+yAqZuZjsqh/z+F1NCffTKKLShY6zXTItVIZ8M=
 github.com/google/go-cmp v0.5.4/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/gopacket v1.1.19 h1:ves8RnFZPGiFnTS0uPQStjwru6uO6h+nlr9j6fL7kF8=
