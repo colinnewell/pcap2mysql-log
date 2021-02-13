@@ -43,7 +43,7 @@ func (h *MySQLConversationReaders) GetConversations() []Conversation {
 	return conversations
 }
 
-type ReaderStream interface {
+type Stream interface {
 	Read(p []byte) (n int, err error)
 	Seen() (time.Time, error)
 }
@@ -56,7 +56,7 @@ func drain(spr *SavePointReader, _ *TimeCaptureReader, _, _ gopacket.Flow) error
 }
 
 // ReadStream tries to read tcp connections and extract MySQL conversations.
-func (h *MySQLConversationReaders) ReadStream(r ReaderStream, a, b gopacket.Flow) {
+func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
 	t := NewTimeCaptureReader(r)
 	spr := NewSavePointReader(t)
 	decoders := []streamDecoder{

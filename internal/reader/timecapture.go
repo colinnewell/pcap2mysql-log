@@ -4,10 +4,10 @@ import "time"
 
 type TimeCaptureReader struct {
 	times []time.Time
-	r     ReaderStream
+	r     Stream
 }
 
-func NewTimeCaptureReader(r ReaderStream) *TimeCaptureReader {
+func NewTimeCaptureReader(r Stream) *TimeCaptureReader {
 	return &TimeCaptureReader{r: r}
 }
 

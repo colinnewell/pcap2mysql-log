@@ -11,7 +11,7 @@ import (
 )
 
 type ConversationReader interface {
-	ReadStream(r reader.ReaderStream, a, b gopacket.Flow)
+	ReadStream(r reader.Stream, a, b gopacket.Flow)
 }
 
 type MySQLStreamFactory struct {
