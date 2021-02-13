@@ -19,7 +19,7 @@ test: .force
 clean:
 	rm pcap2mysql-log
 
-install:
+install: pcap2mysql-log
 	cp pcap2mysql-log /usr/local/bin
 
 lint:
