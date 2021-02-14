@@ -14,31 +14,34 @@ import (
 
 type MySQLConversationReaders struct {
 	mu            sync.Mutex
-	conversations map[ConversationAddress][]Conversation
+	conversations map[ConversationAddress]*Conversation
 }
 
 type ConversationAddress struct {
 	IP, Port gopacket.Flow
 }
+
 type Conversation struct {
-	Address      ConversationAddress
-	Request      *decoding.MySQLRequest
-	Response     *decoding.MySQLresponse
-	RequestSeen  []time.Time
-	ResponseSeen []time.Time
+	Address ConversationAddress
+	Items   []Transmission
+}
+
+type Transmission struct {
+	Data interface{}
+	Seen []time.Time
 }
 
 func New() *MySQLConversationReaders {
-	conversations := make(map[ConversationAddress][]Conversation)
+	conversations := make(map[ConversationAddress]*Conversation)
 	return &MySQLConversationReaders{
 		conversations: conversations,
 	}
 }
 
 func (h *MySQLConversationReaders) GetConversations() []Conversation {
-	var conversations []Conversation
+	conversations := make([]Conversation, len(h.conversations))
 	for _, c := range h.conversations {
-		conversations = append(conversations, c...)
+		conversations = append(conversations, *c)
 	}
 	return conversations
 }
@@ -100,7 +103,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
 	}
-	h.addResponse(a, b, &interpreter, t.Seen())
+	h.updateResponse(a.Reverse(), b.Reverse(), &interpreter, t.Seen())
 
 	return nil
 }
@@ -114,60 +117,21 @@ func (h *MySQLConversationReaders) ReadMySQLRequest(
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
 	}
-	h.addRequest(a, b, &interpreter, t.Seen())
+	h.updateResponse(a, b, &interpreter, t.Seen())
 
 	return nil
 }
 
-func (h *MySQLConversationReaders) addRequest(a, b gopacket.Flow, req *decoding.MySQLRequest, seen []time.Time) {
+func (h *MySQLConversationReaders) updateResponse(a, b gopacket.Flow, item interface{}, seen []time.Time) {
 	address := ConversationAddress{IP: a, Port: b}
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	conversations := h.conversations[address]
-	for n := 0; n < len(conversations); n++ {
-		c := conversations[n]
-		if conversations[n].Request == nil {
-			c.Request = req
-			c.RequestSeen = seen
-			h.conversations[address][n] = c
-			return
-		}
-	}
-	h.conversations[address] = append(h.conversations[address], Conversation{
-		Address:     address,
-		Request:     req,
-		RequestSeen: seen,
-	})
-}
-
-func (h *MySQLConversationReaders) addResponse(a, b gopacket.Flow, res *decoding.MySQLresponse, seen []time.Time) {
-	h.updateResponse(a, b, func(c *Conversation) {
-		c.Response = res
-		c.ResponseSeen = seen
-	})
-}
-
-func (h *MySQLConversationReaders) updateResponse(a, b gopacket.Flow, update func(*Conversation)) {
-	address := ConversationAddress{IP: a.Reverse(), Port: b.Reverse()}
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	conversations := h.conversations[address]
-	if conversations == nil {
-		c := Conversation{
+	c, ok := h.conversations[address]
+	if !ok {
+		c = &Conversation{
 			Address: address,
 		}
-		update(&c)
-		h.conversations[address] = append(h.conversations[address], c)
-		return
+		h.conversations[address] = c
 	}
-	for n := 0; n < len(conversations); n++ {
-		c := conversations[n]
-		if conversations[n].Response == nil {
-			update(&c)
-			h.conversations[address][n] = c
-			break
-		}
-		// FIXME: should think about what we do when we don't find
-		// the other side of the conversation.
-	}
+	c.Items = append(c.Items, Transmission{Data: item, Seen: seen})
 }

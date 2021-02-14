@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -88,8 +89,9 @@ func main() {
 }
 
 func processHarFiles(serverPorts []int32, files []string) {
+	r := reader.New()
 	streamFactory := &streamfactory.MySQLStreamFactory{
-		Reader: reader.New(),
+		Reader: r,
 	}
 	streamPool := tcpassembly.NewStreamPool(streamFactory)
 	assembler := tcpassembly.NewAssembler(streamPool)
@@ -117,6 +119,15 @@ func processHarFiles(serverPorts []int32, files []string) {
 	}
 
 	assembler.FlushAll()
+
+	streamFactory.Wait()
+	c := r.GetConversations()
+	bytes, err := json.MarshalIndent(c, "", "  ")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println(string(bytes))
 }
 
 func allowPort(serverPorts []int32, packet *layers.TCP) bool {
