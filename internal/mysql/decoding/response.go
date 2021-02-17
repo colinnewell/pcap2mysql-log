@@ -240,7 +240,7 @@ func (m *MySQLresponse) decodeGreeting(p []byte) error {
 	return nil
 }
 
-//nolint:funlen
+//nolint:funlen,gocognit
 func (m *MySQLresponse) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
 	switch m.State {
