@@ -257,7 +257,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		case MySQLError:
 			if len(p) > packet.HeaderLen+3 {
 				errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
-				if errorCode == 0xffff {
+				if errorCode == packet.InProgress {
 					// FIXME: progress
 					fmt.Println("Progress")
 				} else {
