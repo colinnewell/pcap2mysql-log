@@ -255,7 +255,22 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		}
 		switch responseType(p[packet.HeaderLen]) {
 		case MySQLError:
-			fmt.Println("error state")
+			if len(p) > packet.HeaderLen+3 {
+				errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
+				if errorCode == 0xffff {
+					// FIXME: progress
+					fmt.Println("Progress")
+				} else {
+					data := p[packet.HeaderLen+3:]
+					var state string
+					if data[0] == '#' {
+						state = string(data[1:6])
+						data = data[6:]
+					}
+					message := string(data)
+					fmt.Printf("Error: #%d: [SQL state %s] %s\n", errorCode, state, message)
+				}
+			}
 		case MySQLEOF:
 			// check if it's really an EOF
 			fmt.Println("eof state")
