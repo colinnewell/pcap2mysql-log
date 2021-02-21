@@ -31,9 +31,9 @@ type TimesSeen interface {
 }
 
 type Response struct {
-	Type    string
-	Fields  []MySQLtypes
-	Results [][]string
+	Type    string       `json:"Type"`
+	Fields  []MySQLtypes `json:"Fields,omitempty"`
+	Results [][]string   `json:"Results,omitempty"`
 }
 
 type MySQLtypes struct {

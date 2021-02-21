@@ -33,6 +33,22 @@ func (h *MySQLConversationReaders) GetConversations() []types.Conversation {
 	return conversations
 }
 
+func (h *MySQLConversationReaders) AddConversation(
+	address types.ConversationAddress, seen []time.Time, item interface{},
+) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	c, ok := h.conversations[address]
+	if !ok {
+		c = &types.Conversation{
+			Address: address,
+		}
+		h.conversations[address] = c
+	}
+	c.Items = append(c.Items, types.Transmission{Data: item, Seen: seen})
+}
+
 type Stream interface {
 	Read(p []byte) (n int, err error)
 	Seen() (time.Time, error)
@@ -89,6 +105,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 	e := TransmissionEmitter{
 		Address: address,
 		Times:   t,
+		Readers: h,
 	}
 	interpreter := decoding.ResponseDecoder{Emit: &e}
 
@@ -107,6 +124,7 @@ func (h *MySQLConversationReaders) ReadRequestDecoder(
 	e := TransmissionEmitter{
 		Address: address,
 		Times:   t,
+		Readers: h,
 	}
 	interpreter := decoding.RequestDecoder{
 		Emit: &e,
@@ -122,7 +140,10 @@ func (h *MySQLConversationReaders) ReadRequestDecoder(
 type TransmissionEmitter struct {
 	Address types.ConversationAddress
 	Times   types.TimesSeen
+	Readers *MySQLConversationReaders
 }
 
 func (e *TransmissionEmitter) Transmission(t interface{}) {
+	e.Readers.AddConversation(e.Address, e.Times.Seen(), t)
+	e.Times.Reset()
 }
