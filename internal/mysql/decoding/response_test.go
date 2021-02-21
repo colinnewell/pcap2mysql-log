@@ -58,13 +58,16 @@ func init() {
 }
 
 type testEmitter struct {
+	transmissions []interface{}
 }
 
 func (t *testEmitter) Transmission(i interface{}) {
+	t.transmissions = append(t.transmissions, i)
 }
 
 func TestDecodeReponse(t *testing.T) {
-	r := decoding.ResponseDecoder{Emit: &testEmitter{}}
+	e := testEmitter{}
+	r := decoding.ResponseDecoder{Emit: &e}
 	for _, p := range packets {
 		_, err := r.Write(p)
 		if err != nil {
@@ -72,56 +75,65 @@ func TestDecodeReponse(t *testing.T) {
 		}
 	}
 
-	expected := []types.MySQLtypes{
-		{
-			Catalog:     "def",
-			TableAlias:  "users",
-			Table:       "users",
-			Schema:      "demo",
-			Column:      "id",
-			ColumnAlias: "id",
-			FieldInfo: types.MySQLfieldinfo{
-				LengthOfFixesFields: 12,
-				CharacterSetNumber:  63,
-				MaxColumnSize:       11,
-				FieldTypes:          types.LONG,
-				FieldDetail: types.DETAIL_NOT_NULL |
-					types.DETAIL_PRIMARY_KEY |
-					types.DETAIL_AUTO_INCREMENT |
-					types.DETAIL_PART_KEY_FLAG,
+	r.FlushResponse()
+
+	expected := []interface{}{
+		types.Response{
+			Type: "SQL results",
+			Fields: []types.MySQLtypes{
+				{
+					Catalog:     "def",
+					TableAlias:  "users",
+					Table:       "users",
+					Schema:      "demo",
+					Column:      "id",
+					ColumnAlias: "id",
+					FieldInfo: types.MySQLfieldinfo{
+						LengthOfFixesFields: 12,
+						CharacterSetNumber:  63,
+						MaxColumnSize:       11,
+						FieldTypes:          types.LONG,
+						FieldDetail: types.DETAIL_NOT_NULL |
+							types.DETAIL_PRIMARY_KEY |
+							types.DETAIL_AUTO_INCREMENT |
+							types.DETAIL_PART_KEY_FLAG,
+					},
+				},
+				{
+					Catalog:     "def",
+					TableAlias:  "users",
+					Table:       "users",
+					Schema:      "demo",
+					Column:      "name",
+					ColumnAlias: "name",
+					FieldInfo: types.MySQLfieldinfo{
+						LengthOfFixesFields: 12,
+						CharacterSetNumber:  8,
+						MaxColumnSize:       255,
+						FieldTypes:          types.VAR_STRING,
+					},
+				},
+				{
+					Catalog:     "def",
+					TableAlias:  "users",
+					Table:       "users",
+					Schema:      "demo",
+					Column:      "username",
+					ColumnAlias: "username",
+					FieldInfo: types.MySQLfieldinfo{
+						LengthOfFixesFields: 12,
+						CharacterSetNumber:  8,
+						MaxColumnSize:       255,
+						FieldTypes:          types.VAR_STRING,
+						FieldDetail:         types.DETAIL_UNIQUE_KEY | types.DETAIL_PART_KEY_FLAG,
+					},
+				},
 			},
-		},
-		{
-			Catalog:     "def",
-			TableAlias:  "users",
-			Table:       "users",
-			Schema:      "demo",
-			Column:      "name",
-			ColumnAlias: "name",
-			FieldInfo: types.MySQLfieldinfo{
-				LengthOfFixesFields: 12,
-				CharacterSetNumber:  8,
-				MaxColumnSize:       255,
-				FieldTypes:          types.VAR_STRING,
-			},
-		},
-		{
-			Catalog:     "def",
-			TableAlias:  "users",
-			Table:       "users",
-			Schema:      "demo",
-			Column:      "username",
-			ColumnAlias: "username",
-			FieldInfo: types.MySQLfieldinfo{
-				LengthOfFixesFields: 12,
-				CharacterSetNumber:  8,
-				MaxColumnSize:       255,
-				FieldTypes:          types.VAR_STRING,
-				FieldDetail:         types.DETAIL_UNIQUE_KEY | types.DETAIL_PART_KEY_FLAG,
-			},
+			Results: [][]string{{"1", "name", "username"}},
 		},
 	}
-	if diff := cmp.Diff(r.Fields, expected); diff != "" {
+
+	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
 	// FIXME: should check we decode the data in the packets too.

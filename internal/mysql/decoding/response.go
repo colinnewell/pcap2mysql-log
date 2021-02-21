@@ -21,8 +21,9 @@ const (
 type ResponseDecoder struct {
 	Emit types.Emitter
 
-	Fields []types.MySQLtypes
-	State  readState
+	Fields  []types.MySQLtypes
+	State   readState
+	Results [][]string
 }
 
 func (m *ResponseDecoder) decodeGreeting(p []byte) error {
@@ -90,11 +91,12 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			fmt.Printf("Expecting: %d fields\n", p[packet.HeaderLen])
 			m.State = fieldInfo
 			m.Fields = []types.MySQLtypes{}
+			m.Results = [][]string{}
 		}
 	case data:
 		if types.ResponseType(p[packet.HeaderLen]) == types.MySQLEOF {
 			m.FlushResponse()
-			m.State = start
+			m.ResetState()
 			break
 		}
 
@@ -112,6 +114,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 				return 0, err
 			}
 		}
+		m.Results = append(m.Results, r)
 
 		for i, v := range r {
 			fmt.Printf("%s(%s.%s): %s\n", m.Fields[i].ColumnAlias, m.Fields[i].Table, m.Fields[i].Column, v)
@@ -161,9 +164,20 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 }
 
 func (m *ResponseDecoder) FlushResponse() {
+	if m.State == start {
+		// nothing banked up.
+		return
+	}
+	// flush out all the data we have stored up.
 	m.Emit.Transmission(types.Response{
-		Type: "SQL results",
+		Type:    "SQL results",
+		Fields:  m.Fields,
+		Results: m.Results,
 	})
+}
+
+func (m *ResponseDecoder) ResetState() {
+	m.State = start
 }
 
 func readLenEncString(buf *bytes.Buffer) (string, error) {
