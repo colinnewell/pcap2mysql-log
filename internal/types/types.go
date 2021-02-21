@@ -57,10 +57,10 @@ type MySQLfieldinfo struct {
 }
 
 type Greeting struct {
+	Capabilities uint32
+	Collation    byte
 	Protocol     byte
 	Version      string
-	Collation    byte
-	Capabilities uint32
 }
 
 type FieldType byte
