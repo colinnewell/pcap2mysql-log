@@ -30,6 +30,11 @@ type TimesSeen interface {
 	Seen() []time.Time
 }
 
+type Request struct {
+	Type  string `json:"Type"`
+	Query string `json:"Query,omitempty"`
+}
+
 type Response struct {
 	Type    string       `json:"Type"`
 	Fields  []MySQLtypes `json:"Fields,omitempty"`
