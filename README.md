@@ -70,6 +70,17 @@ right direction.
 Wireshark is as ever a useful reference for looking at what's going on.  Both
 by looking at packet captures, and by looking at it's code.
 
+## Thanks
+
+A big thank you to Nadja for helping figure out the MySQL traffic and starting
+some of the code when it was at a nascent stage.  Her help got it going at a
+point where I was feeling blocked.
+
+Wireshark has provided a useful reference point for checking my results.
+
+The Lottip program also gave me confidence that this sort of thing could be
+done.
+
 ## References
 
 * Wireshark's [packet-mysql.c](https://github.com/wireshark/wireshark/blob/master/epan/dissectors/packet-mysql.c)
