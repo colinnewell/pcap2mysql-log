@@ -56,6 +56,13 @@ type MySQLfieldinfo struct {
 	Unused              uint16
 }
 
+type Greeting struct {
+	Protocol     byte
+	Version      string
+	Collation    byte
+	Capabilities uint32
+}
+
 type FieldType byte
 type FieldDetail uint16
 type ResponseType byte
