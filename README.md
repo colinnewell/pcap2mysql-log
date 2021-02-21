@@ -5,6 +5,53 @@ This is a work in progress and doesn't do anything too much yet.
 The intention is to take a packet capture file and turn it into some sort of
 text based human & machine readable transcript of MySQL communications.
 
+    pcap2mysql-log test/captures/dump00.pcap --server-ports 3306
+
+## Building
+
+This program requires libpcap to build and run.  On Linux you typically install
+a development version of the library like this on Debian and Ubuntu variants:
+
+	sudo apt install libpcap-dev
+
+On Windows download and install npcap from https://nmap.org/npcap/.  The
+regular installer is sufficient, you shouldn't need the SDK.
+
+On Mac's/BSD the library bindings required should be there out of the box
+(no further action required).
+
+Note that it's assumed you have Go installed, and also make (without make look
+at the commands in the Makefile, that is mostly being used for convenience
+rather than because things are particularly complex).
+
+	git clone https://github.com/colinnewell/pcap2mysql-log.git
+	cd pcap2mysql-log
+	make
+	sudo make install
+
+
+## Usage of pcap2mysql-log:
+
+        --server-ports int32Slice   Server ports (default [])
+        --from string               Traffic from the mysql server
+        --to string                 Traffic to the mysql server
+        --version                   Display program version
+
+Reading a pcap file:
+
+	sudo tcpdump port 3306 -w packets.dump
+    ./pcap2mysql-log packets.dump
+
+Note that the `--server-ports` option is useful for narrowing down the traffic
+the program process from the packet capture.  If you've captured web traffic as
+well as MySQL you can speed it up and ensure it won't get confused by the other
+traffic.
+
+As well as reading from pcap file you can read from raw streams of MySQL data
+using the `--from` and `--to` parameters.
+
+## General notes
+
 Since creating [pcap2har](https://github.com/colinnewell/pcap2har) seemed so
 easy, mostly just wiring up existing libraries, I figured how hard could this
 be?  A fair bit more it turns out.
@@ -19,12 +66,6 @@ packet data and emit a quick transcript that demonstrates we've grokked it's
 contents correctly.  It's very crude so far, but seems to be heading in the
 right direction.
 
-    make
-    ./pcap2mysql-log --to 48508-3306.test --from 3306-48508.test
-
-Right now the program isn't reading a pcap file, instead it's reading raw data
-from files.  I've been generating them by bodging pcap2har to dump out raw
-connection data, but this could be generated in various ways.
 
 Wireshark is as ever a useful reference for looking at what's going on.  Both
 by looking at packet captures, and by looking at it's code.
