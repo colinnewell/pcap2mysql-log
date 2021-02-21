@@ -7,6 +7,7 @@ import (
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
+	"github.com/colinnewell/pcap2mysql-log/internal/types"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly/tcpreader"
@@ -14,32 +15,18 @@ import (
 
 type MySQLConversationReaders struct {
 	mu            sync.Mutex
-	conversations map[ConversationAddress]*Conversation
-}
-
-type ConversationAddress struct {
-	IP, Port gopacket.Flow
-}
-
-type Conversation struct {
-	Address ConversationAddress
-	Items   []Transmission
-}
-
-type Transmission struct {
-	Data interface{}
-	Seen []time.Time
+	conversations map[types.ConversationAddress]*types.Conversation
 }
 
 func New() *MySQLConversationReaders {
-	conversations := make(map[ConversationAddress]*Conversation)
+	conversations := make(map[types.ConversationAddress]*types.Conversation)
 	return &MySQLConversationReaders{
 		conversations: conversations,
 	}
 }
 
-func (h *MySQLConversationReaders) GetConversations() []Conversation {
-	conversations := make([]Conversation, len(h.conversations))
+func (h *MySQLConversationReaders) GetConversations() []types.Conversation {
+	conversations := make([]types.Conversation, len(h.conversations))
 	for _, c := range h.conversations {
 		conversations = append(conversations, *c)
 	}
@@ -69,7 +56,7 @@ func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
 		decoders[0] = h.ReadMySQLResponse
 	} else {
 		// assume request
-		decoders[0] = h.ReadMySQLRequest
+		decoders[0] = h.ReadRequestDecoder
 	}
 	decoders[1] = drain
 
@@ -98,40 +85,44 @@ func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
 func (h *MySQLConversationReaders) ReadMySQLResponse(
 	spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow,
 ) error {
-	interpreter := decoding.MySQLresponse{}
+	address := types.ConversationAddress{IP: a.Reverse(), Port: b.Reverse()}
+	e := TransmissionEmitter{
+		Address: address,
+		Times:   t,
+	}
+	interpreter := decoding.ResponseDecoder{Emit: &e}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
 	}
-	h.updateResponse(a.Reverse(), b.Reverse(), &interpreter, t.Seen())
 
 	return nil
 }
 
-// ReadMySQLRequest try to read the stream as an MySQL request.
-func (h *MySQLConversationReaders) ReadMySQLRequest(
+// ReadRequestDecoder try to read the stream as an MySQL request.
+func (h *MySQLConversationReaders) ReadRequestDecoder(
 	spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow,
 ) error {
-	interpreter := decoding.MySQLRequest{}
+	address := types.ConversationAddress{IP: a, Port: b}
+	e := TransmissionEmitter{
+		Address: address,
+		Times:   t,
+	}
+	interpreter := decoding.RequestDecoder{
+		Emit: &e,
+	}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
 	}
-	h.updateResponse(a, b, &interpreter, t.Seen())
 
 	return nil
 }
 
-func (h *MySQLConversationReaders) updateResponse(a, b gopacket.Flow, item interface{}, seen []time.Time) {
-	address := ConversationAddress{IP: a, Port: b}
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	c, ok := h.conversations[address]
-	if !ok {
-		c = &Conversation{
-			Address: address,
-		}
-		h.conversations[address] = c
-	}
-	c.Items = append(c.Items, Transmission{Data: item, Seen: seen})
+type TransmissionEmitter struct {
+	Address types.ConversationAddress
+	Times   types.TimesSeen
+}
+
+func (e *TransmissionEmitter) Transmission(t interface{}) {
 }

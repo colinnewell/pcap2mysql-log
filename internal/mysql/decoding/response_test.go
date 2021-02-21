@@ -57,7 +57,7 @@ func init() {
 }
 
 func TestDecodeReponse(t *testing.T) {
-	r := decoding.MySQLresponse{}
+	r := decoding.ResponseDecoder{}
 	for _, p := range packets {
 		_, err := r.Write(p)
 		if err != nil {

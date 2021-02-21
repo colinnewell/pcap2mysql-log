@@ -4,207 +4,28 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"strings"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
+	"github.com/colinnewell/pcap2mysql-log/internal/types"
 )
 
-type MySQLtypes struct {
-	Catalog     string
-	TableAlias  string
-	Table       string
-	Schema      string
-	Column      string
-	ColumnAlias string
-	FieldInfo   MySQLfieldinfo
-}
-
-type MySQLfieldinfo struct {
-	LengthOfFixesFields byte
-	CharacterSetNumber  uint16
-	MaxColumnSize       uint32
-	FieldTypes          fieldType
-	FieldDetail         fieldDetail
-	Decimals            byte
-	Unused              uint16
-}
-
-// MySQLresponse - dealing with the response.
-type MySQLresponse struct {
-	Fields []MySQLtypes
-	State  readState
-}
-
 type readState byte
-type fieldType byte
-type fieldDetail uint16
-type responseType byte
 
 const (
 	start readState = iota
 	fieldInfo
 	data
-
-	MySQLError       responseType = 0xff
-	MySQLEOF         responseType = 0xfe
-	MySQLOK          responseType = 0
-	MySQLLocalInfile responseType = 0xfb
 )
 
-//nolint:golint,stylecheck
-const (
-	DECIMAL     fieldType = 0
-	TINY        fieldType = 1
-	SHORT       fieldType = 2
-	LONG        fieldType = 3
-	FLOAT       fieldType = 4
-	DOUBLE      fieldType = 5
-	NULL        fieldType = 6
-	TIMESTAMP   fieldType = 7
-	LONGLONG    fieldType = 8
-	INT24       fieldType = 9
-	DATE        fieldType = 10
-	TIME        fieldType = 11
-	DATETIME    fieldType = 12
-	YEAR        fieldType = 13
-	NEWDATE     fieldType = 14
-	VARCHAR     fieldType = 15
-	BIT         fieldType = 16
-	TIMESTAMP2  fieldType = 17
-	DATETIME2   fieldType = 18
-	TIME2       fieldType = 19
-	JSON        fieldType = 245
-	NEWDECIMAL  fieldType = 246
-	ENUM        fieldType = 247
-	SET         fieldType = 248
-	TINY_BLOB   fieldType = 249
-	MEDIUM_BLOB fieldType = 250
-	LONG_BLOB   fieldType = 251
-	BLOB        fieldType = 252
-	VAR_STRING  fieldType = 253
-	STRING      fieldType = 254
-	GEOMETRY    fieldType = 255
+// ResponseDecoder - dealing with the response.
+type ResponseDecoder struct {
+	Emit types.Emitter
 
-	DETAIL_NOT_NULL              fieldDetail = 1
-	DETAIL_PRIMARY_KEY           fieldDetail = 2
-	DETAIL_UNIQUE_KEY            fieldDetail = 4
-	DETAIL_MULTIPLE_KEY          fieldDetail = 8
-	DETAIL_BLOB                  fieldDetail = 16
-	DETAIL_UNSIGNED              fieldDetail = 32
-	DETAIL_ZEROFILL_FLAG         fieldDetail = 64
-	DETAIL_BINARY_COLLATION      fieldDetail = 128
-	DETAIL_ENUM                  fieldDetail = 256
-	DETAIL_AUTO_INCREMENT        fieldDetail = 512
-	DETAIL_TIMESTAMP             fieldDetail = 1024
-	DETAIL_SET                   fieldDetail = 2048
-	DETAIL_NO_DEFAULT_VALUE_FLAG fieldDetail = 4096
-	DETAIL_ON_UPDATE_NOW_FLAG    fieldDetail = 8192
-	DETAIL_PART_KEY_FLAG         fieldDetail = 16384
-	DETAIL_NUM_FLAG              fieldDetail = 32768
-)
-
-func (d fieldDetail) String() string {
-	var b strings.Builder
-	for _, flag := range []string{
-		"NOT_NULL",
-		"PRIMARY_KEY",
-		"UNIQUE_KEY",
-		"MULTIPLE_KEY",
-		"BLOB",
-		"UNSIGNED",
-		"ZEROFILL_FLAG",
-		"BINARY_COLLATION",
-		"ENUM",
-		"AUTO_INCREMENT",
-		"TIMESTAMP",
-		"SET",
-		"NO_DEFAULT_VALUE_FLAG",
-		"ON_UPDATE_NOW_FLAG",
-		"PART_KEY_FLAG",
-		"NUM_FLAG",
-	} {
-		if d&1 == 1 {
-			if b.Len() > 0 {
-				b.WriteString("|")
-			}
-			b.WriteString(flag)
-		}
-		d >>= 1
-	}
-
-	return b.String()
+	Fields []types.MySQLtypes
+	State  readState
 }
 
-//nolint:funlen,gocyclo
-func (f fieldType) String() string {
-	switch f {
-	case DECIMAL:
-		return "MYSQL_TYPE_DECIMAL"
-	case TINY:
-		return "MYSQL_TYPE_TINY"
-	case SHORT:
-		return "MYSQL_TYPE_SHORT"
-	case LONG:
-		return "MYSQL_TYPE_LONG"
-	case FLOAT:
-		return "MYSQL_TYPE_FLOAT"
-	case DOUBLE:
-		return "MYSQL_TYPE_DOUBLE"
-	case NULL:
-		return "MYSQL_TYPE_NULL"
-	case TIMESTAMP:
-		return "MYSQL_TYPE_TIMESTAMP"
-	case LONGLONG:
-		return "MYSQL_TYPE_LONGLONG"
-	case INT24:
-		return "MYSQL_TYPE_INT24"
-	case DATE:
-		return "MYSQL_TYPE_DATE"
-	case TIME:
-		return "MYSQL_TYPE_TIME"
-	case DATETIME:
-		return "MYSQL_TYPE_DATETIME"
-	case YEAR:
-		return "MYSQL_TYPE_YEAR"
-	case NEWDATE:
-		return "MYSQL_TYPE_NEWDATE"
-	case VARCHAR:
-		return "MYSQL_TYPE_VARCHAR"
-	case BIT:
-		return "MYSQL_TYPE_BIT"
-	case TIMESTAMP2:
-		return "MYSQL_TYPE_TIMESTAMP2"
-	case DATETIME2:
-		return "MYSQL_TYPE_DATETIME2"
-	case TIME2:
-		return "MYSQL_TYPE_TIME2"
-	case JSON:
-		return "MYSQL_TYPE_JSON"
-	case NEWDECIMAL:
-		return "MYSQL_TYPE_NEWDECIMAL"
-	case ENUM:
-		return "MYSQL_TYPE_ENUM"
-	case SET:
-		return "MYSQL_TYPE_SET"
-	case TINY_BLOB:
-		return "MYSQL_TYPE_TINY_BLOB"
-	case MEDIUM_BLOB:
-		return "MYSQL_TYPE_MEDIUM_BLOB"
-	case LONG_BLOB:
-		return "MYSQL_TYPE_LONG_BLOB"
-	case BLOB:
-		return "MYSQL_TYPE_BLOB"
-	case VAR_STRING:
-		return "MYSQL_TYPE_VAR_STRING"
-	case STRING:
-		return "MYSQL_TYPE_STRING"
-	case GEOMETRY:
-		return "MYSQL_TYPE_GEOMETRY"
-	}
-	return "UNRECOGNISED"
-}
-
-func (m *MySQLresponse) decodeGreeting(p []byte) error {
+func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	protocol := p[0]
 	b := bytes.NewBuffer(p[1:])
 	version, err := readNulString(b)
@@ -241,7 +62,7 @@ func (m *MySQLresponse) decodeGreeting(p []byte) error {
 }
 
 //nolint:funlen
-func (m *MySQLresponse) Write(p []byte) (int, error) {
+func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
 	switch m.State {
 	case start:
@@ -253,24 +74,26 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 			}
 			break
 		}
-		switch responseType(p[packet.HeaderLen]) {
-		case MySQLError:
-			fmt.Println("error state")
-		case MySQLEOF:
+		switch types.ResponseType(p[packet.HeaderLen]) {
+		case types.MySQLError:
+			m.Emit.Transmission(types.Response{Type: "Error"})
+		case types.MySQLEOF:
 			// check if it's really an EOF
-			fmt.Println("eof state")
-		case MySQLOK:
-			fmt.Println("ok state")
-		case MySQLLocalInfile:
+			m.Emit.Transmission(types.Response{Type: "EOF"})
+		case types.MySQLOK:
+			m.Emit.Transmission(types.Response{Type: "OK"})
+		case types.MySQLLocalInfile:
 			// check if it's really an EOF
+			m.Emit.Transmission(types.Response{Type: "In file"})
 			fmt.Println("In file")
 		default:
 			fmt.Printf("Expecting: %d fields\n", p[packet.HeaderLen])
 			m.State = fieldInfo
-			m.Fields = []MySQLtypes{}
+			m.Fields = []types.MySQLtypes{}
 		}
 	case data:
-		if responseType(p[packet.HeaderLen]) == MySQLEOF {
+		if types.ResponseType(p[packet.HeaderLen]) == types.MySQLEOF {
+			m.FlushResponse()
 			m.State = start
 			break
 		}
@@ -295,7 +118,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		}
 
 	case fieldInfo:
-		if responseType(p[packet.HeaderLen]) == MySQLEOF {
+		if types.ResponseType(p[packet.HeaderLen]) == types.MySQLEOF {
 			m.State = data
 			break
 		}
@@ -303,7 +126,7 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 		fmt.Println("Field definition")
 
 		buf := bytes.NewBuffer(p[packet.HeaderLen:])
-		field := MySQLtypes{}
+		field := types.MySQLtypes{}
 
 		for _, val := range []*string{
 			&field.Catalog,
@@ -330,10 +153,17 @@ func (m *MySQLresponse) Write(p []byte) (int, error) {
 
 		fmt.Printf("%+v\n", field)
 	default:
+		// does this case still make sense?
 		fmt.Printf("Unrecognised packet: %x\n", p[0])
 	}
 
 	return len(p), nil
+}
+
+func (m *ResponseDecoder) FlushResponse() {
+	m.Emit.Transmission(types.Response{
+		Type: "SQL results",
+	})
 }
 
 func readLenEncString(buf *bytes.Buffer) (string, error) {

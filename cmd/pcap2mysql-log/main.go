@@ -148,7 +148,7 @@ func allowPort(serverPorts []int32, packet *layers.TCP) bool {
 func (m *MySQLConnection) Read() error {
 	fmt.Println("---- To")
 
-	interpreter := decoding.MySQLRequest{}
+	interpreter := decoding.RequestDecoder{}
 
 	if _, err := packet.Copy(m.Request, &interpreter); err != nil {
 		log.Println(err)
@@ -156,7 +156,7 @@ func (m *MySQLConnection) Read() error {
 
 	fmt.Println("---- From")
 
-	response := decoding.MySQLresponse{}
+	response := decoding.ResponseDecoder{}
 
 	if _, err := packet.Copy(m.Response, &response); err != nil {
 		return err

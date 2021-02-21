@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
+	"github.com/colinnewell/pcap2mysql-log/internal/types"
 )
 
 type CommandCode byte
@@ -113,10 +114,11 @@ func (c CommandCode) String() string {
 	return fmt.Sprintf("Unrecognised command: %d", c)
 }
 
-type MySQLRequest struct {
+type RequestDecoder struct {
+	Emit types.Emitter
 }
 
-func (m *MySQLRequest) Write(p []byte) (int, error) {
+func (m *RequestDecoder) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:

@@ -7,7 +7,7 @@ import (
 )
 
 func TestDecodeRequest(t *testing.T) {
-	r := decoding.MySQLRequest{}
+	r := decoding.RequestDecoder{}
 	//nolint:misspell
 	_, err := r.Write([]byte{
 		0x46, 0x00, 0x00, 0x00, 0x03, 0x53, 0x45, 0x4c, // F....SEL
