@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
+	"github.com/colinnewell/pcap2mysql-log/internal/types"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -56,8 +57,14 @@ func init() {
 	}
 }
 
+type testEmitter struct {
+}
+
+func (t *testEmitter) Transmission(i interface{}) {
+}
+
 func TestDecodeReponse(t *testing.T) {
-	r := decoding.ResponseDecoder{}
+	r := decoding.ResponseDecoder{Emit: &testEmitter{}}
 	for _, p := range packets {
 		_, err := r.Write(p)
 		if err != nil {
@@ -65,7 +72,7 @@ func TestDecodeReponse(t *testing.T) {
 		}
 	}
 
-	expected := []decoding.MySQLtypes{
+	expected := []types.MySQLtypes{
 		{
 			Catalog:     "def",
 			TableAlias:  "users",
@@ -73,15 +80,15 @@ func TestDecodeReponse(t *testing.T) {
 			Schema:      "demo",
 			Column:      "id",
 			ColumnAlias: "id",
-			FieldInfo: decoding.MySQLfieldinfo{
+			FieldInfo: types.MySQLfieldinfo{
 				LengthOfFixesFields: 12,
 				CharacterSetNumber:  63,
 				MaxColumnSize:       11,
-				FieldTypes:          decoding.LONG,
-				FieldDetail: decoding.DETAIL_NOT_NULL |
-					decoding.DETAIL_PRIMARY_KEY |
-					decoding.DETAIL_AUTO_INCREMENT |
-					decoding.DETAIL_PART_KEY_FLAG,
+				FieldTypes:          types.LONG,
+				FieldDetail: types.DETAIL_NOT_NULL |
+					types.DETAIL_PRIMARY_KEY |
+					types.DETAIL_AUTO_INCREMENT |
+					types.DETAIL_PART_KEY_FLAG,
 			},
 		},
 		{
@@ -91,11 +98,11 @@ func TestDecodeReponse(t *testing.T) {
 			Schema:      "demo",
 			Column:      "name",
 			ColumnAlias: "name",
-			FieldInfo: decoding.MySQLfieldinfo{
+			FieldInfo: types.MySQLfieldinfo{
 				LengthOfFixesFields: 12,
 				CharacterSetNumber:  8,
 				MaxColumnSize:       255,
-				FieldTypes:          decoding.VAR_STRING,
+				FieldTypes:          types.VAR_STRING,
 			},
 		},
 		{
@@ -105,12 +112,12 @@ func TestDecodeReponse(t *testing.T) {
 			Schema:      "demo",
 			Column:      "username",
 			ColumnAlias: "username",
-			FieldInfo: decoding.MySQLfieldinfo{
+			FieldInfo: types.MySQLfieldinfo{
 				LengthOfFixesFields: 12,
 				CharacterSetNumber:  8,
 				MaxColumnSize:       255,
-				FieldTypes:          decoding.VAR_STRING,
-				FieldDetail:         decoding.DETAIL_UNIQUE_KEY | decoding.DETAIL_PART_KEY_FLAG,
+				FieldTypes:          types.VAR_STRING,
+				FieldDetail:         types.DETAIL_UNIQUE_KEY | types.DETAIL_PART_KEY_FLAG,
 			},
 		},
 	}
