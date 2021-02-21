@@ -122,19 +122,14 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
-		fmt.Println("Prepare")
 		m.Emit.Transmission(types.Request{Type: "Prepare"})
 	case reqQuery:
 		query := p[packet.HeaderLen+1:]
-		fmt.Printf("Query: %s\n", query)
 		m.Emit.Transmission(types.Request{Type: "Query", Query: string(query)})
 	case reqQuit:
 		m.Emit.Transmission(types.Request{Type: "QUIT"})
-		fmt.Println("quit")
-		fmt.Printf("%#v\n", p)
 	default:
 		m.Emit.Transmission(types.Request{Type: t.String()})
-		fmt.Printf("Unrecognised packet: %v\n", t)
 	}
 	return len(p), nil
 }

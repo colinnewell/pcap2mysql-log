@@ -33,7 +33,6 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Protocol: %d\nVersion: %s\n", protocol, version)
 
 	// not really interested in all the data here right now.
 	// skipping connection id + various other bits.
@@ -58,7 +57,6 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	}
 	// FIXME: not sure if this is the best way to decode the capability info
 	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
-	fmt.Printf("Collation: %x\nCapabilities: %b - %x\n", collation, capabilities, capabilities)
 	m.Emit.Transmission(types.Greeting{
 		Protocol:     protocol,
 		Version:      version,
@@ -74,7 +72,6 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	switch m.State {
 	case start:
 		if p[packet.PacketNo] == 0 {
-			fmt.Printf("Greeting\n%#v\n", p)
 			err := m.decodeGreeting(p[packet.HeaderLen:])
 			if err != nil {
 				return 0, err
@@ -92,9 +89,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		case types.MySQLLocalInfile:
 			// check if it's really an EOF
 			m.Emit.Transmission(types.Response{Type: "In file"})
-			fmt.Println("In file")
 		default:
-			fmt.Printf("Expecting: %d fields\n", p[packet.HeaderLen])
 			m.State = fieldInfo
 			m.Fields = []types.MySQLtypes{}
 			m.Results = [][]string{}
@@ -106,7 +101,6 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			break
 		}
 
-		fmt.Println("Response Data")
 		r := make([]string, len(m.Fields))
 
 		b := bytes.NewBuffer(p[packet.HeaderLen:])
@@ -122,17 +116,11 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 		m.Results = append(m.Results, r)
 
-		for i, v := range r {
-			fmt.Printf("%s(%s.%s): %s\n", m.Fields[i].ColumnAlias, m.Fields[i].Table, m.Fields[i].Column, v)
-		}
-
 	case fieldInfo:
 		if types.ResponseType(p[packet.HeaderLen]) == types.MySQLEOF {
 			m.State = data
 			break
 		}
-
-		fmt.Println("Field definition")
 
 		buf := bytes.NewBuffer(p[packet.HeaderLen:])
 		field := types.MySQLtypes{}
@@ -159,11 +147,6 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 
 		m.Fields = append(m.Fields, field)
-
-		fmt.Printf("%+v\n", field)
-	default:
-		// does this case still make sense?
-		fmt.Printf("Unrecognised packet: %x\n", p[0])
 	}
 
 	return len(p), nil
