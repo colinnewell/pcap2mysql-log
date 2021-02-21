@@ -81,7 +81,23 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 		switch types.ResponseType(p[packet.HeaderLen]) {
 		case types.MySQLError:
-			m.Emit.Transmission(types.Response{Type: "Error"})
+			errorMsg := types.ErrorResponse{Type: "Error"}
+			if len(p) > packet.HeaderLen+3 {
+				errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
+				errorMsg.Code = errorCode
+				if errorCode == packet.InProgress {
+					// FIXME: progress
+					errorMsg.Message = "Progress"
+				} else {
+					data := p[packet.HeaderLen+3:]
+					if data[0] == '#' {
+						errorMsg.State = string(data[1:6])
+						data = data[6:]
+					}
+					errorMsg.Message = string(data)
+				}
+			}
+			m.Emit.Transmission(errorMsg)
 		case types.MySQLEOF:
 			// check if it's really an EOF
 			m.Emit.Transmission(types.Response{Type: "EOF"})

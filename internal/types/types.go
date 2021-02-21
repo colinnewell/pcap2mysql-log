@@ -50,6 +50,13 @@ type Response struct {
 	Results [][]string   `json:"Results,omitempty"`
 }
 
+type ErrorResponse struct {
+	Code    uint16
+	Type    string
+	State   string `json:"State,omitempty"`
+	Message string
+}
+
 type MySQLtypes struct {
 	Catalog     string
 	TableAlias  string
