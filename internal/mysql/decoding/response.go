@@ -15,6 +15,11 @@ const (
 	start readState = iota
 	fieldInfo
 	data
+
+	encodedNull  = 0xfb
+	encoded16bit = 0xfc
+	encoded32bit = 0xfd
+	encoded64bit = 0xfe
 )
 
 // ResponseDecoder - dealing with the response.
@@ -67,6 +72,25 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	return nil
 }
 
+func (m *ResponseDecoder) decodeOK(p []byte) error {
+	fmt.Printf("OK parse: %#v\n", p)
+	ok := types.OKResponse{
+		Type: "OK",
+	}
+	b := bytes.NewBuffer(p)
+	for _, val := range []*uint64{&ok.AffectedRows, &ok.LastInsertID} {
+		v, err := readLenEncInt(b)
+		if err != nil {
+			return err
+		}
+		*val = v
+	}
+	// then int<2> status
+	// int<2> warning count
+	m.Emit.Transmission(ok)
+	return nil
+}
+
 //nolint:funlen
 func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
@@ -86,7 +110,10 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			// check if it's really an EOF
 			m.Emit.Transmission(types.Response{Type: "EOF"})
 		case types.MySQLOK:
-			m.Emit.Transmission(types.Response{Type: "OK"})
+			err := m.decodeOK(p[packet.HeaderLen+1:])
+			if err != nil {
+				return 0, err
+			}
 		case types.MySQLLocalInfile:
 			// check if it's really an EOF
 			m.Emit.Transmission(types.Response{Type: "In file"})
@@ -212,6 +239,45 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 		return "", err
 	}
 	return string(vb[:len(vb)-1]), nil
+}
+
+func readLenEncInt(buf *bytes.Buffer) (uint64, error) {
+	b := buf.Next(1)
+	fmt.Printf("%#v\n", b)
+	if len(b) == 0 {
+		return 0, fmt.Errorf("no bytes found")
+	}
+	l := b[0]
+
+	var need int
+	var f func([]byte) uint64
+	switch l {
+	case encodedNull:
+		// FIXME: actually null, not sure how to express this.
+		return 0, nil
+	case encoded16bit:
+		need = 2
+		f = func(b []byte) uint64 {
+			return uint64(binary.LittleEndian.Uint16(b))
+		}
+	case encoded32bit:
+		need = 4
+		f = func(b []byte) uint64 {
+			return uint64(binary.LittleEndian.Uint32(b))
+		}
+	case encoded64bit:
+		need = 8
+		f = func(b []byte) uint64 {
+			return binary.LittleEndian.Uint64(b)
+		}
+	default:
+		return uint64(l), nil
+	}
+	b = buf.Next(need)
+	if len(b) < need {
+		return 0, fmt.Errorf("missing expected for length encoded int")
+	}
+	return f(b), nil
 }
 
 // func readFixedString(buf *bytes.Buffer, length int) (string, error) {

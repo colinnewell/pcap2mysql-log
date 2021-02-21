@@ -50,6 +50,16 @@ type Response struct {
 	Results [][]string   `json:"Results,omitempty"`
 }
 
+type OKResponse struct {
+	AffectedRows uint64
+	LastInsertID uint64
+	ServerStatus uint16
+	WarningCount uint16
+	// FIXME: deal with session tracking
+	Type string `json:"Type"`
+	Info string
+}
+
 type ErrorResponse struct {
 	Code    uint16
 	Type    string
