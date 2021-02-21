@@ -4,10 +4,13 @@ import (
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
+	"github.com/colinnewell/pcap2mysql-log/internal/types"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestDecodeRequest(t *testing.T) {
-	r := decoding.RequestDecoder{}
+	e := testEmitter{}
+	r := decoding.RequestDecoder{Emit: &e}
 	//nolint:misspell
 	_, err := r.Write([]byte{
 		0x46, 0x00, 0x00, 0x00, 0x03, 0x53, 0x45, 0x4c, // F....SEL
@@ -23,5 +26,15 @@ func TestDecodeRequest(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	expected := []interface{}{
+		types.Request{
+			Type:  "Query",
+			Query: "SELECT id, password, u2f, totp FROM users WHERE username = 'username'",
+		},
+	}
+	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
+		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
 }
