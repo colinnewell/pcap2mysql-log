@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -9,6 +11,13 @@ import (
 
 type ConversationAddress struct {
 	IP, Port gopacket.Flow
+}
+
+func (c ConversationAddress) MarshalJSON() ([]byte, error) {
+	src, dest := c.IP.Endpoints()
+	sPort, dPort := c.Port.Endpoints()
+
+	return json.Marshal(fmt.Sprintf("%s:%s - %s:%s", src, sPort, dest, dPort))
 }
 
 type Conversation struct {
@@ -66,6 +75,7 @@ type Greeting struct {
 	Collation    byte
 	Protocol     byte
 	Version      string
+	Type         string
 }
 
 type FieldType byte

@@ -27,8 +27,10 @@ func New() *MySQLConversationReaders {
 
 func (h *MySQLConversationReaders) GetConversations() []types.Conversation {
 	conversations := make([]types.Conversation, len(h.conversations))
+	i := 0
 	for _, c := range h.conversations {
-		conversations = append(conversations, *c)
+		conversations[i] = *c
+		i++
 	}
 	return conversations
 }
@@ -112,6 +114,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
 	}
+	interpreter.FlushResponse()
 
 	return nil
 }
