@@ -81,23 +81,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 		switch types.ResponseType(p[packet.HeaderLen]) {
 		case types.MySQLError:
-			errorMsg := types.ErrorResponse{Type: "Error"}
-			if len(p) > packet.HeaderLen+3 {
-				errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
-				errorMsg.Code = errorCode
-				if errorCode == packet.InProgress {
-					// FIXME: progress
-					errorMsg.Message = "Progress"
-				} else {
-					data := p[packet.HeaderLen+3:]
-					if data[0] == '#' {
-						errorMsg.State = string(data[1:6])
-						data = data[6:]
-					}
-					errorMsg.Message = string(data)
-				}
-			}
-			m.Emit.Transmission(errorMsg)
+			m.decodeError(p)
 		case types.MySQLEOF:
 			// check if it's really an EOF
 			m.Emit.Transmission(types.Response{Type: "EOF"})
@@ -184,6 +168,26 @@ func (m *ResponseDecoder) FlushResponse() {
 
 func (m *ResponseDecoder) ResetState() {
 	m.State = start
+}
+
+func (m *ResponseDecoder) decodeError(p []byte) {
+	errorMsg := types.ErrorResponse{Type: "Error"}
+	if len(p) > packet.HeaderLen+3 {
+		errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
+		errorMsg.Code = errorCode
+		if errorCode == packet.InProgress {
+			// FIXME: progress
+			errorMsg.Message = "Progress"
+		} else {
+			data := p[packet.HeaderLen+3:]
+			if data[0] == '#' {
+				errorMsg.State = string(data[1:6])
+				data = data[6:]
+			}
+			errorMsg.Message = string(data)
+		}
+	}
+	m.Emit.Transmission(errorMsg)
 }
 
 func readLenEncString(buf *bytes.Buffer) (string, error) {
