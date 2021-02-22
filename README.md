@@ -33,8 +33,6 @@ rather than because things are particularly complex).
 ## Usage of pcap2mysql-log:
 
         --server-ports int32Slice   Server ports (default [])
-        --from string               Traffic from the mysql server
-        --to string                 Traffic to the mysql server
         --version                   Display program version
 
 Reading a pcap file:
@@ -46,9 +44,6 @@ Note that the `--server-ports` option is useful for narrowing down the traffic
 the program process from the packet capture.  If you've captured web traffic as
 well as MySQL you can speed it up and ensure it won't get confused by the other
 traffic.
-
-As well as reading from pcap file you can read from raw streams of MySQL data
-using the `--from` and `--to` parameters.
 
 ## General notes
 
