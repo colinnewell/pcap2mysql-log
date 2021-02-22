@@ -73,8 +73,8 @@ by looking at packet captures, and by looking at it's code.
 ## Thanks
 
 A big thank you to Nadja for helping figure out the MySQL traffic and starting
-some of the code when it was at a nascent stage.  Her help got it going at a
-point where I was feeling blocked.
+some of the foundational code when it was at a nascent stage.  Her help got it
+going at a point where I was feeling blocked.
 
 Wireshark has provided a useful reference point for checking my results.
 
