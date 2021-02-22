@@ -73,7 +73,6 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 }
 
 func (m *ResponseDecoder) decodeOK(p []byte) error {
-	fmt.Printf("OK parse: %#v\n", p)
 	ok := types.OKResponse{
 		Type: "OK",
 	}
@@ -243,7 +242,6 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 
 func readLenEncInt(buf *bytes.Buffer) (uint64, error) {
 	b := buf.Next(1)
-	fmt.Printf("%#v\n", b)
 	if len(b) == 0 {
 		return 0, fmt.Errorf("no bytes found")
 	}
