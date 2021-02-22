@@ -2,6 +2,7 @@ package reader
 
 import (
 	"io"
+	"sort"
 	"sync"
 	"time"
 
@@ -29,9 +30,15 @@ func (h *MySQLConversationReaders) GetConversations() []types.Conversation {
 	conversations := make([]types.Conversation, len(h.conversations))
 	i := 0
 	for _, c := range h.conversations {
+		sort.Slice(c.Items, func(i, j int) bool {
+			return c.Items[i].Seen[0].Before(c.Items[j].Seen[0])
+		})
 		conversations[i] = *c
 		i++
 	}
+	sort.Slice(conversations, func(i, j int) bool {
+		return conversations[i].Items[0].Seen[0].Before(conversations[j].Items[0].Seen[0])
+	})
 	return conversations
 }
 
