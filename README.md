@@ -7,6 +7,10 @@ text based human & machine readable transcript of MySQL communications.
 
     pcap2mysql-log test/captures/dump00.pcap --server-ports 3306
 
+It is currently being developed as a quick tool to aid development, and is only
+really being developed as needed.  To develop it properly it really needs a lot
+of effort, and so far that isn't being expended on this.
+
 ## Building
 
 This program requires libpcap to build and run.  On Linux you typically install
