@@ -26,7 +26,7 @@ const (
 type ResponseDecoder struct {
 	Emit Emitter
 
-	Fields  []structure.MySQLtypes
+	Fields  []structure.FieldInfo
 	State   readState
 	Results [][]string
 }
@@ -118,7 +118,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			m.Emit.Transmission(structure.Response{Type: "In file"})
 		default:
 			m.State = fieldInfo
-			m.Fields = []structure.MySQLtypes{}
+			m.Fields = []structure.FieldInfo{}
 			m.Results = [][]string{}
 		}
 	case data:
@@ -150,7 +150,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 
 		buf := bytes.NewBuffer(p[packet.HeaderLen:])
-		field := structure.MySQLtypes{}
+		field := structure.FieldInfo{}
 
 		for _, val := range []*string{
 			&field.Catalog,

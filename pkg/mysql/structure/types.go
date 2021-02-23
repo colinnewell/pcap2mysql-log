@@ -42,7 +42,7 @@ type Request struct {
 
 type Response struct {
 	Type    string       `json:"Type"`
-	Fields  []MySQLtypes `json:"Fields,omitempty"`
+	Fields  []FieldInfo `json:"Fields,omitempty"`
 	Results [][]string   `json:"Results,omitempty"`
 }
 
@@ -63,7 +63,7 @@ type ErrorResponse struct {
 	Message string
 }
 
-type MySQLtypes struct {
+type FieldInfo struct {
 	Catalog     string
 	TableAlias  string
 	Table       string
