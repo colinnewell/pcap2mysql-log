@@ -3,7 +3,7 @@ package decoding_test
 import (
 	"testing"
 
-	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/google/go-cmp/cmp"
 )
