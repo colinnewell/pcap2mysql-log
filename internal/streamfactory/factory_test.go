@@ -13,7 +13,7 @@ import (
 
 func TestHTTPStreamRead(t *testing.T) {
 	r := reader.New()
-	streamFactory := &streamfactory.MySQLStreamFactory{
+	streamFactory := &streamfactory.StreamFactory{
 		Reader: r,
 	}
 	streamPool := tcpassembly.NewStreamPool(streamFactory)

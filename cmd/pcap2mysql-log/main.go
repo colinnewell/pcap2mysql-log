@@ -49,7 +49,7 @@ func main() {
 
 func processHarFiles(serverPorts []int32, files []string) {
 	r := reader.New()
-	streamFactory := &streamfactory.MySQLStreamFactory{
+	streamFactory := &streamfactory.StreamFactory{
 		Reader: r,
 	}
 	streamPool := tcpassembly.NewStreamPool(streamFactory)

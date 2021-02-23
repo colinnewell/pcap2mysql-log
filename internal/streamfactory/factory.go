@@ -14,12 +14,12 @@ type ConversationReader interface {
 	ReadStream(r reader.Stream, a, b gopacket.Flow)
 }
 
-type MySQLStreamFactory struct {
+type StreamFactory struct {
 	Reader ConversationReader
 	wg     sync.WaitGroup
 }
 
-func (f *MySQLStreamFactory) New(a, b gopacket.Flow) tcpassembly.Stream {
+func (f *StreamFactory) New(a, b gopacket.Flow) tcpassembly.Stream {
 	r := gpkt.NewReaderStream()
 	f.wg.Add(1)
 	go func() {
@@ -29,6 +29,6 @@ func (f *MySQLStreamFactory) New(a, b gopacket.Flow) tcpassembly.Stream {
 	return &r
 }
 
-func (f *MySQLStreamFactory) Wait() {
+func (f *StreamFactory) Wait() {
 	f.wg.Wait()
 }
