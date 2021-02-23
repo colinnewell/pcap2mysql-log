@@ -65,10 +65,10 @@ type FieldInfo struct {
 	Schema      string
 	Column      string
 	ColumnAlias string
-	FieldInfo   MySQLfieldinfo
+	FieldInfo   TypeInfo
 }
 
-type MySQLfieldinfo struct {
+type TypeInfo struct {
 	LengthOfFixesFields byte
 	CharacterSetNumber  uint16
 	MaxColumnSize       uint32
