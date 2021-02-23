@@ -12,7 +12,7 @@ import (
 	"github.com/google/gopacket/tcpassembly"
 	"github.com/spf13/pflag"
 
-	"github.com/colinnewell/pcap2mysql-log/internal/reader"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 )
 
@@ -48,7 +48,7 @@ func main() {
 }
 
 func processHarFiles(serverPorts []int32, files []string) {
-	r := reader.New()
+	r := decoding.New()
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}

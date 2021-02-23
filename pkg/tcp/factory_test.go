@@ -3,8 +3,9 @@ package tcp_test
 import (
 	"testing"
 
-	"github.com/colinnewell/pcap2mysql-log/internal/reader"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
+
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
@@ -12,7 +13,7 @@ import (
 )
 
 func TestHTTPStreamRead(t *testing.T) {
-	r := reader.New()
+	r := decoding.New()
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}

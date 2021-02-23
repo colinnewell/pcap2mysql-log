@@ -1,4 +1,4 @@
-package reader
+package decoding
 
 import (
 	"io"
@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
-	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 
@@ -112,7 +111,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 		Times:   t,
 		Readers: h,
 	}
-	interpreter := decoding.ResponseDecoder{Emit: &e}
+	interpreter := ResponseDecoder{Emit: &e}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
@@ -132,7 +131,7 @@ func (h *MySQLConversationReaders) ReadRequestDecoder(
 		Times:   t,
 		Readers: h,
 	}
-	interpreter := decoding.RequestDecoder{
+	interpreter := RequestDecoder{
 		Emit: &e,
 	}
 
