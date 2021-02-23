@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/reader"
-	"github.com/colinnewell/pcap2mysql-log/internal/streamfactory"
+	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 )
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 
 func processHarFiles(serverPorts []int32, files []string) {
 	r := reader.New()
-	streamFactory := &streamfactory.StreamFactory{
+	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}
 	streamPool := tcpassembly.NewStreamPool(streamFactory)

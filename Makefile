@@ -2,7 +2,7 @@ VERSION  := $(shell git describe --tags 2>/dev/null || git rev-parse --short HEA
 
 all: pcap2mysql-log
 
-pcap2mysql-log: cmd/pcap2mysql-log/*.go internal/*/* internal/*/*/*
+pcap2mysql-log: cmd/pcap2mysql-log/*.go internal/*/* internal/*/*/*  pkg/*/* pkg/*/*/*
 	go build -o pcap2mysql-log -ldflags "-X main.Version=$(VERSION)" cmd/pcap2mysql-log/*.go
 
 test: .force
