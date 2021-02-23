@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"os"
 	"runtime/debug"
 
 	"github.com/google/gopacket"
@@ -14,26 +12,15 @@ import (
 	"github.com/google/gopacket/tcpassembly"
 	"github.com/spf13/pflag"
 
-	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
-	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/internal/reader"
 	"github.com/colinnewell/pcap2mysql-log/internal/streamfactory"
 )
 
-// MySQLConnection is for reading the two sides of the connection.
-type MySQLConnection struct {
-	Request  io.Reader
-	Response io.Reader
-}
-
 func main() {
 	var displayVersion bool
-	var to, from string
 	var serverPorts []int32
 
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
-	pflag.StringVar(&to, "to", "", "Traffic to the mysql server")
-	pflag.StringVar(&from, "from", "", "Traffic from the mysql server")
 	pflag.Int32SliceVar(&serverPorts, "server-ports", []int32{}, "Server ports")
 	pflag.Parse()
 
@@ -57,35 +44,7 @@ func main() {
 		return
 	}
 
-	// FIXME: check to and from are specified
-	if len(files) == 0 && (to == "" || from == "") {
-		log.Fatal("Must specify --to and --from files with traffic")
-	}
-
-	c := MySQLConnection{}
-
-	f, err := os.Open(to)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	c.Request = f
-
-	t, err := os.Open(from)
-	if err != nil {
-		// NOTE: complains about fatal + defer.  This code isn't great, but is
-		// more for testing so not going to worry right now.
-		//nolint:gocritic
-		log.Fatal(err)
-	}
-	defer t.Close()
-
-	c.Response = t
-
-	if err := c.Read(); err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println("Specify pcap files to process")
 }
 
 func processHarFiles(serverPorts []int32, files []string) {
@@ -143,24 +102,4 @@ func allowPort(serverPorts []int32, packet *layers.TCP) bool {
 	}
 
 	return false
-}
-
-func (m *MySQLConnection) Read() error {
-	fmt.Println("---- To")
-
-	interpreter := decoding.RequestDecoder{}
-
-	if _, err := packet.Copy(m.Request, &interpreter); err != nil {
-		log.Println(err)
-	}
-
-	fmt.Println("---- From")
-
-	response := decoding.ResponseDecoder{}
-
-	if _, err := packet.Copy(m.Response, &response); err != nil {
-		return err
-	}
-
-	return nil
 }
