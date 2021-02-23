@@ -69,7 +69,7 @@ type FieldInfo struct {
 }
 
 type TypeInfo struct {
-	LengthOfFixesFields byte
+	LengthOfFixedFields byte
 	CharacterSetNumber  uint16
 	MaxColumnSize       uint32
 	FieldTypes          FieldType

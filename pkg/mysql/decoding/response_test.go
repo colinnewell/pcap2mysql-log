@@ -89,7 +89,7 @@ func TestDecodeReponse(t *testing.T) {
 					Column:      "id",
 					ColumnAlias: "id",
 					TypeInfo: structure.TypeInfo{
-						LengthOfFixesFields: 12,
+						LengthOfFixedFields: 12,
 						CharacterSetNumber:  63,
 						MaxColumnSize:       11,
 						FieldTypes:          structure.LONG,
@@ -107,7 +107,7 @@ func TestDecodeReponse(t *testing.T) {
 					Column:      "name",
 					ColumnAlias: "name",
 					TypeInfo: structure.TypeInfo{
-						LengthOfFixesFields: 12,
+						LengthOfFixedFields: 12,
 						CharacterSetNumber:  8,
 						MaxColumnSize:       255,
 						FieldTypes:          structure.VAR_STRING,
@@ -121,7 +121,7 @@ func TestDecodeReponse(t *testing.T) {
 					Column:      "username",
 					ColumnAlias: "username",
 					TypeInfo: structure.TypeInfo{
-						LengthOfFixesFields: 12,
+						LengthOfFixedFields: 12,
 						CharacterSetNumber:  8,
 						MaxColumnSize:       255,
 						FieldTypes:          structure.VAR_STRING,
