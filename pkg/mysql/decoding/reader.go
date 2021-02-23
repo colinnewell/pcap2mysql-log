@@ -18,6 +18,11 @@ type Emitter interface {
 	Transmission(t interface{})
 }
 
+type TimesSeen interface {
+	Reset()
+	Seen() []time.Time
+}
+
 type MySQLConversationReaders struct {
 	mu            sync.Mutex
 	conversations map[structure.ConversationAddress]*structure.Conversation

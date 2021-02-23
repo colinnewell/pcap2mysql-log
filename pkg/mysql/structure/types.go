@@ -30,20 +30,15 @@ type Transmission struct {
 	Seen []time.Time
 }
 
-type TimesSeen interface {
-	Reset()
-	Seen() []time.Time
-}
-
 type Request struct {
 	Type  string `json:"Type"`
 	Query string `json:"Query,omitempty"`
 }
 
 type Response struct {
-	Type    string       `json:"Type"`
+	Type    string      `json:"Type"`
 	Fields  []FieldInfo `json:"Fields,omitempty"`
-	Results [][]string   `json:"Results,omitempty"`
+	Results [][]string  `json:"Results,omitempty"`
 }
 
 type OKResponse struct {
