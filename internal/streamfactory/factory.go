@@ -4,14 +4,14 @@ import (
 	"sync"
 
 	gpkt "github.com/colinnewell/pcap2mysql-log/internal/gopacket"
-	"github.com/colinnewell/pcap2mysql-log/internal/reader"
+	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly"
 )
 
 type ConversationReader interface {
-	ReadStream(r reader.Stream, a, b gopacket.Flow)
+	ReadStream(r tcp.Stream, a, b gopacket.Flow)
 }
 
 type StreamFactory struct {

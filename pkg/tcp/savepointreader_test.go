@@ -1,18 +1,19 @@
-package reader_test
+package tcp_test
 
 import (
 	"io/ioutil"
 	"strings"
 	"testing"
 
-	"github.com/colinnewell/pcap2mysql-log/internal/reader"
+	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
+
 	"github.com/google/go-cmp/cmp"
 )
 
 func TestSavePointReader(t *testing.T) {
 	r := strings.NewReader("test this thing can do lots")
 
-	sp := reader.NewSavePointReader(r)
+	sp := tcp.NewSavePointReader(r)
 	var buf [4]byte
 
 	if _, err := sp.Read(buf[:]); err != nil {

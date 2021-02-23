@@ -9,6 +9,7 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
+	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly/tcpreader"
@@ -58,22 +59,17 @@ func (h *MySQLConversationReaders) AddConversation(
 	c.Items = append(c.Items, structure.Transmission{Data: item, Seen: seen})
 }
 
-type Stream interface {
-	Read(p []byte) (n int, err error)
-	Seen() (time.Time, error)
-}
+type streamDecoder func(*tcp.SavePointReader, *tcp.TimeCaptureReader, gopacket.Flow, gopacket.Flow) error
 
-type streamDecoder func(*SavePointReader, *TimeCaptureReader, gopacket.Flow, gopacket.Flow) error
-
-func drain(spr *SavePointReader, _ *TimeCaptureReader, _, _ gopacket.Flow) error {
+func drain(spr *tcp.SavePointReader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) error {
 	tcpreader.DiscardBytesToEOF(spr)
 	return nil
 }
 
 // ReadStream tries to read tcp connections and extract MySQL conversations.
-func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
-	t := NewTimeCaptureReader(r)
-	spr := NewSavePointReader(t)
+func (h *MySQLConversationReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
+	t := tcp.NewTimeCaptureReader(r)
+	spr := tcp.NewSavePointReader(t)
 	src, dest := b.Endpoints()
 	decoders := [2]streamDecoder{}
 	if src.LessThan(dest) {
@@ -108,7 +104,7 @@ func (h *MySQLConversationReaders) ReadStream(r Stream, a, b gopacket.Flow) {
 
 // ReadMySQLResponse try to read the stream as an MySQL response.
 func (h *MySQLConversationReaders) ReadMySQLResponse(
-	spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow,
+	spr *tcp.SavePointReader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConversationAddress{IP: a.Reverse(), Port: b.Reverse()}
 	e := TransmissionEmitter{
@@ -128,7 +124,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 
 // ReadRequestDecoder try to read the stream as an MySQL request.
 func (h *MySQLConversationReaders) ReadRequestDecoder(
-	spr *SavePointReader, t *TimeCaptureReader, a, b gopacket.Flow,
+	spr *tcp.SavePointReader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConversationAddress{IP: a, Port: b}
 	e := TransmissionEmitter{
