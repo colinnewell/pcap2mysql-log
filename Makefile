@@ -24,6 +24,7 @@ install: pcap2mysql-log
 
 lint:
 	golangci-lint run
+	gofmt -l -s .
 
 fuzz:
 	go get github.com/dvyukov/go-fuzz/go-fuzz \
