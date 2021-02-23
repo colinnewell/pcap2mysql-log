@@ -65,7 +65,7 @@ type FieldInfo struct {
 	Schema      string
 	Column      string
 	ColumnAlias string
-	FieldInfo   TypeInfo
+	TypeInfo    TypeInfo
 }
 
 type TypeInfo struct {

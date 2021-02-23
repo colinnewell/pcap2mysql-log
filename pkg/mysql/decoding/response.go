@@ -169,7 +169,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			*val = s
 		}
 
-		if err := binary.Read(buf, binary.LittleEndian, &field.FieldInfo); err != nil {
+		if err := binary.Read(buf, binary.LittleEndian, &field.TypeInfo); err != nil {
 			return 0, err
 		}
 

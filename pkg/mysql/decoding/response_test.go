@@ -88,7 +88,7 @@ func TestDecodeReponse(t *testing.T) {
 					Schema:      "demo",
 					Column:      "id",
 					ColumnAlias: "id",
-					FieldInfo: structure.TypeInfo{
+					TypeInfo: structure.TypeInfo{
 						LengthOfFixesFields: 12,
 						CharacterSetNumber:  63,
 						MaxColumnSize:       11,
@@ -106,7 +106,7 @@ func TestDecodeReponse(t *testing.T) {
 					Schema:      "demo",
 					Column:      "name",
 					ColumnAlias: "name",
-					FieldInfo: structure.TypeInfo{
+					TypeInfo: structure.TypeInfo{
 						LengthOfFixesFields: 12,
 						CharacterSetNumber:  8,
 						MaxColumnSize:       255,
@@ -120,7 +120,7 @@ func TestDecodeReponse(t *testing.T) {
 					Schema:      "demo",
 					Column:      "username",
 					ColumnAlias: "username",
-					FieldInfo: structure.TypeInfo{
+					TypeInfo: structure.TypeInfo{
 						LengthOfFixesFields: 12,
 						CharacterSetNumber:  8,
 						MaxColumnSize:       255,
