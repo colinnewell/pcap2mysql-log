@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
