@@ -30,10 +30,6 @@ type Transmission struct {
 	Seen []time.Time
 }
 
-type Emitter interface {
-	Transmission(t interface{})
-}
-
 type TimesSeen interface {
 	Reset()
 	Seen() []time.Time

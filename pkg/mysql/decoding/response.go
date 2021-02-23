@@ -24,7 +24,7 @@ const (
 
 // ResponseDecoder - dealing with the response.
 type ResponseDecoder struct {
-	Emit structure.Emitter
+	Emit Emitter
 
 	Fields  []structure.MySQLtypes
 	State   readState

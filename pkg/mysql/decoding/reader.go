@@ -14,6 +14,10 @@ import (
 	"github.com/google/gopacket/tcpassembly/tcpreader"
 )
 
+type Emitter interface {
+	Transmission(t interface{})
+}
+
 type MySQLConversationReaders struct {
 	mu            sync.Mutex
 	conversations map[structure.ConversationAddress]*structure.Conversation
