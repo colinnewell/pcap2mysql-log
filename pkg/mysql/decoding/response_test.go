@@ -80,7 +80,7 @@ func TestDecodeReponse(t *testing.T) {
 	expected := []interface{}{
 		structure.Response{
 			Type: "SQL results",
-			Fields: []structure.FieldInfo{
+			Columns: []structure.ColumnInfo{
 				{
 					Catalog:     "def",
 					TableAlias:  "users",

@@ -36,9 +36,9 @@ type Request struct {
 }
 
 type Response struct {
-	Type    string      `json:"Type"`
-	Fields  []FieldInfo `json:"Fields,omitempty"`
-	Results [][]string  `json:"Results,omitempty"`
+	Type    string       `json:"Type"`
+	Columns []ColumnInfo `json:"Columns,omitempty"`
+	Results [][]string   `json:"Results,omitempty"`
 }
 
 type OKResponse struct {
@@ -58,7 +58,7 @@ type ErrorResponse struct {
 	Message string
 }
 
-type FieldInfo struct {
+type ColumnInfo struct {
 	Catalog     string
 	TableAlias  string
 	Table       string

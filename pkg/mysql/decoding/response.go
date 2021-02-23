@@ -26,7 +26,7 @@ const (
 type ResponseDecoder struct {
 	Emit Emitter
 
-	Fields  []structure.FieldInfo
+	Fields  []structure.ColumnInfo
 	State   readState
 	Results [][]string
 }
@@ -118,7 +118,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			m.Emit.Transmission(structure.Response{Type: "In file"})
 		default:
 			m.State = fieldInfo
-			m.Fields = []structure.FieldInfo{}
+			m.Fields = []structure.ColumnInfo{}
 			m.Results = [][]string{}
 		}
 	case data:
@@ -150,7 +150,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 
 		buf := bytes.NewBuffer(p[packet.HeaderLen:])
-		field := structure.FieldInfo{}
+		field := structure.ColumnInfo{}
 
 		for _, val := range []*string{
 			&field.Catalog,
@@ -187,7 +187,7 @@ func (m *ResponseDecoder) FlushResponse() {
 	// flush out all the data we have stored up.
 	m.Emit.Transmission(structure.Response{
 		Type:    "SQL results",
-		Fields:  m.Fields,
+		Columns: m.Fields,
 		Results: m.Results,
 	})
 }
