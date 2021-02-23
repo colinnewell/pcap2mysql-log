@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
-	"github.com/colinnewell/pcap2mysql-log/internal/types"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -78,9 +78,9 @@ func TestDecodeReponse(t *testing.T) {
 	r.FlushResponse()
 
 	expected := []interface{}{
-		types.Response{
+		structure.Response{
 			Type: "SQL results",
-			Fields: []types.MySQLtypes{
+			Fields: []structure.MySQLtypes{
 				{
 					Catalog:     "def",
 					TableAlias:  "users",
@@ -88,15 +88,15 @@ func TestDecodeReponse(t *testing.T) {
 					Schema:      "demo",
 					Column:      "id",
 					ColumnAlias: "id",
-					FieldInfo: types.MySQLfieldinfo{
+					FieldInfo: structure.MySQLfieldinfo{
 						LengthOfFixesFields: 12,
 						CharacterSetNumber:  63,
 						MaxColumnSize:       11,
-						FieldTypes:          types.LONG,
-						FieldDetail: types.DETAIL_NOT_NULL |
-							types.DETAIL_PRIMARY_KEY |
-							types.DETAIL_AUTO_INCREMENT |
-							types.DETAIL_PART_KEY_FLAG,
+						FieldTypes:          structure.LONG,
+						FieldDetail: structure.DETAIL_NOT_NULL |
+							structure.DETAIL_PRIMARY_KEY |
+							structure.DETAIL_AUTO_INCREMENT |
+							structure.DETAIL_PART_KEY_FLAG,
 					},
 				},
 				{
@@ -106,11 +106,11 @@ func TestDecodeReponse(t *testing.T) {
 					Schema:      "demo",
 					Column:      "name",
 					ColumnAlias: "name",
-					FieldInfo: types.MySQLfieldinfo{
+					FieldInfo: structure.MySQLfieldinfo{
 						LengthOfFixesFields: 12,
 						CharacterSetNumber:  8,
 						MaxColumnSize:       255,
-						FieldTypes:          types.VAR_STRING,
+						FieldTypes:          structure.VAR_STRING,
 					},
 				},
 				{
@@ -120,12 +120,12 @@ func TestDecodeReponse(t *testing.T) {
 					Schema:      "demo",
 					Column:      "username",
 					ColumnAlias: "username",
-					FieldInfo: types.MySQLfieldinfo{
+					FieldInfo: structure.MySQLfieldinfo{
 						LengthOfFixesFields: 12,
 						CharacterSetNumber:  8,
 						MaxColumnSize:       255,
-						FieldTypes:          types.VAR_STRING,
-						FieldDetail:         types.DETAIL_UNIQUE_KEY | types.DETAIL_PART_KEY_FLAG,
+						FieldTypes:          structure.VAR_STRING,
+						FieldDetail:         structure.DETAIL_UNIQUE_KEY | structure.DETAIL_PART_KEY_FLAG,
 					},
 				},
 			},

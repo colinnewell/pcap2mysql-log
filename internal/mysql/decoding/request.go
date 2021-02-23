@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
-	"github.com/colinnewell/pcap2mysql-log/internal/types"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
 
 type CommandCode byte
@@ -115,21 +115,21 @@ func (c CommandCode) String() string {
 }
 
 type RequestDecoder struct {
-	Emit types.Emitter
+	Emit structure.Emitter
 }
 
 func (m *RequestDecoder) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
-		m.Emit.Transmission(types.Request{Type: "Prepare"})
+		m.Emit.Transmission(structure.Request{Type: "Prepare"})
 	case reqQuery:
 		query := p[packet.HeaderLen+1:]
-		m.Emit.Transmission(types.Request{Type: "Query", Query: string(query)})
+		m.Emit.Transmission(structure.Request{Type: "Query", Query: string(query)})
 	case reqQuit:
-		m.Emit.Transmission(types.Request{Type: "QUIT"})
+		m.Emit.Transmission(structure.Request{Type: "QUIT"})
 	default:
-		m.Emit.Transmission(types.Request{Type: t.String()})
+		m.Emit.Transmission(structure.Request{Type: t.String()})
 	}
 	return len(p), nil
 }

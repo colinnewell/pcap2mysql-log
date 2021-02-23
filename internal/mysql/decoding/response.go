@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/packet"
-	"github.com/colinnewell/pcap2mysql-log/internal/types"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
 
 type readState byte
@@ -24,9 +24,9 @@ const (
 
 // ResponseDecoder - dealing with the response.
 type ResponseDecoder struct {
-	Emit types.Emitter
+	Emit structure.Emitter
 
-	Fields  []types.MySQLtypes
+	Fields  []structure.MySQLtypes
 	State   readState
 	Results [][]string
 }
@@ -62,7 +62,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	}
 	// FIXME: not sure if this is the best way to decode the capability info
 	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
-	m.Emit.Transmission(types.Greeting{
+	m.Emit.Transmission(structure.Greeting{
 		Capabilities: capabilities,
 		Collation:    collation,
 		Protocol:     protocol,
@@ -73,7 +73,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 }
 
 func (m *ResponseDecoder) decodeOK(p []byte) error {
-	ok := types.OKResponse{
+	ok := structure.OKResponse{
 		Type: "OK",
 	}
 	b := bytes.NewBuffer(p)
@@ -102,27 +102,27 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			}
 			break
 		}
-		switch types.ResponseType(p[packet.HeaderLen]) {
-		case types.MySQLError:
+		switch structure.ResponseType(p[packet.HeaderLen]) {
+		case structure.MySQLError:
 			m.decodeError(p)
-		case types.MySQLEOF:
+		case structure.MySQLEOF:
 			// check if it's really an EOF
-			m.Emit.Transmission(types.Response{Type: "EOF"})
-		case types.MySQLOK:
+			m.Emit.Transmission(structure.Response{Type: "EOF"})
+		case structure.MySQLOK:
 			err := m.decodeOK(p[packet.HeaderLen+1:])
 			if err != nil {
 				return 0, err
 			}
-		case types.MySQLLocalInfile:
+		case structure.MySQLLocalInfile:
 			// check if it's really an EOF
-			m.Emit.Transmission(types.Response{Type: "In file"})
+			m.Emit.Transmission(structure.Response{Type: "In file"})
 		default:
 			m.State = fieldInfo
-			m.Fields = []types.MySQLtypes{}
+			m.Fields = []structure.MySQLtypes{}
 			m.Results = [][]string{}
 		}
 	case data:
-		if types.ResponseType(p[packet.HeaderLen]) == types.MySQLEOF {
+		if structure.ResponseType(p[packet.HeaderLen]) == structure.MySQLEOF {
 			m.FlushResponse()
 			m.ResetState()
 			break
@@ -144,13 +144,13 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		m.Results = append(m.Results, r)
 
 	case fieldInfo:
-		if types.ResponseType(p[packet.HeaderLen]) == types.MySQLEOF {
+		if structure.ResponseType(p[packet.HeaderLen]) == structure.MySQLEOF {
 			m.State = data
 			break
 		}
 
 		buf := bytes.NewBuffer(p[packet.HeaderLen:])
-		field := types.MySQLtypes{}
+		field := structure.MySQLtypes{}
 
 		for _, val := range []*string{
 			&field.Catalog,
@@ -185,7 +185,7 @@ func (m *ResponseDecoder) FlushResponse() {
 		return
 	}
 	// flush out all the data we have stored up.
-	m.Emit.Transmission(types.Response{
+	m.Emit.Transmission(structure.Response{
 		Type:    "SQL results",
 		Fields:  m.Fields,
 		Results: m.Results,
@@ -197,7 +197,7 @@ func (m *ResponseDecoder) ResetState() {
 }
 
 func (m *ResponseDecoder) decodeError(p []byte) {
-	errorMsg := types.ErrorResponse{Type: "Error"}
+	errorMsg := structure.ErrorResponse{Type: "Error"}
 	if len(p) > packet.HeaderLen+3 {
 		errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
 		errorMsg.Code = errorCode

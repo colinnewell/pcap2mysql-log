@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/internal/mysql/decoding"
-	"github.com/colinnewell/pcap2mysql-log/internal/types"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -29,7 +29,7 @@ func TestDecodeRequest(t *testing.T) {
 	}
 
 	expected := []interface{}{
-		types.Request{
+		structure.Request{
 			Type:  "Query",
 			Query: "SELECT id, password, u2f, totp FROM users WHERE username = 'username'",
 		},
