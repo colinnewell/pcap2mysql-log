@@ -153,7 +153,7 @@ func (h *MySQLConversationReaders) ReadRequestDecoder(
 
 type TransmissionEmitter struct {
 	Address structure.ConversationAddress
-	Times   structure.TimesSeen
+	Times   TimesSeen
 	Readers *MySQLConversationReaders
 }
 
