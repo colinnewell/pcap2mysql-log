@@ -85,6 +85,10 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 		*val = v
 	}
 	var serverStatus uint16
+	// NOTE: this may not be quite right.  Capabilities of the
+	// connection will affect the structure of the OK.
+	// also note that the EOF (0xfe) packet has the same basic structure
+	// too now.
 	for _, val := range []*uint16{&serverStatus, &ok.WarningCount} {
 		if err := binary.Read(b, binary.LittleEndian, val); err != nil {
 			return err
