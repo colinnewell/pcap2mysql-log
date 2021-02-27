@@ -76,7 +76,6 @@ func (f StatusFlags) String() string {
 	}
 
 	return b.String()
-
 }
 
 type OKResponse struct {

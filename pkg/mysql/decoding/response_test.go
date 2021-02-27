@@ -144,7 +144,9 @@ func TestOKResponse(t *testing.T) {
 	}
 	e := testEmitter{}
 	r := decoding.ResponseDecoder{Emit: &e}
-	r.Write(input)
+	if _, err := r.Write(input); err != nil {
+		t.Fatal(err)
+	}
 	r.FlushResponse()
 
 	expected := []interface{}{
