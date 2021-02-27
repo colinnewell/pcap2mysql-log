@@ -84,8 +84,13 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 		}
 		*val = v
 	}
-	// then int<2> status
-	// int<2> warning count
+	var serverStatus uint16
+	for _, val := range []*uint16{&serverStatus, &ok.WarningCount} {
+		if err := binary.Read(b, binary.LittleEndian, val); err != nil {
+			return err
+		}
+	}
+	ok.ServerStatus = structure.StatusFlags(serverStatus)
 	m.Emit.Transmission(ok)
 	return nil
 }

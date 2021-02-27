@@ -41,10 +41,48 @@ type Response struct {
 	Results [][]string   `json:"Results,omitempty"`
 }
 
+type StatusFlags uint16
+
+func (f StatusFlags) MarshalJSON() ([]byte, error) {
+	return json.Marshal(fmt.Sprintf("%x: %s", uint16(f), f.String()))
+}
+
+func (f StatusFlags) String() string {
+	var b strings.Builder
+	for _, flag := range []string{
+		"SERVER_STATUS_IN_TRANS",
+		"SERVER_STATUS_AUTOCOMMIT",
+		"Unknown!", // haven't spotted this in the docs yet.
+		"SERVER_MORE_RESULTS_EXISTS",
+		"SERVER_STATUS_NO_GOOD_INDEX_USED",
+		"SERVER_STATUS_NO_INDEX_USED",
+		"SERVER_STATUS_CURSOR_EXISTS",
+		"SERVER_STATUS_LAST_ROW_SENT",
+		"SERVER_STATUS_DB_DROPPED",
+		"SERVER_STATUS_NO_BACKSLASH_ESCAPES",
+		"SERVER_STATUS_METADATA_CHANGED",
+		"SERVER_QUERY_WAS_SLOW",
+		"SERVER_PS_OUT_PARAMS",
+		"SERVER_STATUS_IN_TRANS_READONLY",
+		"SERVER_SESSION_STATE_CHANGED",
+	} {
+		if f&1 == 1 {
+			if b.Len() > 0 {
+				b.WriteString("|")
+			}
+			b.WriteString(flag)
+		}
+		f >>= 1
+	}
+
+	return b.String()
+
+}
+
 type OKResponse struct {
 	AffectedRows uint64
 	LastInsertID uint64
-	ServerStatus uint16
+	ServerStatus StatusFlags
 	WarningCount uint16
 	// FIXME: deal with session tracking
 	Type string `json:"Type"`

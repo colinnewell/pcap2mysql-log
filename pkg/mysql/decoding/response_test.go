@@ -136,5 +136,27 @@ func TestDecodeReponse(t *testing.T) {
 	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
-	// FIXME: should check we decode the data in the packets too.
+}
+
+func TestOKResponse(t *testing.T) {
+	input := []byte{
+		0x07, 0x00, 0x00, 0x01, 0x00, 0x01, 0x02, 0x02, 0x00, 0x00, 0x00,
+	}
+	e := testEmitter{}
+	r := decoding.ResponseDecoder{Emit: &e}
+	r.Write(input)
+	r.FlushResponse()
+
+	expected := []interface{}{
+		structure.OKResponse{
+			AffectedRows: 1,
+			LastInsertID: 2,
+			ServerStatus: 2,
+			Type:         "OK",
+		},
+	}
+
+	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
+		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
+	}
 }
