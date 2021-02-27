@@ -64,8 +64,24 @@ Then having found one that has the sort of structure I want focus on that using 
 Then to grab the raw data:
 
 ```
-./pcap2mysql-log test/captures/insecure.pcap --raw-data | jq '.[1].Items[12].Data.RawData' -r 
+./pcap2mysql-log test/captures/insecure.pcap --raw-data | jq '.[1].Items[12].Data.RawData' -r
 ```
 
-To turn it into something useful for tests I can use the quick go program at 
+To turn it into something useful for tests I tend to use the quick go program at:
+https://gist.github.com/colinnewell/b822fb73bfdd146719b0bbbd5b9b64e2
 
+```
+pcap2mysql-log test/captures/insecure.pcap --raw-data | jq '.[1].Items[12].Data.RawData' -r | base64 -d |
+ go run hex-dump.go
+0x07, 0x00, 0x00, 0x01, 0x00, 0x01, 0x02, 0x02,  // ........
+0x00, 0x00, 0x00,  // ...
+```
+
+This can then be inserted into a test easily like:
+
+```
+    input := []byte{
+        0x07, 0x00, 0x00, 0x01, 0x00, 0x01, 0x02, 0x02,  // ........
+        0x00, 0x00, 0x00,  // ...
+    }
+```
