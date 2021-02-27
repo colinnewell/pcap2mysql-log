@@ -13,7 +13,7 @@ import (
 )
 
 func TestHTTPStreamRead(t *testing.T) {
-	r := decoding.New()
+	r := decoding.New(false)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}

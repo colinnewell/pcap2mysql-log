@@ -17,10 +17,11 @@ import (
 )
 
 func main() {
-	var displayVersion bool
+	var displayVersion, rawData bool
 	var serverPorts []int32
 
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
+	pflag.BoolVar(&rawData, "raw-data", false, "Include the raw packet data")
 	pflag.Int32SliceVar(&serverPorts, "server-ports", []int32{}, "Server ports")
 	pflag.Parse()
 
@@ -40,15 +41,15 @@ func main() {
 	files := pflag.Args()
 
 	if len(files) > 0 {
-		processHarFiles(serverPorts, files)
+		processHarFiles(serverPorts, files, rawData)
 		return
 	}
 
 	fmt.Println("Specify pcap files to process")
 }
 
-func processHarFiles(serverPorts []int32, files []string) {
-	r := decoding.New()
+func processHarFiles(serverPorts []int32, files []string, rawData bool) {
+	r := decoding.New(rawData)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}

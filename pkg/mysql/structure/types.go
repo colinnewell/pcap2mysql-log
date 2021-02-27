@@ -86,6 +86,11 @@ type Greeting struct {
 	Type         string
 }
 
+type WithRawPacket struct {
+	RawData      []byte
+	Transmission interface{}
+}
+
 type FieldType byte
 type FieldDetail uint16
 type ResponseType byte

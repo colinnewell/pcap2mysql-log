@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"bytes"
 	"io"
 	"sort"
 	"sync"
@@ -26,12 +27,14 @@ type TimesSeen interface {
 type MySQLConversationReaders struct {
 	mu            sync.Mutex
 	conversations map[structure.ConversationAddress]*structure.Conversation
+	rawData       bool
 }
 
-func New() *MySQLConversationReaders {
+func New(rawData bool) *MySQLConversationReaders {
 	conversations := make(map[structure.ConversationAddress]*structure.Conversation)
 	return &MySQLConversationReaders{
 		conversations: conversations,
+		rawData:       rawData,
 	}
 }
 
@@ -67,9 +70,9 @@ func (h *MySQLConversationReaders) AddConversation(
 	c.Items = append(c.Items, structure.Transmission{Data: item, Seen: seen})
 }
 
-type streamDecoder func(*tcp.SavePointReader, *tcp.TimeCaptureReader, gopacket.Flow, gopacket.Flow) error
+type streamDecoder func(io.Reader, *tcp.TimeCaptureReader, gopacket.Flow, gopacket.Flow) error
 
-func drain(spr *tcp.SavePointReader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) error {
+func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) error {
 	tcpreader.DiscardBytesToEOF(spr)
 	return nil
 }
@@ -112,15 +115,19 @@ func (h *MySQLConversationReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) 
 
 // ReadMySQLResponse try to read the stream as an MySQL response.
 func (h *MySQLConversationReaders) ReadMySQLResponse(
-	spr *tcp.SavePointReader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
+	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConversationAddress{IP: a.Reverse(), Port: b.Reverse()}
-	e := TransmissionEmitter{
+	var e Emitter
+	e = &TransmissionEmitter{
 		Address: address,
 		Times:   t,
 		Readers: h,
 	}
-	interpreter := ResponseDecoder{Emit: &e}
+	if h.rawData {
+		spr, e = SetupRawDataEmitter(e, spr)
+	}
+	interpreter := ResponseDecoder{Emit: e}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
 		return err
@@ -132,16 +139,20 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 
 // ReadRequestDecoder try to read the stream as an MySQL request.
 func (h *MySQLConversationReaders) ReadRequestDecoder(
-	spr *tcp.SavePointReader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
+	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConversationAddress{IP: a, Port: b}
-	e := TransmissionEmitter{
+	var e Emitter
+	e = &TransmissionEmitter{
 		Address: address,
 		Times:   t,
 		Readers: h,
 	}
+	if h.rawData {
+		spr, e = SetupRawDataEmitter(e, spr)
+	}
 	interpreter := RequestDecoder{
-		Emit: &e,
+		Emit: e,
 	}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
@@ -160,4 +171,22 @@ type TransmissionEmitter struct {
 func (e *TransmissionEmitter) Transmission(t interface{}) {
 	e.Readers.AddConversation(e.Address, e.Times.Seen(), t)
 	e.Times.Reset()
+}
+
+type RawDataEmitter struct {
+	read    bytes.Buffer
+	emitter Emitter
+}
+
+func SetupRawDataEmitter(e Emitter, rdr io.Reader) (io.Reader, *RawDataEmitter) {
+	emitter := RawDataEmitter{emitter: e}
+	return io.TeeReader(rdr, &emitter.read), &emitter
+}
+
+func (e *RawDataEmitter) Transmission(t interface{}) {
+	// take the buffer that has been emitted and tag that onto what we're
+	// emitting
+	// this feels flawed, should I be copying the byte array?
+	e.emitter.Transmission(structure.WithRawPacket{RawData: e.read.Bytes(), Transmission: t})
+	e.read.Reset()
 }
