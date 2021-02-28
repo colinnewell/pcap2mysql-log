@@ -122,7 +122,8 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
-		m.Emit.Transmission(structure.Request{Type: "Prepare"})
+		query := p[packet.HeaderLen+1:]
+		m.Emit.Transmission(structure.Request{Type: "Prepare", Query: string(query)})
 	case reqQuery:
 		query := p[packet.HeaderLen+1:]
 		m.Emit.Transmission(structure.Request{Type: "Query", Query: string(query)})
