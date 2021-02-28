@@ -142,12 +142,6 @@ func TestOKResponse(t *testing.T) {
 	input := []byte{
 		0x07, 0x00, 0x00, 0x01, 0x00, 0x01, 0x02, 0x02, 0x00, 0x00, 0x00,
 	}
-	e := testEmitter{}
-	r := decoding.ResponseDecoder{Emit: &e}
-	if _, err := r.Write(input); err != nil {
-		t.Fatal(err)
-	}
-	r.FlushResponse()
 
 	expected := []interface{}{
 		structure.OKResponse{
@@ -158,7 +152,38 @@ func TestOKResponse(t *testing.T) {
 		},
 	}
 
+	testResponse(t, input, expected)
+}
+
+func TestOKResponseOnLogin(t *testing.T) {
+	input := []byte{
+		0x10, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, // ........
+		0x40, 0x00, 0x00, 0x00, 0x07, 0x01, 0x05, 0x04, // @.......
+		0x64, 0x65, 0x6d, 0x6f, // demo
+	}
+	// TODO: read more of the trailing info.
+	expected := []interface{}{
+		structure.OKResponse{
+			AffectedRows: 0,
+			LastInsertID: 0,
+			ServerStatus: 0x4002,
+			Type:         "OK",
+		},
+	}
+	testResponse(t, input, expected)
+}
+
+func testResponse(t *testing.T, input []byte, expected []interface{}) {
+	t.Helper()
+
+	e := testEmitter{}
+	r := decoding.ResponseDecoder{Emit: &e}
+	if _, err := r.Write(input); err != nil {
+		t.Fatal(err)
+	}
+	r.FlushResponse()
+
 	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
-		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
+		t.Fatalf("Output doesn't match (-got +expected):\n%s\n", diff)
 	}
 }
