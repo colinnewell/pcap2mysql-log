@@ -43,7 +43,12 @@ func (h *MySQLConversationReaders) GetConversations() []structure.Conversation {
 	i := 0
 	for _, c := range h.conversations {
 		sort.Slice(c.Items, func(i, j int) bool {
-			return c.Items[i].Seen[0].Before(c.Items[j].Seen[0])
+			if len(c.Items[i].Seen) > 0 && len(c.Items[j].Seen) > 0 {
+				return c.Items[i].Seen[0].Before(c.Items[j].Seen[0])
+			} else if len(c.Items[i].Seen) > 0 {
+				return true
+			}
+			return false
 		})
 		conversations[i] = *c
 		i++
