@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
@@ -249,42 +250,38 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 	return string(vb[:len(vb)-1]), nil
 }
 
-func readLenEncInt(buf *bytes.Buffer) (uint64, error) {
-	b := buf.Next(1)
-	if len(b) == 0 {
-		return 0, fmt.Errorf("no bytes found")
+func readLenEncInt(buf io.Reader) (uint64, error) {
+	var first [1]byte
+	if _, err := buf.Read(first[:]); err != nil {
+		return 0, err
 	}
-	l := b[0]
+	l := first[0]
 
-	var need int
-	var f func([]byte) uint64
 	switch l {
 	case encodedNull:
 		// FIXME: actually null, not sure how to express this.
 		return 0, nil
 	case encoded16bit:
-		need = 2
-		f = func(b []byte) uint64 {
-			return uint64(binary.LittleEndian.Uint16(b))
+		var val uint16
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return 0, err
 		}
+		return uint64(val), nil
 	case encoded32bit:
-		need = 4
-		f = func(b []byte) uint64 {
-			return uint64(binary.LittleEndian.Uint32(b))
+		var val uint32
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return 0, err
 		}
+		return uint64(val), nil
 	case encoded64bit:
-		need = 8
-		f = func(b []byte) uint64 {
-			return binary.LittleEndian.Uint64(b)
+		var val uint64
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return 0, err
 		}
+		return val, nil
 	default:
 		return uint64(l), nil
 	}
-	b = buf.Next(need)
-	if len(b) < need {
-		return 0, fmt.Errorf("missing expected for length encoded int")
-	}
-	return f(b), nil
 }
 
 // func readFixedString(buf *bytes.Buffer, length int) (string, error) {
