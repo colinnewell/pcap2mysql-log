@@ -40,6 +40,9 @@ type ExecuteRequest struct {
 	StatementID    uint32
 	Flags          uint8
 	IterationCount uint32
+	// FIXME: ought to think about how to express this in the output.
+	NullMap []uint8
+	Params  []interface{}
 }
 
 type Response struct {

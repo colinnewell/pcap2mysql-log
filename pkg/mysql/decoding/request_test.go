@@ -45,6 +45,8 @@ func TestDecodeExecute(t *testing.T) {
 			Type:           "Execute",
 			StatementID:    23,
 			IterationCount: 1,
+			NullMap:        []uint8{0},
+			Params:         []interface{}{"Jobbbb"},
 		},
 	}
 	testRequestDecode(t, input, expected)

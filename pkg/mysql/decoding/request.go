@@ -132,27 +132,97 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	case reqQuit:
 		m.Emit.Transmission(structure.Request{Type: "QUIT"})
 	case reqStmtExecute:
-		buf := bytes.NewBuffer(p[packet.HeaderLen+1:])
-		er := structure.ExecuteRequest{
-			Type: "Execute",
-		}
+		return m.decodeExecute(p)
+	default:
+		m.Emit.Transmission(structure.Request{Type: t.String()})
+	}
+	return len(p), nil
+}
 
-		if err := binary.Read(buf, binary.LittleEndian, &er.StatementID); err != nil {
-			return 0, err
-		}
-		if err := binary.Read(buf, binary.LittleEndian, &er.Flags); err != nil {
-			return 0, err
-		}
-		if err := binary.Read(buf, binary.LittleEndian, &er.IterationCount); err != nil {
-			return 0, err
+// NOTE: should refactor, just want more code before I figure out exactly where.
+//nolint:gocognit
+func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
+	buf := bytes.NewBuffer(p[packet.HeaderLen+1:])
+	er := structure.ExecuteRequest{
+		Type: "Execute",
+	}
+
+	if err := binary.Read(buf, binary.LittleEndian, &er.StatementID); err != nil {
+		return 0, err
+	}
+	if err := binary.Read(buf, binary.LittleEndian, &er.Flags); err != nil {
+		return 0, err
+	}
+	if err := binary.Read(buf, binary.LittleEndian, &er.IterationCount); err != nil {
+		return 0, err
+	}
+	//nolint:nestif
+	if buf.Len() > 1 {
+		for paramCount := 0; buf.Len() > 0; paramCount++ {
+			if paramCount%8 == 0 {
+				var nullBitmap uint8
+				if err := binary.Read(buf, binary.LittleEndian, &nullBitmap); err != nil {
+					return 0, err
+				}
+				er.NullMap = append(er.NullMap, nullBitmap)
+			}
+			var send uint8
+			if err := binary.Read(buf, binary.LittleEndian, &send); err != nil {
+				return 0, err
+			}
+			if send == 1 {
+				a := struct {
+					FieldType structure.FieldType
+					ParamFlag byte
+				}{}
+
+				if err := binary.Read(buf, binary.LittleEndian, &a); err != nil {
+					return 0, err
+				}
+
+				switch a.FieldType {
+				case structure.FLOAT:
+				case structure.DOUBLE:
+				case structure.LONGLONG:
+				case structure.INT24:
+
+				case structure.SHORT,
+					structure.YEAR:
+
+				case structure.TINY:
+
+				case structure.DATE,
+					structure.DATETIME,
+					structure.TIMESTAMP:
+
+				case structure.TIME:
+
+				case structure.STRING,
+					structure.VAR_STRING,
+					structure.VARCHAR:
+
+					data, err := readLenEncBytes(buf)
+					if err != nil {
+						return 0, err
+					}
+					er.Params = append(er.Params, string(data))
+
+				default:
+					data, err := readLenEncBytes(buf)
+					if err != nil {
+						return 0, err
+					}
+					er.Params = append(er.Params, data)
+					// FIXME: if this is a string, let's turn it into a
+					// string so it comes out nicely.
+					// byte<lenenc> encoding
+					// starts with length encoded int for length,
+					// then we have the bytes
+				}
+			}
 		}
 		// do we have more bytes?
 		// then presumably params.
-		// FIXME: need to know param count
-		// int<1> 0x17 : COM_STMT_EXECUTE header
-		// int<4> statement id
-		// int<1> flags:
-		// int<4> Iteration count (always 1)
 		// if (param_count > 0)
 		// byte<(param_count + 7)/8> null bitmap
 		// byte<1>: send type to server (0 / 1)
@@ -162,9 +232,8 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 		// byte<1>: parameter flag
 		// for each parameter (i.e param_count times)
 		// byte<n> binary parameter value
-		m.Emit.Transmission(er)
-	default:
-		m.Emit.Transmission(structure.Request{Type: t.String()})
 	}
+	m.Emit.Transmission(er)
+
 	return len(p), nil
 }
