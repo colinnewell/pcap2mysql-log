@@ -75,6 +75,9 @@ A big thank you to Nadja for helping figure out the MySQL traffic and starting
 some of the foundational code when it was at a nascent stage.  Her help got it
 going at a point where I was feeling blocked.
 
+The gopacket library and the people involved in creating that.  This program
+uses that library and also contains a minor variation on their tcpreader code.
+
 Wireshark has provided a useful reference point for checking my results.
 
 The Lottip program also gave me confidence that this sort of thing could be
