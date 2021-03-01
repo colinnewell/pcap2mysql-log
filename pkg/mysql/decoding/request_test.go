@@ -9,10 +9,8 @@ import (
 )
 
 func TestDecodeRequest(t *testing.T) {
-	e := testEmitter{}
-	r := decoding.RequestDecoder{Emit: &e}
 	//nolint:misspell
-	_, err := r.Write([]byte{
+	input := []byte{
 		0x46, 0x00, 0x00, 0x00, 0x03, 0x53, 0x45, 0x4c, // F....SEL
 		0x45, 0x43, 0x54, 0x20, 0x69, 0x64, 0x2c, 0x20, // ECT id,
 		0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, // password
@@ -23,9 +21,6 @@ func TestDecodeRequest(t *testing.T) {
 		0x72, 0x6e, 0x61, 0x6d, 0x65, 0x20, 0x3d, 0x20, // rname =
 		0x27, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, // 'usernam
 		0x65, 0x27, // e'
-	})
-	if err != nil {
-		t.Fatal(err)
 	}
 
 	expected := []interface{}{
@@ -34,6 +29,36 @@ func TestDecodeRequest(t *testing.T) {
 			Query: "SELECT id, password, u2f, totp FROM users WHERE username = 'username'",
 		},
 	}
+
+	testRequestDecode(t, input, expected)
+}
+
+func TestDecodeExecute(t *testing.T) {
+	//nolint:misspell
+	input := []byte{
+		0x15, 0x00, 0x00, 0x00, 0x17, 0x17, 0x00, 0x00, // ........
+		0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, // ........
+		0xfe, 0x00, 0x06, 0x4a, 0x6f, 0x62, 0x62, 0x62, // ...Jobbb
+		0x62, // b
+	}
+	expected := []interface{}{
+		structure.Request{
+			Type: "Execute",
+		},
+	}
+	testRequestDecode(t, input, expected)
+}
+
+func testRequestDecode(t *testing.T, input []byte, expected []interface{}) {
+	t.Helper()
+
+	e := testEmitter{}
+	r := decoding.RequestDecoder{Emit: &e}
+	_, err := r.Write(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
 		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
 	}
