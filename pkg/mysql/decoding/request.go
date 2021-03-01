@@ -221,6 +221,9 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 					// starts with length encoded int for length,
 					// then we have the bytes
 				}
+			} else {
+				// FIXME: should check if this means null
+				er.Params = append(er.Params, nil)
 			}
 		}
 		// do we have more bytes?
