@@ -226,17 +226,6 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 				er.Params = append(er.Params, nil)
 			}
 		}
-		// do we have more bytes?
-		// then presumably params.
-		// if (param_count > 0)
-		// byte<(param_count + 7)/8> null bitmap
-		// byte<1>: send type to server (0 / 1)
-		// if (send type to server)
-		// for each parameter :
-		// byte<1>: field type
-		// byte<1>: parameter flag
-		// for each parameter (i.e param_count times)
-		// byte<n> binary parameter value
 	}
 	m.Emit.Transmission(er)
 
