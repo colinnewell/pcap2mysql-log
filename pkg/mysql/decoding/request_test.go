@@ -41,8 +41,10 @@ func TestDecodeExecute(t *testing.T) {
 		0x62, // b
 	}
 	expected := []interface{}{
-		structure.Request{
-			Type: "Execute",
+		structure.ExecuteRequest{
+			Type:           "Execute",
+			StatementID:    23,
+			IterationCount: 1,
 		},
 	}
 	testRequestDecode(t, input, expected)

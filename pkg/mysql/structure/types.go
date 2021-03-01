@@ -35,6 +35,13 @@ type Request struct {
 	Query string `json:"Query,omitempty"`
 }
 
+type ExecuteRequest struct {
+	Type           string
+	StatementID    uint32
+	Flags          uint8
+	IterationCount uint32
+}
+
 type Response struct {
 	Type    string       `json:"Type"`
 	Columns []ColumnInfo `json:"Columns,omitempty"`

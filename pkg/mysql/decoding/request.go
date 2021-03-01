@@ -1,6 +1,8 @@
 package decoding
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
@@ -130,6 +132,23 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	case reqQuit:
 		m.Emit.Transmission(structure.Request{Type: "QUIT"})
 	case reqStmtExecute:
+		buf := bytes.NewBuffer(p[packet.HeaderLen+1:])
+		er := structure.ExecuteRequest{
+			Type: "Execute",
+		}
+
+		if err := binary.Read(buf, binary.LittleEndian, &er.StatementID); err != nil {
+			return 0, err
+		}
+		if err := binary.Read(buf, binary.LittleEndian, &er.Flags); err != nil {
+			return 0, err
+		}
+		if err := binary.Read(buf, binary.LittleEndian, &er.IterationCount); err != nil {
+			return 0, err
+		}
+		// do we have more bytes?
+		// then presumably params.
+		// FIXME: need to know param count
 		// int<1> 0x17 : COM_STMT_EXECUTE header
 		// int<4> statement id
 		// int<1> flags:
@@ -143,7 +162,7 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 		// byte<1>: parameter flag
 		// for each parameter (i.e param_count times)
 		// byte<n> binary parameter value
-		m.Emit.Transmission(structure.Request{Type: "Execute"})
+		m.Emit.Transmission(er)
 	default:
 		m.Emit.Transmission(structure.Request{Type: t.String()})
 	}
