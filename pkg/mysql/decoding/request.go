@@ -143,19 +143,21 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 //nolint:gocognit
 func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 	buf := bytes.NewBuffer(p[packet.HeaderLen+1:])
+	hdr := struct {
+		StatementID    uint32
+		Flags          uint8
+		IterationCount uint32
+	}{}
+	if err := binary.Read(buf, binary.LittleEndian, &hdr); err != nil {
+		return 0, err
+	}
 	er := structure.ExecuteRequest{
-		Type: "Execute",
+		Type:           "Execute",
+		StatementID:    hdr.StatementID,
+		Flags:          hdr.Flags,
+		IterationCount: hdr.IterationCount,
 	}
 
-	if err := binary.Read(buf, binary.LittleEndian, &er.StatementID); err != nil {
-		return 0, err
-	}
-	if err := binary.Read(buf, binary.LittleEndian, &er.Flags); err != nil {
-		return 0, err
-	}
-	if err := binary.Read(buf, binary.LittleEndian, &er.IterationCount); err != nil {
-		return 0, err
-	}
 	//nolint:nestif
 	if buf.Len() > 1 {
 		for paramCount := 0; buf.Len() > 0; paramCount++ {
