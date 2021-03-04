@@ -45,6 +45,15 @@ type ExecuteRequest struct {
 	Params  []interface{}
 }
 
+type LoginRequest struct {
+	Type                 string
+	ClientCapabilities   uint32
+	Collation            byte
+	ExtendedCapabilities uint32
+	MaxPacketSize        uint32
+	Username             string
+}
+
 type Response struct {
 	Type    string       `json:"Type"`
 	Columns []ColumnInfo `json:"Columns,omitempty"`

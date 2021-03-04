@@ -134,8 +134,41 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	case reqStmtExecute:
 		return m.decodeExecute(p)
 	default:
+		if p[packet.PacketNo] == 1 {
+			return m.decodeLoginPacket(p)
+		}
 		m.Emit.Transmission(structure.Request{Type: t.String()})
 	}
+	return len(p), nil
+}
+
+func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
+	login := structure.LoginRequest{Type: "Login"}
+	b := bytes.NewBuffer(p[packet.HeaderLen:])
+	v := struct {
+		ClientCapabilities   uint32
+		MaxPacketSize        uint32
+		Collation            byte
+		Reserved             [19]byte
+		ExtendedCapabilities uint32
+	}{}
+	if err := binary.Read(b, binary.LittleEndian, &v); err != nil {
+		return 0, err
+	}
+	login.ClientCapabilities = v.ClientCapabilities
+	login.Collation = v.Collation
+	login.ExtendedCapabilities = v.ExtendedCapabilities
+	login.MaxPacketSize = v.MaxPacketSize
+
+	username, err := readNulString(b)
+	if err != nil {
+		return 0, err
+	}
+
+	login.Username = username
+
+	m.Emit.Transmission(login)
+
 	return len(p), nil
 }
 
