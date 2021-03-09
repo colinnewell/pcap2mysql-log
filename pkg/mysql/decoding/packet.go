@@ -31,12 +31,18 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 	return string(vb[:len(vb)-1]), nil
 }
 
-func readLenEncBytes(buf io.Reader) ([]byte, error) {
+func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 	length, err := readLenEncInt(buf)
 	if err != nil {
 		return []byte(nil), err
 	}
 
+	if length > uint64(buf.Len()) {
+		return []byte(nil),
+			fmt.Errorf(
+				"length encoded field requesting more bytes than are in the packet: %d wanted, %d left",
+				length, buf.Len())
+	}
 	data := make([]byte, length)
 	if _, err := buf.Read(data); err != nil {
 		return []byte(nil), err
