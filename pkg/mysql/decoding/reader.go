@@ -59,7 +59,7 @@ func (h *MySQLConnectionReaders) GetConnections() []structure.Connection {
 	return connections
 }
 
-func (h *MySQLConnectionReaders) AddConnection(
+func (h *MySQLConnectionReaders) AddToConnection(
 	address structure.ConnectionAddress, seen []time.Time, item interface{},
 ) {
 	h.mu.Lock()
@@ -174,7 +174,7 @@ type TransmissionEmitter struct {
 }
 
 func (e *TransmissionEmitter) Transmission(t interface{}) {
-	e.Readers.AddConnection(e.Address, e.Times.Seen(), t)
+	e.Readers.AddToConnection(e.Address, e.Times.Seen(), t)
 	e.Times.Reset()
 }
 
