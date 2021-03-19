@@ -26,20 +26,20 @@ type TimesSeen interface {
 
 type MySQLConversationReaders struct {
 	mu            sync.Mutex
-	conversations map[structure.ConversationAddress]*structure.Conversation
+	conversations map[structure.ConnectionAddress]*structure.Connection
 	rawData       bool
 }
 
 func New(rawData bool) *MySQLConversationReaders {
-	conversations := make(map[structure.ConversationAddress]*structure.Conversation)
+	conversations := make(map[structure.ConnectionAddress]*structure.Connection)
 	return &MySQLConversationReaders{
 		conversations: conversations,
 		rawData:       rawData,
 	}
 }
 
-func (h *MySQLConversationReaders) GetConversations() []structure.Conversation {
-	conversations := make([]structure.Conversation, len(h.conversations))
+func (h *MySQLConversationReaders) GetConversations() []structure.Connection {
+	conversations := make([]structure.Connection, len(h.conversations))
 	i := 0
 	for _, c := range h.conversations {
 		sort.Slice(c.Items, func(i, j int) bool {
@@ -60,14 +60,14 @@ func (h *MySQLConversationReaders) GetConversations() []structure.Conversation {
 }
 
 func (h *MySQLConversationReaders) AddConversation(
-	address structure.ConversationAddress, seen []time.Time, item interface{},
+	address structure.ConnectionAddress, seen []time.Time, item interface{},
 ) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
 	c, ok := h.conversations[address]
 	if !ok {
-		c = &structure.Conversation{
+		c = &structure.Connection{
 			Address: address,
 		}
 		h.conversations[address] = c
@@ -122,7 +122,7 @@ func (h *MySQLConversationReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) 
 func (h *MySQLConversationReaders) ReadMySQLResponse(
 	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
-	address := structure.ConversationAddress{IP: a.Reverse(), Port: b.Reverse()}
+	address := structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
 	var e Emitter
 	e = &TransmissionEmitter{
 		Address: address,
@@ -146,7 +146,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 func (h *MySQLConversationReaders) ReadRequestDecoder(
 	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
-	address := structure.ConversationAddress{IP: a, Port: b}
+	address := structure.ConnectionAddress{IP: a, Port: b}
 	var e Emitter
 	e = &TransmissionEmitter{
 		Address: address,
@@ -168,7 +168,7 @@ func (h *MySQLConversationReaders) ReadRequestDecoder(
 }
 
 type TransmissionEmitter struct {
-	Address structure.ConversationAddress
+	Address structure.ConnectionAddress
 	Times   TimesSeen
 	Readers *MySQLConversationReaders
 }

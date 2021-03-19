@@ -9,19 +9,19 @@ import (
 	"github.com/google/gopacket"
 )
 
-type ConversationAddress struct {
+type ConnectionAddress struct {
 	IP, Port gopacket.Flow
 }
 
-func (c ConversationAddress) MarshalJSON() ([]byte, error) {
+func (c ConnectionAddress) MarshalJSON() ([]byte, error) {
 	src, dest := c.IP.Endpoints()
 	sPort, dPort := c.Port.Endpoints()
 
 	return json.Marshal(fmt.Sprintf("%s:%s - %s:%s", src, sPort, dest, dPort))
 }
 
-type Conversation struct {
-	Address ConversationAddress
+type Connection struct {
+	Address ConnectionAddress
 	Items   []Transmission
 }
 
