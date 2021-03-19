@@ -81,7 +81,7 @@ func processHarFiles(serverPorts []int32, files []string, rawData bool) {
 	assembler.FlushAll()
 
 	streamFactory.Wait()
-	c := r.GetConversations()
+	c := r.GetConnections()
 	bytes, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		log.Println(err)

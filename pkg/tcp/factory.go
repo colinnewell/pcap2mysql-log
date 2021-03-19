@@ -9,12 +9,12 @@ import (
 	"github.com/google/gopacket/tcpassembly"
 )
 
-type ConversationReader interface {
+type ConnectionReader interface {
 	ReadStream(r Stream, a, b gopacket.Flow)
 }
 
 type StreamFactory struct {
-	Reader ConversationReader
+	Reader ConnectionReader
 	wg     sync.WaitGroup
 }
 

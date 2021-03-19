@@ -34,11 +34,9 @@ func TestHTTPStreamRead(t *testing.T) {
 		}
 	}
 	assembler.FlushAll()
-	r.GetConversations()
-	// FIXME: get this reliable and test properly.
-	// this is a pretty crude test, just checking we have
-	// managed to do something, rather than the integrity.
-	// if len(c) != 13 {
-	// 	t.Errorf("Should have read 13 http conversations: read %d", len(c))
-	// }
+	c := r.GetConnections()
+	// FIXME: test in more detail.
+	if len(c) != 7 {
+		t.Errorf("Should have read 13 mysql connections: read %d", len(c))
+	}
 }

@@ -24,24 +24,24 @@ type TimesSeen interface {
 	Seen() []time.Time
 }
 
-type MySQLConversationReaders struct {
-	mu            sync.Mutex
-	conversations map[structure.ConnectionAddress]*structure.Connection
-	rawData       bool
+type MySQLConnectionReaders struct {
+	mu          sync.Mutex
+	connections map[structure.ConnectionAddress]*structure.Connection
+	rawData     bool
 }
 
-func New(rawData bool) *MySQLConversationReaders {
-	conversations := make(map[structure.ConnectionAddress]*structure.Connection)
-	return &MySQLConversationReaders{
-		conversations: conversations,
-		rawData:       rawData,
+func New(rawData bool) *MySQLConnectionReaders {
+	connections := make(map[structure.ConnectionAddress]*structure.Connection)
+	return &MySQLConnectionReaders{
+		connections: connections,
+		rawData:     rawData,
 	}
 }
 
-func (h *MySQLConversationReaders) GetConversations() []structure.Connection {
-	conversations := make([]structure.Connection, len(h.conversations))
+func (h *MySQLConnectionReaders) GetConnections() []structure.Connection {
+	connections := make([]structure.Connection, len(h.connections))
 	i := 0
-	for _, c := range h.conversations {
+	for _, c := range h.connections {
 		sort.Slice(c.Items, func(i, j int) bool {
 			if len(c.Items[i].Seen) > 0 && len(c.Items[j].Seen) > 0 {
 				return c.Items[i].Seen[0].Before(c.Items[j].Seen[0])
@@ -50,27 +50,27 @@ func (h *MySQLConversationReaders) GetConversations() []structure.Connection {
 			}
 			return false
 		})
-		conversations[i] = *c
+		connections[i] = *c
 		i++
 	}
-	sort.Slice(conversations, func(i, j int) bool {
-		return conversations[i].Items[0].Seen[0].Before(conversations[j].Items[0].Seen[0])
+	sort.Slice(connections, func(i, j int) bool {
+		return connections[i].Items[0].Seen[0].Before(connections[j].Items[0].Seen[0])
 	})
-	return conversations
+	return connections
 }
 
-func (h *MySQLConversationReaders) AddConversation(
+func (h *MySQLConnectionReaders) AddConnection(
 	address structure.ConnectionAddress, seen []time.Time, item interface{},
 ) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	c, ok := h.conversations[address]
+	c, ok := h.connections[address]
 	if !ok {
 		c = &structure.Connection{
 			Address: address,
 		}
-		h.conversations[address] = c
+		h.connections[address] = c
 	}
 	c.Items = append(c.Items, structure.Transmission{Data: item, Seen: seen})
 }
@@ -82,8 +82,8 @@ func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) error {
 	return nil
 }
 
-// ReadStream tries to read tcp connections and extract MySQL conversations.
-func (h *MySQLConversationReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
+// ReadStream tries to read tcp connections and extract MySQL connections.
+func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 	t := tcp.NewTimeCaptureReader(r)
 	spr := tcp.NewSavePointReader(t)
 	src, dest := b.Endpoints()
@@ -119,7 +119,7 @@ func (h *MySQLConversationReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) 
 }
 
 // ReadMySQLResponse try to read the stream as an MySQL response.
-func (h *MySQLConversationReaders) ReadMySQLResponse(
+func (h *MySQLConnectionReaders) ReadMySQLResponse(
 	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
@@ -143,7 +143,7 @@ func (h *MySQLConversationReaders) ReadMySQLResponse(
 }
 
 // ReadRequestDecoder try to read the stream as an MySQL request.
-func (h *MySQLConversationReaders) ReadRequestDecoder(
+func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConnectionAddress{IP: a, Port: b}
@@ -170,11 +170,11 @@ func (h *MySQLConversationReaders) ReadRequestDecoder(
 type TransmissionEmitter struct {
 	Address structure.ConnectionAddress
 	Times   TimesSeen
-	Readers *MySQLConversationReaders
+	Readers *MySQLConnectionReaders
 }
 
 func (e *TransmissionEmitter) Transmission(t interface{}) {
-	e.Readers.AddConversation(e.Address, e.Times.Seen(), t)
+	e.Readers.AddConnection(e.Address, e.Times.Seen(), t)
 	e.Times.Reset()
 }
 
