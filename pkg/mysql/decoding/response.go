@@ -24,7 +24,7 @@ const (
 
 // ResponseDecoder - dealing with the response.
 type ResponseDecoder struct {
-	Emit ConnectionBuilder
+	Emit Emitter
 
 	Fields  []structure.ColumnInfo
 	State   readState

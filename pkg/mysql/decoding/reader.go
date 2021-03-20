@@ -22,6 +22,10 @@ type ConnectionBuilder interface {
 	PreviousRequestType() string
 }
 
+type Emitter interface {
+	Transmission(t interface{})
+}
+
 type TimesSeen interface {
 	Reset()
 	Seen() []time.Time
@@ -126,8 +130,8 @@ func (h *MySQLConnectionReaders) ReadMySQLResponse(
 	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
-	var e ConnectionBuilder
-	e = &MySQLConnectionBuilder{
+	var e Emitter
+	e = &TransmissionEmitter{
 		Address: address,
 		Times:   t,
 		Readers: h,
@@ -150,8 +154,8 @@ func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
 ) error {
 	address := structure.ConnectionAddress{IP: a, Port: b}
-	var e ConnectionBuilder
-	e = &MySQLConnectionBuilder{
+	var e Emitter
+	e = &TransmissionEmitter{
 		Address: address,
 		Times:   t,
 		Readers: h,
@@ -168,6 +172,17 @@ func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	}
 
 	return nil
+}
+
+type TransmissionEmitter struct {
+	Address structure.ConnectionAddress
+	Times   TimesSeen
+	Readers *MySQLConnectionReaders
+}
+
+func (e *TransmissionEmitter) Transmission(t interface{}) {
+	e.Readers.AddToConnection(e.Address, e.Times.Seen(), t)
+	e.Times.Reset()
 }
 
 type MySQLConnectionBuilder struct {
@@ -191,10 +206,10 @@ func (e *MySQLConnectionBuilder) Transmission(t interface{}) {
 
 type RawDataEmitter struct {
 	read    bytes.Buffer
-	emitter ConnectionBuilder
+	emitter Emitter
 }
 
-func SetupRawDataEmitter(e ConnectionBuilder, rdr io.Reader) (io.Reader, *RawDataEmitter) {
+func SetupRawDataEmitter(e Emitter, rdr io.Reader) (io.Reader, *RawDataEmitter) {
 	emitter := RawDataEmitter{emitter: e}
 	return io.TeeReader(rdr, &emitter.read), &emitter
 }
