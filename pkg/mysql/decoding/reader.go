@@ -132,9 +132,9 @@ func (h *MySQLConnectionReaders) ReadMySQLResponse(
 	address := structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
 	var e Emitter
 	e = &TransmissionEmitter{
-		Address: address,
+		Request: false,
 		Times:   t,
-		Readers: h,
+		Builder: h.ConnectionBuilder(address),
 	}
 	if h.rawData {
 		spr, e = SetupRawDataEmitter(e, spr)
@@ -156,9 +156,9 @@ func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	address := structure.ConnectionAddress{IP: a, Port: b}
 	var e Emitter
 	e = &TransmissionEmitter{
-		Address: address,
+		Request: true,
 		Times:   t,
-		Readers: h,
+		Builder: h.ConnectionBuilder(address),
 	}
 	if h.rawData {
 		spr, e = SetupRawDataEmitter(e, spr)
@@ -174,14 +174,21 @@ func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	return nil
 }
 
+func (h *MySQLConnectionReaders) ConnectionBuilder(address structure.ConnectionAddress) *MySQLConnectionBuilder {
+	return &MySQLConnectionBuilder{
+		Address: address,
+		Readers: h,
+	}
+}
+
 type TransmissionEmitter struct {
-	Address structure.ConnectionAddress
+	Request bool
 	Times   TimesSeen
-	Readers *MySQLConnectionReaders
+	Builder *MySQLConnectionBuilder
 }
 
 func (e *TransmissionEmitter) Transmission(t interface{}) {
-	e.Readers.AddToConnection(e.Address, e.Times.Seen(), t)
+	e.Builder.AddToConnection(e.Request, e.Times.Seen(), t)
 	e.Times.Reset()
 }
 
@@ -190,15 +197,19 @@ type MySQLConnectionBuilder struct {
 	Readers   *MySQLConnectionReaders
 	Requests  []interface{}
 	Responses []interface{}
-
-	// need some sort of wrapper for this.
-	// and to package up the data too.  this is where the data can go
-	Times TimesSeen
 }
 
-func (e *MySQLConnectionBuilder) Transmission(t interface{}) {
-	e.Readers.AddToConnection(e.Address, e.Times.Seen(), t)
-	e.Times.Reset()
+func (e *MySQLConnectionBuilder) AddToConnection(
+	request bool, seen []time.Time, t interface{},
+) {
+	// FIXME: store this locally
+	// FIXME: deal with seen times
+	if request {
+		e.Requests = append(e.Requests, t)
+	} else {
+		e.Responses = append(e.Responses, t)
+	}
+	e.Readers.AddToConnection(e.Address, seen, t)
 }
 
 // FIXME: want connection properties
