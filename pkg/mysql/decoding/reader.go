@@ -15,6 +15,13 @@ import (
 	"github.com/google/gopacket/tcpassembly/tcpreader"
 )
 
+type ConnectionBuilder interface {
+	DecodedResponse(t interface{})
+	DecodedRequest(typeName string, t interface{})
+	JustSeenGreeting() bool
+	PreviousRequestType() string
+}
+
 type Emitter interface {
 	Transmission(t interface{})
 }
@@ -177,6 +184,9 @@ func (e *TransmissionEmitter) Transmission(t interface{}) {
 	e.Readers.AddToConnection(e.Address, e.Times.Seen(), t)
 	e.Times.Reset()
 }
+
+// FIXME: want connection properties
+// also previous request/response
 
 type RawDataEmitter struct {
 	read    bytes.Buffer
