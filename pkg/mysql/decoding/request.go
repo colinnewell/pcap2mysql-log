@@ -117,7 +117,7 @@ func (c CommandCode) String() string {
 }
 
 type RequestDecoder struct {
-	Emit Emitter
+	Emit ConnectionBuilder
 }
 
 func (m *RequestDecoder) Write(p []byte) (int, error) {
