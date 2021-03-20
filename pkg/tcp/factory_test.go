@@ -36,7 +36,8 @@ func TestHTTPStreamRead(t *testing.T) {
 	assembler.FlushAll()
 	c := r.GetConnections()
 	// FIXME: test in more detail.
-	if len(c) != 7 {
-		t.Errorf("Should have read 13 mysql connections: read %d", len(c))
+	expected := 29
+	if len(c) != expected {
+		t.Errorf("Should have read %d mysql connections: read %d", expected, len(c))
 	}
 }

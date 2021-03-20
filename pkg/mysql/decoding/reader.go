@@ -32,54 +32,30 @@ type TimesSeen interface {
 }
 
 type MySQLConnectionReaders struct {
-	mu          sync.Mutex
-	connections map[structure.ConnectionAddress]*structure.Connection
-	rawData     bool
+	mu       sync.Mutex
+	builders map[structure.ConnectionAddress]*MySQLConnectionBuilder
+	rawData  bool
 }
 
 func New(rawData bool) *MySQLConnectionReaders {
-	connections := make(map[structure.ConnectionAddress]*structure.Connection)
+	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
-		connections: connections,
-		rawData:     rawData,
+		builders: builders,
+		rawData:  rawData,
 	}
 }
 
 func (h *MySQLConnectionReaders) GetConnections() []structure.Connection {
-	connections := make([]structure.Connection, len(h.connections))
+	connections := make([]structure.Connection, len(h.builders))
 	i := 0
-	for _, c := range h.connections {
-		sort.Slice(c.Items, func(i, j int) bool {
-			if len(c.Items[i].Seen) > 0 && len(c.Items[j].Seen) > 0 {
-				return c.Items[i].Seen[0].Before(c.Items[j].Seen[0])
-			} else if len(c.Items[i].Seen) > 0 {
-				return true
-			}
-			return false
-		})
-		connections[i] = *c
+	for _, b := range h.builders {
+		connections[i] = b.Connection()
 		i++
 	}
 	sort.Slice(connections, func(i, j int) bool {
-		return connections[i].Items[0].Seen[0].Before(connections[j].Items[0].Seen[0])
+		return connections[i].FirstSeen().Before(connections[j].FirstSeen())
 	})
 	return connections
-}
-
-func (h *MySQLConnectionReaders) AddToConnection(
-	address structure.ConnectionAddress, seen []time.Time, item interface{},
-) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-
-	c, ok := h.connections[address]
-	if !ok {
-		c = &structure.Connection{
-			Address: address,
-		}
-		h.connections[address] = c
-	}
-	c.Items = append(c.Items, structure.Transmission{Data: item, Seen: seen})
 }
 
 type streamDecoder func(io.Reader, *tcp.TimeCaptureReader, gopacket.Flow, gopacket.Flow) error
@@ -174,11 +150,21 @@ func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	return nil
 }
 
-func (h *MySQLConnectionReaders) ConnectionBuilder(address structure.ConnectionAddress) *MySQLConnectionBuilder {
-	return &MySQLConnectionBuilder{
-		Address: address,
-		Readers: h,
+func (h *MySQLConnectionReaders) ConnectionBuilder(
+	address structure.ConnectionAddress,
+) *MySQLConnectionBuilder {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	b, ok := h.builders[address]
+	if !ok {
+		b = &MySQLConnectionBuilder{
+			Address: address,
+			Readers: h,
+		}
+		h.builders[address] = b
 	}
+	return b
 }
 
 type TransmissionEmitter struct {
@@ -195,25 +181,38 @@ func (e *TransmissionEmitter) Transmission(t interface{}) {
 type MySQLConnectionBuilder struct {
 	Address   structure.ConnectionAddress
 	Readers   *MySQLConnectionReaders
-	Requests  []interface{}
-	Responses []interface{}
+	Requests  []structure.Transmission
+	Responses []structure.Transmission
 }
 
-func (e *MySQLConnectionBuilder) AddToConnection(
-	request bool, seen []time.Time, t interface{},
+func (b *MySQLConnectionBuilder) AddToConnection(
+	request bool, seen []time.Time, item interface{},
 ) {
-	// FIXME: store this locally
-	// FIXME: deal with seen times
+	t := structure.Transmission{Data: item, Seen: seen}
 	if request {
-		e.Requests = append(e.Requests, t)
+		b.Requests = append(b.Requests, t)
 	} else {
-		e.Responses = append(e.Responses, t)
+		b.Responses = append(b.Responses, t)
 	}
-	e.Readers.AddToConnection(e.Address, seen, t)
 }
 
-// FIXME: want connection properties
-// also previous request/response
+func (b *MySQLConnectionBuilder) Connection() structure.Connection {
+	items := append(b.Requests, b.Responses...)
+
+	sort.Slice(items, func(i, j int) bool {
+		if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
+			return items[i].Seen[0].Before(items[j].Seen[0])
+		} else if len(items[i].Seen) > 0 {
+			return true
+		}
+		return false
+	})
+
+	return structure.Connection{
+		Address: b.Address,
+		Items:   items,
+	}
+}
 
 type RawDataEmitter struct {
 	read    bytes.Buffer

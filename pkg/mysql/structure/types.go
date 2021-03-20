@@ -25,6 +25,13 @@ type Connection struct {
 	Items   []Transmission
 }
 
+func (c Connection) FirstSeen() time.Time {
+	if len(c.Items) > 0 && len(c.Items[0].Seen) > 0 {
+		return c.Items[0].Seen[0]
+	}
+	return time.Time{}
+}
+
 type Transmission struct {
 	Data interface{}
 	Seen []time.Time
