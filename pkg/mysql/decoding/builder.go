@@ -7,7 +7,6 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
 
-// FIXME: is this interface necessary?
 type ConnectionBuilder interface {
 	AddToConnection(
 		request bool, seen []time.Time, typeName string, item interface{},
