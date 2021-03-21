@@ -118,6 +118,14 @@ type OKResponse struct {
 	Info string
 }
 
+type PrepareOKResponse struct {
+	Type        string `json:"Type"`
+	StatementID uint32
+	NumColumns  uint16
+	NumParams   uint16
+	Warnings    int16
+}
+
 type ErrorResponse struct {
 	Code    uint16
 	Type    string

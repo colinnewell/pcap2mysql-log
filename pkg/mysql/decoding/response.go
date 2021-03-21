@@ -199,6 +199,9 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 }
 
 func (m *ResponseDecoder) decodeOK(p []byte) error {
+	if m.Emit.ConnectionBuilder().PreviousRequestType() == "Prepare" {
+		return m.decodePrepareOK(p)
+	}
 	ok := structure.OKResponse{
 		Type: "OK",
 	}
@@ -222,5 +225,30 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 	}
 	ok.ServerStatus = structure.StatusFlags(serverStatus)
 	m.Emit.Transmission(ok.Type, ok)
+	return nil
+}
+
+func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
+	buf := bytes.NewBuffer(p)
+
+	b := struct {
+		statementID uint32
+		numColumns  uint16
+		numParams   uint16
+		unused      byte
+		warnings    int16
+	}{}
+	if err := binary.Read(buf, binary.LittleEndian, &b); err != nil {
+		return err
+	}
+
+	m.Emit.Transmission("PREPARE_OK", structure.PrepareOKResponse{
+		Type:        "PREPARE_OK",
+		StatementID: b.statementID,
+		NumColumns:  b.numColumns,
+		NumParams:   b.numParams,
+		Warnings:    b.warnings,
+	})
+
 	return nil
 }
