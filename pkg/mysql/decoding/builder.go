@@ -7,6 +7,8 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
 
+// FIXME: this is massively different currently.
+// also, is it needed?
 type ConnectionBuilder interface {
 	DecodedResponse(t interface{})
 	DecodedRequest(typeName string, t interface{})
