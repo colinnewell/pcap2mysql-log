@@ -61,7 +61,7 @@ type testEmitter struct {
 	transmissions []interface{}
 }
 
-func (t *testEmitter) Transmission(i interface{}) {
+func (t *testEmitter) Transmission(typeName string, i interface{}) {
 	t.transmissions = append(t.transmissions, i)
 }
 

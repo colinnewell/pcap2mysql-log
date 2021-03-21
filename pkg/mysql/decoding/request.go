@@ -125,19 +125,19 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
 		query := p[packet.HeaderLen+1:]
-		m.Emit.Transmission(structure.Request{Type: "Prepare", Query: string(query)})
+		m.Emit.Transmission("Prepare", structure.Request{Type: "Prepare", Query: string(query)})
 	case reqQuery:
 		query := p[packet.HeaderLen+1:]
-		m.Emit.Transmission(structure.Request{Type: "Query", Query: string(query)})
+		m.Emit.Transmission("Query", structure.Request{Type: "Query", Query: string(query)})
 	case reqQuit:
-		m.Emit.Transmission(structure.Request{Type: "QUIT"})
+		m.Emit.Transmission("QUIT", structure.Request{Type: "QUIT"})
 	case reqStmtExecute:
 		return m.decodeExecute(p)
 	default:
 		if p[packet.PacketNo] == 1 {
 			return m.decodeLoginPacket(p)
 		}
-		m.Emit.Transmission(structure.Request{Type: t.String()})
+		m.Emit.Transmission(t.String(), structure.Request{Type: t.String()})
 	}
 	return len(p), nil
 }
@@ -167,7 +167,7 @@ func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
 
 	login.Username = username
 
-	m.Emit.Transmission(login)
+	m.Emit.Transmission(login.Type, login)
 
 	return len(p), nil
 }
@@ -260,7 +260,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 			}
 		}
 	}
-	m.Emit.Transmission(er)
+	m.Emit.Transmission(er.Type, er)
 
 	return len(p), nil
 }

@@ -14,7 +14,7 @@ type TimesSeen interface {
 }
 
 type Emitter interface {
-	Transmission(t interface{})
+	Transmission(typeName string, t interface{})
 }
 
 type TransmissionEmitter struct {
@@ -23,7 +23,7 @@ type TransmissionEmitter struct {
 	Builder *MySQLConnectionBuilder
 }
 
-func (e *TransmissionEmitter) Transmission(t interface{}) {
+func (e *TransmissionEmitter) Transmission(typeName string, t interface{}) {
 	e.Builder.AddToConnection(e.Request, e.Times.Seen(), t)
 	e.Times.Reset()
 }
@@ -38,7 +38,7 @@ func SetupRawDataEmitter(e Emitter, rdr io.Reader) (io.Reader, *RawDataEmitter) 
 	return io.TeeReader(rdr, &emitter.read), &emitter
 }
 
-func (e *RawDataEmitter) Transmission(t interface{}) {
+func (e *RawDataEmitter) Transmission(typeName string, t interface{}) {
 	// take the buffer that has been emitted and tag that onto what we're
 	// emitting
 	// this feels flawed, should I be copying the byte array?
@@ -49,6 +49,6 @@ func (e *RawDataEmitter) Transmission(t interface{}) {
 			panic(err)
 		}
 	}
-	e.emitter.Transmission(structure.WithRawPacket{RawData: data, Transmission: t})
+	e.emitter.Transmission(typeName, structure.WithRawPacket{RawData: data, Transmission: t})
 	e.read.Reset()
 }

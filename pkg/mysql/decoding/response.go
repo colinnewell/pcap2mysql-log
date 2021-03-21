@@ -62,7 +62,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	}
 	// FIXME: not sure if this is the best way to decode the capability info
 	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
-	m.Emit.Transmission(structure.Greeting{
+	m.Emit.Transmission("Greeting", structure.Greeting{
 		Capabilities: capabilities,
 		Collation:    collation,
 		Protocol:     protocol,
@@ -95,7 +95,7 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 		}
 	}
 	ok.ServerStatus = structure.StatusFlags(serverStatus)
-	m.Emit.Transmission(ok)
+	m.Emit.Transmission(ok.Type, ok)
 	return nil
 }
 
@@ -116,7 +116,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			m.decodeError(p)
 		case structure.MySQLEOF:
 			// check if it's really an EOF
-			m.Emit.Transmission(structure.Response{Type: "EOF"})
+			m.Emit.Transmission("EOF", structure.Response{Type: "EOF"})
 		case structure.MySQLOK:
 			err := m.decodeOK(p[packet.HeaderLen+1:])
 			if err != nil {
@@ -124,7 +124,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			}
 		case structure.MySQLLocalInfile:
 			// check if it's really an EOF
-			m.Emit.Transmission(structure.Response{Type: "In file"})
+			m.Emit.Transmission("In file", structure.Response{Type: "In file"})
 		default:
 			m.State = fieldInfo
 			m.Fields = []structure.ColumnInfo{}
@@ -194,7 +194,7 @@ func (m *ResponseDecoder) FlushResponse() {
 		return
 	}
 	// flush out all the data we have stored up.
-	m.Emit.Transmission(structure.Response{
+	m.Emit.Transmission("SQL results", structure.Response{
 		Type:    "SQL results",
 		Columns: m.Fields,
 		Results: m.Results,
@@ -222,5 +222,5 @@ func (m *ResponseDecoder) decodeError(p []byte) {
 			errorMsg.Message = string(data)
 		}
 	}
-	m.Emit.Transmission(errorMsg)
+	m.Emit.Transmission(errorMsg.Type, errorMsg)
 }
