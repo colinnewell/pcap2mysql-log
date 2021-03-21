@@ -30,6 +30,10 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 	t := structure.Transmission{Data: item, Seen: seen}
 	if request {
 		b.Requests = append(b.Requests, t)
+		// FIXME: could this be problematic?
+		// how do we know that this sync's with the processing of the
+		// other side.  For instance, could we have read all the requests, then
+		// read all the responses?
 		b.previousRequestType = typeName
 	} else {
 		b.Responses = append(b.Responses, t)
