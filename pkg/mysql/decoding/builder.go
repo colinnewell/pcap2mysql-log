@@ -7,30 +7,34 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
 
-// FIXME: this is massively different currently.
-// also, is it needed?
+// FIXME: is this interface necessary?
 type ConnectionBuilder interface {
-	DecodedResponse(t interface{})
-	DecodedRequest(typeName string, t interface{})
+	AddToConnection(
+		request bool, seen []time.Time, typeName string, item interface{},
+	)
 	JustSeenGreeting() bool
 	PreviousRequestType() string
 }
 
 type MySQLConnectionBuilder struct {
-	Address   structure.ConnectionAddress
-	Readers   *MySQLConnectionReaders
-	Requests  []structure.Transmission
-	Responses []structure.Transmission
+	Address             structure.ConnectionAddress
+	Readers             *MySQLConnectionReaders
+	Requests            []structure.Transmission
+	Responses           []structure.Transmission
+	previousRequestType string
+	justSeenGreeting    bool
 }
 
 func (b *MySQLConnectionBuilder) AddToConnection(
-	request bool, seen []time.Time, item interface{},
+	request bool, seen []time.Time, typeName string, item interface{},
 ) {
 	t := structure.Transmission{Data: item, Seen: seen}
 	if request {
 		b.Requests = append(b.Requests, t)
+		b.previousRequestType = typeName
 	} else {
 		b.Responses = append(b.Responses, t)
+		b.justSeenGreeting = typeName == "Greeting"
 	}
 }
 
@@ -50,4 +54,12 @@ func (b *MySQLConnectionBuilder) Connection() structure.Connection {
 		Address: b.Address,
 		Items:   items,
 	}
+}
+
+func (b *MySQLConnectionBuilder) PreviousRequestType() string {
+	return b.previousRequestType
+}
+
+func (b *MySQLConnectionBuilder) JustSeenGreeting() bool {
+	return b.justSeenGreeting
 }

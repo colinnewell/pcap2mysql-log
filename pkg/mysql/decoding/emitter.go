@@ -24,7 +24,7 @@ type TransmissionEmitter struct {
 }
 
 func (e *TransmissionEmitter) Transmission(typeName string, t interface{}) {
-	e.Builder.AddToConnection(e.Request, e.Times.Seen(), t)
+	e.Builder.AddToConnection(e.Request, e.Times.Seen(), typeName, t)
 	e.Times.Reset()
 }
 
