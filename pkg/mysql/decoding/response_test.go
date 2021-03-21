@@ -97,7 +97,7 @@ func TestDecodeReponse(t *testing.T) {
 	r.FlushResponse()
 
 	expected := []interface{}{
-		structure.Response{
+		structure.ResultSetResponse{
 			Type: "SQL results",
 			Columns: []structure.ColumnInfo{
 				{

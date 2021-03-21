@@ -62,9 +62,13 @@ type LoginRequest struct {
 }
 
 type Response struct {
+	Type string `json:"Type"`
+}
+
+type ResultSetResponse struct {
 	Type    string       `json:"Type"`
-	Columns []ColumnInfo `json:"Columns,omitempty"`
-	Results [][]string   `json:"Results,omitempty"`
+	Columns []ColumnInfo `json:"Columns"`
+	Results [][]string   `json:"Results"`
 }
 
 type StatusFlags uint16

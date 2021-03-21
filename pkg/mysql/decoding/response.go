@@ -126,7 +126,7 @@ func (m *ResponseDecoder) FlushResponse() {
 		return
 	}
 	// flush out all the data we have stored up.
-	m.Emit.Transmission("SQL results", structure.Response{
+	m.Emit.Transmission("SQL results", structure.ResultSetResponse{
 		Type:    "SQL results",
 		Columns: m.Fields,
 		Results: m.Results,
