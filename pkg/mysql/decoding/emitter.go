@@ -15,6 +15,7 @@ type TimesSeen interface {
 
 type Emitter interface {
 	Transmission(typeName string, t interface{})
+	ConnectionBuilder() ConnectionBuilder
 }
 
 type TransmissionEmitter struct {
@@ -26,6 +27,10 @@ type TransmissionEmitter struct {
 func (e *TransmissionEmitter) Transmission(typeName string, t interface{}) {
 	e.Builder.AddToConnection(e.Request, e.Times.Seen(), typeName, t)
 	e.Times.Reset()
+}
+
+func (e *TransmissionEmitter) ConnectionBuilder() ConnectionBuilder {
+	return e.Builder
 }
 
 type RawDataEmitter struct {
@@ -51,4 +56,8 @@ func (e *RawDataEmitter) Transmission(typeName string, t interface{}) {
 	}
 	e.emitter.Transmission(typeName, structure.WithRawPacket{RawData: data, Transmission: t})
 	e.read.Reset()
+}
+
+func (e *RawDataEmitter) ConnectionBuilder() ConnectionBuilder {
+	return e.emitter.ConnectionBuilder()
 }

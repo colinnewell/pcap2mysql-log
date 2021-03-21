@@ -26,7 +26,9 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	case reqStmtExecute:
 		return m.decodeExecute(p)
 	default:
-		if p[packet.PacketNo] == 1 {
+		builder := m.Emit.ConnectionBuilder()
+		if builder.JustSeenGreeting() ||
+			(builder.PreviousRequestType() == "" && p[packet.PacketNo] == 1) {
 			return m.decodeLoginPacket(p)
 		}
 		m.Emit.Transmission(t.String(), structure.Request{Type: t.String()})

@@ -2,6 +2,7 @@ package decoding_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
@@ -57,12 +58,30 @@ func init() {
 	}
 }
 
+type testOneSidedConnectionBuilder struct{}
+
+func (b *testOneSidedConnectionBuilder) AddToConnection(
+	request bool, seen []time.Time, typeName string, item interface{}) {
+}
+
+func (b *testOneSidedConnectionBuilder) PreviousRequestType() string {
+	return ""
+}
+
+func (b *testOneSidedConnectionBuilder) JustSeenGreeting() bool {
+	return false
+}
+
 type testEmitter struct {
 	transmissions []interface{}
 }
 
 func (t *testEmitter) Transmission(typeName string, i interface{}) {
 	t.transmissions = append(t.transmissions, i)
+}
+
+func (t *testEmitter) ConnectionBuilder() decoding.ConnectionBuilder {
+	return &testOneSidedConnectionBuilder{}
 }
 
 func TestDecodeReponse(t *testing.T) {
