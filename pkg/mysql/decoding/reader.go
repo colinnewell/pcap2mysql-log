@@ -1,11 +1,9 @@
 package decoding
 
 import (
-	"bytes"
 	"io"
 	"sort"
 	"sync"
-	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
@@ -14,22 +12,6 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly/tcpreader"
 )
-
-type ConnectionBuilder interface {
-	DecodedResponse(t interface{})
-	DecodedRequest(typeName string, t interface{})
-	JustSeenGreeting() bool
-	PreviousRequestType() string
-}
-
-type Emitter interface {
-	Transmission(t interface{})
-}
-
-type TimesSeen interface {
-	Reset()
-	Seen() []time.Time
-}
 
 type MySQLConnectionReaders struct {
 	mu       sync.Mutex
@@ -165,76 +147,4 @@ func (h *MySQLConnectionReaders) ConnectionBuilder(
 		h.builders[address] = b
 	}
 	return b
-}
-
-type TransmissionEmitter struct {
-	Request bool
-	Times   TimesSeen
-	Builder *MySQLConnectionBuilder
-}
-
-func (e *TransmissionEmitter) Transmission(t interface{}) {
-	e.Builder.AddToConnection(e.Request, e.Times.Seen(), t)
-	e.Times.Reset()
-}
-
-type MySQLConnectionBuilder struct {
-	Address   structure.ConnectionAddress
-	Readers   *MySQLConnectionReaders
-	Requests  []structure.Transmission
-	Responses []structure.Transmission
-}
-
-func (b *MySQLConnectionBuilder) AddToConnection(
-	request bool, seen []time.Time, item interface{},
-) {
-	t := structure.Transmission{Data: item, Seen: seen}
-	if request {
-		b.Requests = append(b.Requests, t)
-	} else {
-		b.Responses = append(b.Responses, t)
-	}
-}
-
-func (b *MySQLConnectionBuilder) Connection() structure.Connection {
-	items := append(b.Requests, b.Responses...)
-
-	sort.Slice(items, func(i, j int) bool {
-		if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
-			return items[i].Seen[0].Before(items[j].Seen[0])
-		} else if len(items[i].Seen) > 0 {
-			return true
-		}
-		return false
-	})
-
-	return structure.Connection{
-		Address: b.Address,
-		Items:   items,
-	}
-}
-
-type RawDataEmitter struct {
-	read    bytes.Buffer
-	emitter Emitter
-}
-
-func SetupRawDataEmitter(e Emitter, rdr io.Reader) (io.Reader, *RawDataEmitter) {
-	emitter := RawDataEmitter{emitter: e}
-	return io.TeeReader(rdr, &emitter.read), &emitter
-}
-
-func (e *RawDataEmitter) Transmission(t interface{}) {
-	// take the buffer that has been emitted and tag that onto what we're
-	// emitting
-	// this feels flawed, should I be copying the byte array?
-	data := make([]byte, e.read.Len())
-	if e.read.Len() > 0 {
-		if _, err := e.read.Read(data); err != nil {
-			// shouldn't really be possible to have an error here.
-			panic(err)
-		}
-	}
-	e.emitter.Transmission(structure.WithRawPacket{RawData: data, Transmission: t})
-	e.read.Reset()
 }
