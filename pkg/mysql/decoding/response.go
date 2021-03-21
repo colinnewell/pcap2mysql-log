@@ -232,11 +232,11 @@ func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
 	buf := bytes.NewBuffer(p)
 
 	b := struct {
-		statementID uint32
-		numColumns  uint16
-		numParams   uint16
-		unused      byte
-		warnings    int16
+		StatementID uint32
+		NumColumns  uint16
+		NumParams   uint16
+		Unused      byte
+		Warnings    int16
 	}{}
 	if err := binary.Read(buf, binary.LittleEndian, &b); err != nil {
 		return err
@@ -244,10 +244,10 @@ func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
 
 	m.Emit.Transmission("PREPARE_OK", structure.PrepareOKResponse{
 		Type:        "PREPARE_OK",
-		StatementID: b.statementID,
-		NumColumns:  b.numColumns,
-		NumParams:   b.numParams,
-		Warnings:    b.warnings,
+		StatementID: b.StatementID,
+		NumColumns:  b.NumColumns,
+		NumParams:   b.NumParams,
+		Warnings:    b.Warnings,
 	})
 
 	return nil

@@ -74,6 +74,7 @@ func (b *testOneSidedConnectionBuilder) JustSeenGreeting() bool {
 
 type testEmitter struct {
 	transmissions []interface{}
+	Builder       decoding.ConnectionBuilder
 }
 
 func (t *testEmitter) Transmission(typeName string, i interface{}) {
@@ -81,6 +82,9 @@ func (t *testEmitter) Transmission(typeName string, i interface{}) {
 }
 
 func (t *testEmitter) ConnectionBuilder() decoding.ConnectionBuilder {
+	if t.Builder != nil {
+		return t.Builder
+	}
 	return &testOneSidedConnectionBuilder{}
 }
 
@@ -192,10 +196,62 @@ func TestOKResponseOnLogin(t *testing.T) {
 	testResponse(t, input, expected)
 }
 
+func TestPrepareOKResponse(t *testing.T) {
+	input := []byte{
+		0x0c, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, // ........
+		0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, // ........
+		0x17, 0x00, 0x00, 0x02, 0x03, 0x64, 0x65, 0x66, // .....def
+		0x00, 0x00, 0x00, 0x01, 0x3f, 0x00, 0x0c, 0x3f, // ....?..?
+		0x00, 0x00, 0x00, 0x00, 0x00, 0xfd, 0x80, 0x00, // ........
+		0x00, 0x00, 0x00, 0x17, 0x00, 0x00, 0x03, 0x03, // ........
+		0x64, 0x65, 0x66, 0x00, 0x00, 0x00, 0x01, 0x3f, // def....?
+		0x00, 0x0c, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, // ..?.....
+		0xfd, 0x80, 0x00, 0x00, 0x00, 0x00, 0x17, 0x00, // ........
+		0x00, 0x04, 0x03, 0x64, 0x65, 0x66, 0x00, 0x00, // ...def..
+		0x00, 0x01, 0x3f, 0x00, 0x0c, 0x3f, 0x00, 0x00, // ..?..?..
+		0x00, 0x00, 0x00, 0xfd, 0x80, 0x00, 0x00, 0x00, // ........
+		0x00, 0x05, 0x00, 0x00, 0x05, 0xfe, 0x00, 0x00, // ........
+		0x03, 0x00, // ..
+	}
+
+	expected := []interface{}{
+		structure.PrepareOKResponse{
+			Type:        "PREPARE_OK",
+			StatementID: 1,
+			NumParams:   3,
+		},
+	}
+
+	e := testEmitter{Builder: &prevRequestBuilder{PreviousRequest: "Prepare"}}
+
+	testResponseEx(t, e, input, expected)
+}
+
+type prevRequestBuilder struct {
+	PreviousRequest string
+}
+
+func (b *prevRequestBuilder) AddToConnection(
+	request bool, seen []time.Time, typeName string, item interface{}) {
+}
+
+func (b *prevRequestBuilder) PreviousRequestType() string {
+	return b.PreviousRequest
+}
+
+func (b *prevRequestBuilder) JustSeenGreeting() bool {
+	return false
+}
+
 func testResponse(t *testing.T, input []byte, expected []interface{}) {
 	t.Helper()
 
-	e := testEmitter{}
+	testResponseEx(t, testEmitter{}, input, expected)
+}
+
+func testResponseEx(t *testing.T, e testEmitter, input []byte, expected []interface{}) {
+	t.Helper()
+
 	r := decoding.ResponseDecoder{Emit: &e}
 	if _, err := r.Write(input); err != nil {
 		t.Fatal(err)
