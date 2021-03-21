@@ -31,74 +31,6 @@ type ResponseDecoder struct {
 	Results [][]string
 }
 
-func (m *ResponseDecoder) decodeGreeting(p []byte) error {
-	protocol := p[0]
-	b := bytes.NewBuffer(p[1:])
-	version, err := readNulString(b)
-	if err != nil {
-		return err
-	}
-
-	// not really interested in all the data here right now.
-	// skipping connection id + various other bits.
-	//nolint:gomnd
-	b.Next(9 + 4)
-	capabilityBytes := [4]byte{}
-	if n, err := b.Read(capabilityBytes[0:2]); err != nil || n < 2 {
-		if err != nil {
-			return err
-		}
-		return fmt.Errorf("only read %d bytes", b.Len())
-	}
-	collation, err := b.ReadByte()
-	if err != nil {
-		return err
-	}
-	if n, err := b.Read(capabilityBytes[2:4]); err != nil || n < 2 {
-		if err != nil {
-			return err
-		}
-		return fmt.Errorf("only read %d bytes", b.Len())
-	}
-	// FIXME: not sure if this is the best way to decode the capability info
-	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
-	m.Emit.Transmission("Greeting", structure.Greeting{
-		Capabilities: capabilities,
-		Collation:    collation,
-		Protocol:     protocol,
-		Type:         "Greeting",
-		Version:      version,
-	})
-	return nil
-}
-
-func (m *ResponseDecoder) decodeOK(p []byte) error {
-	ok := structure.OKResponse{
-		Type: "OK",
-	}
-	b := bytes.NewBuffer(p)
-	for _, val := range []*uint64{&ok.AffectedRows, &ok.LastInsertID} {
-		v, err := readLenEncInt(b)
-		if err != nil {
-			return err
-		}
-		*val = v
-	}
-	var serverStatus uint16
-	// NOTE: this may not be quite right.  Capabilities of the
-	// connection will affect the structure of the OK.
-	// also note that the EOF (0xfe) packet has the same basic structure
-	// too now.
-	for _, val := range []*uint16{&serverStatus, &ok.WarningCount} {
-		if err := binary.Read(b, binary.LittleEndian, val); err != nil {
-			return err
-		}
-	}
-	ok.ServerStatus = structure.StatusFlags(serverStatus)
-	m.Emit.Transmission(ok.Type, ok)
-	return nil
-}
-
 //nolint:funlen
 func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
@@ -223,4 +155,72 @@ func (m *ResponseDecoder) decodeError(p []byte) {
 		}
 	}
 	m.Emit.Transmission(errorMsg.Type, errorMsg)
+}
+
+func (m *ResponseDecoder) decodeGreeting(p []byte) error {
+	protocol := p[0]
+	b := bytes.NewBuffer(p[1:])
+	version, err := readNulString(b)
+	if err != nil {
+		return err
+	}
+
+	// not really interested in all the data here right now.
+	// skipping connection id + various other bits.
+	//nolint:gomnd
+	b.Next(9 + 4)
+	capabilityBytes := [4]byte{}
+	if n, err := b.Read(capabilityBytes[0:2]); err != nil || n < 2 {
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("only read %d bytes", b.Len())
+	}
+	collation, err := b.ReadByte()
+	if err != nil {
+		return err
+	}
+	if n, err := b.Read(capabilityBytes[2:4]); err != nil || n < 2 {
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("only read %d bytes", b.Len())
+	}
+	// FIXME: not sure if this is the best way to decode the capability info
+	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
+	m.Emit.Transmission("Greeting", structure.Greeting{
+		Capabilities: capabilities,
+		Collation:    collation,
+		Protocol:     protocol,
+		Type:         "Greeting",
+		Version:      version,
+	})
+	return nil
+}
+
+func (m *ResponseDecoder) decodeOK(p []byte) error {
+	ok := structure.OKResponse{
+		Type: "OK",
+	}
+	b := bytes.NewBuffer(p)
+	for _, val := range []*uint64{&ok.AffectedRows, &ok.LastInsertID} {
+		v, err := readLenEncInt(b)
+		if err != nil {
+			return err
+		}
+		*val = v
+	}
+	var serverStatus uint16
+	// NOTE: this may not be quite right.  Capabilities of the
+	// connection will affect the structure of the OK.
+	// also note that the EOF (0xfe) packet has the same basic structure
+	// too now.
+	for _, val := range []*uint16{&serverStatus, &ok.WarningCount} {
+		if err := binary.Read(b, binary.LittleEndian, val); err != nil {
+			return err
+		}
+	}
+	ok.ServerStatus = structure.StatusFlags(serverStatus)
+	m.Emit.Transmission(ok.Type, ok)
+	return nil
 }
