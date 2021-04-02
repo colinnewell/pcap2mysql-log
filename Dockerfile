@@ -6,7 +6,7 @@ COPY go.mod go.sum /src/pcap2mysql-log/
 COPY cmd /src/pcap2mysql-log/cmd/
 COPY internal /src/pcap2mysql-log/internal/
 COPY pkg /src/pcap2mysql-log/pkg/
-COPY test /src/pcap2mysql-log/test/
+COPY test/captures /src/pcap2mysql-log/test/captures
 
 WORKDIR /src/pcap2mysql-log
 

@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.tcpdump
+    volumes:
+      - ../tcpdump:/var/tcpdump
 
   mysql:
     image: mysql/mysql-server:5.7
@@ -14,5 +16,11 @@ services:
   pcap2mysql-log:
     build:
       context: ..
-    network_mode: service:tcpdump
 
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      - mysql
+    network_mode: service:tcpdump

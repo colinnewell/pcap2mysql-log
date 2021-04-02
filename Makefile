@@ -1,4 +1,5 @@
 VERSION  := $(shell git describe --tags 2>/dev/null || git rev-parse --short HEAD)
+DC := docker-compose -f test/docker-compose.yml
 
 all: pcap2mysql-log
 
@@ -25,6 +26,12 @@ install: pcap2mysql-log
 lint:
 	golangci-lint run
 	gofmt -l -s .
+
+captures:
+	${DC} down
+	${DC} build
+	${DC} run --rm test && ${DC} logs
+#	${DC} down
 
 fuzz:
 	go get github.com/dvyukov/go-fuzz/go-fuzz \
