@@ -22,8 +22,8 @@ func (f *StreamFactory) New(a, b gopacket.Flow) tcpassembly.Stream {
 	r := gpkt.NewReaderStream()
 	f.wg.Add(1)
 	go func() {
+		defer f.wg.Done()
 		f.Reader.ReadStream(&r, a, b)
-		f.wg.Done()
 	}()
 	return &r
 }
