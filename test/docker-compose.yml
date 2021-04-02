@@ -1,0 +1,18 @@
+version: "3.3"
+services:
+  tcpdump:
+    build:
+      context: .
+      dockerfile: Dockerfile.tcpdump
+
+  mysql:
+    image: mysql/mysql-server:5.7
+    network_mode: service:tcpdump
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d/
+
+  pcap2mysql-log:
+    build:
+      context: ..
+    network_mode: service:tcpdump
+

@@ -1,0 +1,7 @@
+FROM alpine
+
+RUN apk update && apk add tcpdump
+
+VOLUME /var/tcpdump
+# https://superuser.com/a/929011
+CMD tcpdump -w /var/tcpdump  -W 48 -G 1800 -C 100 -K -n
