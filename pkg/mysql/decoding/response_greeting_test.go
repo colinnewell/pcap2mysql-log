@@ -17,9 +17,10 @@ func TestNotAllowedGreeting(t *testing.T) {
 	}
 
 	expected := []interface{}{
-		structure.Greeting{
-			Capabilities: 104874141,
-			Type:         "Greeting",
+		structure.ErrorResponse{
+			Code:    1130,
+			Type:    "Error",
+			Message: "Host '127.0.0.1' is not allowed to connect to this MySQL server",
 		},
 	}
 
