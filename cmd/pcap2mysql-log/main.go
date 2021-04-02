@@ -64,9 +64,6 @@ func processHarFiles(serverPorts []int32, files []string, rawData bool) {
 			packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 
 			for packet := range packetSource.Packets() {
-				// FIXME: could discriminate here to minimise issues with processing.
-				// NOTE: just pushing all TCP through it on the basis it might
-				// be http.
 				if tcp, ok := packet.TransportLayer().(*layers.TCP); ok {
 					if allowPort(serverPorts, tcp) {
 						assembler.AssembleWithTimestamp(
