@@ -1,3 +1,5 @@
+# Developing
+
 ## Creating tests
 
 The --raw-data option allows you to gather the packet data from the original captures to allow you to craft tests.
@@ -85,3 +87,16 @@ This can then be inserted into a test easily like:
         0x00, 0x00, 0x00,  // ...
     }
 ```
+
+## Creating test captures for test purposes
+
+There is a docker-compose environment that spins up MySQL and then talks to it
+to allow the creation of packet captures of the traffic.
+
+	make captures
+
+Capture files are produced in the tcpdump/ folder (in gitignore).
+
+This docker-compose environment pushes all the containers onto the same ip
+address so that the tcpdump can capture the traffic on localhost where the
+communication occurs.
