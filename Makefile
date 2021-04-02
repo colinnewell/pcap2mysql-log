@@ -30,7 +30,7 @@ lint:
 captures:
 	${DC} down
 	${DC} build
-	${DC} run --rm test && ${DC} logs
+	${DC} run --rm test || ${DC} logs
 #	${DC} down
 
 fuzz:

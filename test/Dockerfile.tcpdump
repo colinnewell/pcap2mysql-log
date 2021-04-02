@@ -4,4 +4,4 @@ RUN apk update && apk add tcpdump
 
 VOLUME /var/tcpdump
 # https://superuser.com/a/929011
-CMD tcpdump -w /var/tcpdump/testcap  -W 48 -G 1800 -C 100 -K -n port 3306
+CMD tcpdump -i lo -w /var/tcpdump/testcap  -W 48 -G 1800 -C 100 -K -n port 3306
