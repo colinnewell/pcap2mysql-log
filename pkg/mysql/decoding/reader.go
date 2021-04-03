@@ -2,6 +2,7 @@ package decoding
 
 import (
 	"io"
+	"log"
 	"sort"
 	"sync"
 
@@ -17,13 +18,15 @@ type MySQLConnectionReaders struct {
 	mu       sync.Mutex
 	builders map[structure.ConnectionAddress]*MySQLConnectionBuilder
 	rawData  bool
+	verbose  bool
 }
 
-func New(rawData bool) *MySQLConnectionReaders {
+func New(rawData bool, verbose bool) *MySQLConnectionReaders {
 	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
 		builders: builders,
 		rawData:  rawData,
+		verbose:  verbose,
 	}
 }
 
@@ -100,6 +103,9 @@ func (h *MySQLConnectionReaders) ReadMySQLResponse(
 	interpreter := ResponseDecoder{Emit: e}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
+		if h.verbose {
+			log.Printf("Error on response: %s\n", err)
+		}
 		return err
 	}
 	interpreter.FlushResponse()
@@ -126,6 +132,9 @@ func (h *MySQLConnectionReaders) ReadRequestDecoder(
 	}
 
 	if _, err := packet.Copy(spr, &interpreter); err != nil {
+		if h.verbose {
+			log.Printf("Error on request: %s\n", err)
+		}
 		return err
 	}
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"runtime/debug"
@@ -17,13 +18,21 @@ import (
 )
 
 func main() {
-	var displayVersion, rawData bool
+	var assemblyDebug, displayVersion, rawData, verbose bool
 	var serverPorts []int32
 
+	pflag.BoolVar(&assemblyDebug, "assembly-debug", false, "Debug log from the tcp assembly")
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
 	pflag.BoolVar(&rawData, "raw-data", false, "Include the raw packet data")
+	pflag.BoolVar(&verbose, "verbose", false, "Vocalise error info")
 	pflag.Int32SliceVar(&serverPorts, "server-ports", []int32{}, "Server ports")
 	pflag.Parse()
+
+	if assemblyDebug {
+		if err := flag.Set("assembly_debug_log", "true"); err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	buildVersion := "unknown"
 	if bi, ok := debug.ReadBuildInfo(); ok {
@@ -41,15 +50,15 @@ func main() {
 	files := pflag.Args()
 
 	if len(files) > 0 {
-		processHarFiles(serverPorts, files, rawData)
+		processHarFiles(serverPorts, files, rawData, verbose)
 		return
 	}
 
 	fmt.Println("Specify pcap files to process")
 }
 
-func processHarFiles(serverPorts []int32, files []string, rawData bool) {
-	r := decoding.New(rawData)
+func processHarFiles(serverPorts []int32, files []string, rawData bool, verbose bool) {
+	r := decoding.New(rawData, verbose)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}

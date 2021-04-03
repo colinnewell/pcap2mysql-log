@@ -7,6 +7,7 @@ import (
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
+	"github.com/pkg/errors"
 )
 
 type readState byte
@@ -175,7 +176,10 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 		if err != nil {
 			return err
 		}
-		return fmt.Errorf("only read %d bytes", b.Len())
+		return errors.Wrap(
+			errRequestTooFewBytes,
+			fmt.Sprintf("only read %d bytes", b.Len()),
+		)
 	}
 	collation, err := b.ReadByte()
 	if err != nil {
@@ -185,7 +189,10 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 		if err != nil {
 			return err
 		}
-		return fmt.Errorf("only read %d bytes", b.Len())
+		return errors.Wrap(
+			errRequestTooFewBytes,
+			fmt.Sprintf("only read %d bytes", b.Len()),
+		)
 	}
 	// FIXME: not sure if this is the best way to decode the capability info
 	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])

@@ -5,7 +5,12 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+
+	"github.com/pkg/errors"
 )
+
+var errRequestTooManyBytes = errors.New("requesting more bytes than are in the packet")
+var errRequestTooFewBytes = errors.New("not enough bytes")
 
 func readLenEncString(buf *bytes.Buffer) (string, error) {
 	count, err := buf.ReadByte()
@@ -17,7 +22,11 @@ func readLenEncString(buf *bytes.Buffer) (string, error) {
 	s := string(buf.Next(int(count)))
 
 	if len(s) < int(count) {
-		return "", fmt.Errorf("only read %d bytes", len(s))
+		return "",
+			errors.Wrap(
+				errRequestTooFewBytes,
+				fmt.Sprintf("only read %d bytes", len(s)),
+			)
 	}
 
 	return s, nil
@@ -39,9 +48,10 @@ func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 
 	if length > uint64(buf.Len()) {
 		return []byte(nil),
-			fmt.Errorf(
-				"length encoded field requesting more bytes than are in the packet: %d wanted, %d left",
-				length, buf.Len())
+			errors.Wrap(
+				errRequestTooManyBytes,
+				fmt.Sprintf("%d wanted, %d left", length, buf.Len()),
+			)
 	}
 	data := make([]byte, length)
 	if _, err := buf.Read(data); err != nil {
