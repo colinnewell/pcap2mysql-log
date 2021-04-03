@@ -1,5 +1,6 @@
 FROM mysql/mysql-server:5.7
 
-ENV MYSQL_RANDOM_ROOT_PASSWORD 1
-
-COPY ./sql /docker-entrypoint-initdb.d/
+# not really sure why this works, but in order for the communication over the
+# network from localhost to not fail with a basic 'host' error this is
+# necessary.
+RUN sed -e '/skip-name-resolve/ s/^/# /' -i /etc/my.cnf

@@ -8,7 +8,9 @@ services:
       - ../tcpdump:/var/tcpdump
 
   mysql:
-    image: mysql/mysql-server:5.7
+    build:
+      context: .
+      dockerfile: Dockerfile.mysql
     network_mode: service:tcpdump
     volumes:
       - ./sql:/docker-entrypoint-initdb.d/
