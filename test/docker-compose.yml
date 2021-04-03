@@ -13,9 +13,11 @@ services:
     volumes:
       - ./sql:/docker-entrypoint-initdb.d/
 
-  pcap2mysql-log:
-    build:
-      context: ..
+  # in theory we can use this as some sort of e2e to test freshly generaeted
+  # captures.
+  #pcap2mysql-log:
+  #  build:
+  #    context: ..
 
   test:
     build:
