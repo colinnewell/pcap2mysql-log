@@ -41,7 +41,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		if p[packet.PacketNo] == 0 && packetType != structure.MySQLError {
 			err := m.decodeGreeting(p[packet.HeaderLen:])
 			if err != nil {
-				return 0, err
+				return 0, errors.Wrap(err, "response-write")
 			}
 			break
 		}
@@ -54,7 +54,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		case structure.MySQLOK:
 			err := m.decodeOK(p[packet.HeaderLen+1:])
 			if err != nil {
-				return 0, err
+				return 0, errors.Wrap(err, "response-write")
 			}
 		case structure.MySQLLocalInfile:
 			// check if it's really an EOF
@@ -81,7 +81,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			r[i], err = readLenEncString(b)
 
 			if err != nil {
-				return 0, err
+				return 0, errors.Wrap(err, "response-write")
 			}
 		}
 		m.Results = append(m.Results, r)
@@ -106,14 +106,14 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			s, err := readLenEncString(buf)
 
 			if err != nil {
-				return 0, err
+				return 0, errors.Wrap(err, "response-write")
 			}
 
 			*val = s
 		}
 
 		if err := binary.Read(buf, binary.LittleEndian, &field.TypeInfo); err != nil {
-			return 0, err
+			return 0, errors.Wrap(err, "response-write")
 		}
 
 		m.Fields = append(m.Fields, field)
@@ -164,7 +164,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	b := bytes.NewBuffer(p[1:])
 	version, err := readNulString(b)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "decode-greeting")
 	}
 
 	// not really interested in all the data here right now.
@@ -174,7 +174,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	capabilityBytes := [4]byte{}
 	if n, err := b.Read(capabilityBytes[0:2]); err != nil || n < 2 {
 		if err != nil {
-			return err
+			return errors.Wrap(err, "decode-greeting")
 		}
 		return errors.Wrap(
 			errRequestTooFewBytes,
@@ -183,11 +183,11 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	}
 	collation, err := b.ReadByte()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "decode-greeting")
 	}
 	if n, err := b.Read(capabilityBytes[2:4]); err != nil || n < 2 {
 		if err != nil {
-			return err
+			return errors.Wrap(err, "decode-greeting")
 		}
 		return errors.Wrap(
 			errRequestTooFewBytes,
@@ -217,7 +217,7 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 	for _, val := range []*uint64{&ok.AffectedRows, &ok.LastInsertID} {
 		v, err := readLenEncInt(b)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "decode-ok")
 		}
 		*val = v
 	}
@@ -228,7 +228,7 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 	// too now.
 	for _, val := range []*uint16{&serverStatus, &ok.WarningCount} {
 		if err := binary.Read(b, binary.LittleEndian, val); err != nil {
-			return err
+			return errors.Wrap(err, "decode-ok")
 		}
 	}
 	ok.ServerStatus = structure.StatusFlags(serverStatus)
@@ -247,7 +247,7 @@ func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
 		Warnings    int16
 	}{}
 	if err := binary.Read(buf, binary.LittleEndian, &b); err != nil {
-		return err
+		return errors.Wrap(err, "decode-prepare-ok")
 	}
 
 	m.Emit.Transmission("PREPARE_OK", structure.PrepareOKResponse{

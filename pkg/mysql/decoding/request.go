@@ -6,6 +6,7 @@ import (
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
+	"github.com/pkg/errors"
 )
 
 type RequestDecoder struct {
@@ -47,7 +48,7 @@ func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
 		ExtendedCapabilities uint32
 	}{}
 	if err := binary.Read(b, binary.LittleEndian, &v); err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "decode-login-packet")
 	}
 	login.ClientCapabilities = v.ClientCapabilities
 	login.Collation = v.Collation
@@ -56,7 +57,7 @@ func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
 
 	username, err := readNulString(b)
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "deocde-login-packet")
 	}
 
 	login.Username = username
@@ -76,7 +77,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 		IterationCount uint32
 	}{}
 	if err := binary.Read(buf, binary.LittleEndian, &hdr); err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "deocde-execute")
 	}
 	er := structure.ExecuteRequest{
 		Type:           "Execute",
@@ -91,13 +92,13 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 			if paramCount%8 == 0 {
 				var nullBitmap uint8
 				if err := binary.Read(buf, binary.LittleEndian, &nullBitmap); err != nil {
-					return 0, err
+					return 0, errors.Wrap(err, "deocde-execute")
 				}
 				er.NullMap = append(er.NullMap, nullBitmap)
 			}
 			var send uint8
 			if err := binary.Read(buf, binary.LittleEndian, &send); err != nil {
-				return 0, err
+				return 0, errors.Wrap(err, "deocde-execute")
 			}
 			if send == 1 {
 				a := struct {
@@ -106,7 +107,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 				}{}
 
 				if err := binary.Read(buf, binary.LittleEndian, &a); err != nil {
-					return 0, err
+					return 0, errors.Wrap(err, "deocde-execute")
 				}
 
 				switch a.FieldType {
@@ -132,14 +133,14 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 
 					data, err := readLenEncBytes(buf)
 					if err != nil {
-						return 0, err
+						return 0, errors.Wrap(err, "deocde-execute")
 					}
 					er.Params = append(er.Params, string(data))
 
 				default:
 					data, err := readLenEncBytes(buf)
 					if err != nil {
-						return 0, err
+						return 0, errors.Wrap(err, "deocde-execute")
 					}
 					er.Params = append(er.Params, data)
 					// FIXME: if this is a string, let's turn it into a

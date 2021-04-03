@@ -16,7 +16,7 @@ func readLenEncString(buf *bytes.Buffer) (string, error) {
 	count, err := buf.ReadByte()
 
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "read-len-enc-string")
 	}
 
 	s := string(buf.Next(int(count)))
@@ -35,7 +35,7 @@ func readLenEncString(buf *bytes.Buffer) (string, error) {
 func readNulString(buf *bytes.Buffer) (string, error) {
 	vb, err := buf.ReadBytes(0)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "read-nul-string")
 	}
 	return string(vb[:len(vb)-1]), nil
 }
@@ -43,7 +43,7 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 	length, err := readLenEncInt(buf)
 	if err != nil {
-		return []byte(nil), err
+		return []byte(nil), errors.Wrap(err, "read-len-enc-bytes")
 	}
 
 	if length > uint64(buf.Len()) {
@@ -55,7 +55,7 @@ func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 	}
 	data := make([]byte, length)
 	if _, err := buf.Read(data); err != nil {
-		return []byte(nil), err
+		return []byte(nil), errors.Wrap(err, "read-len-enc-bytes")
 	}
 
 	return data, err
@@ -64,7 +64,7 @@ func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 func readLenEncInt(buf io.Reader) (uint64, error) {
 	var first [1]byte
 	if _, err := buf.Read(first[:]); err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "read-len-enc-int")
 	}
 	l := first[0]
 
@@ -75,19 +75,19 @@ func readLenEncInt(buf io.Reader) (uint64, error) {
 	case encoded16bit:
 		var val uint16
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return 0, err
+			return 0, errors.Wrap(err, "read-len-enc-int")
 		}
 		return uint64(val), nil
 	case encoded32bit:
 		var val uint32
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return 0, err
+			return 0, errors.Wrap(err, "read-len-enc-int")
 		}
 		return uint64(val), nil
 	case encoded64bit:
 		var val uint64
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return 0, err
+			return 0, errors.Wrap(err, "read-len-enc-int")
 		}
 		return val, nil
 	default:
