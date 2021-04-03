@@ -36,15 +36,15 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
 	switch m.State {
 	case start:
-		if p[packet.PacketNo] == 0 &&
-			structure.ResponseType(p[packet.HeaderLen]) != structure.MySQLError {
+		packetType := structure.ResponseType(p[packet.HeaderLen])
+		if p[packet.PacketNo] == 0 && packetType != structure.MySQLError {
 			err := m.decodeGreeting(p[packet.HeaderLen:])
 			if err != nil {
 				return 0, err
 			}
 			break
 		}
-		switch structure.ResponseType(p[packet.HeaderLen]) {
+		switch packetType {
 		case structure.MySQLError:
 			m.decodeError(p)
 		case structure.MySQLEOF:
