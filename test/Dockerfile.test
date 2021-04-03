@@ -2,12 +2,16 @@ FROM golang:buster AS build
 
 RUN apt-get update && apt-get install netcat-openbsd
 
-COPY go.mod go.sum /src/tests/
-COPY *.go /src/tests/
+WORKDIR /src/tests
+
 ADD https://raw.githubusercontent.com/eficode/wait-for/v2.1.0/wait-for /src/tests
 RUN chmod +x /src/tests/wait-for
 
-WORKDIR /src/tests
+COPY go.mod go.sum /src/tests/
+RUN go mod download
+
+COPY *.go /src/tests/
+
 
 CMD ./wait-for -t 30 localhost:3306 -- go test --tags capturetest ./... -v
 
