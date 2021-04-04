@@ -1,0 +1,258 @@
+[
+  {
+    "Address": "127.0.0.1:33534 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33532 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33530 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33528 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33526 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33522 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33518 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33516 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33514 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33510 - 127.0.0.1:3306",
+    "Items": null
+  },
+  {
+    "Address": "127.0.0.1:33536 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "Capabilities": 196607,
+          "Collation": 8,
+          "Protocol": 10,
+          "Version": "5.7.25",
+          "Type": "Greeting"
+        },
+        "Seen": [
+          "2021-04-04T17:28:48.051099Z"
+        ]
+      }
+    ]
+  },
+  {
+    "Address": "127.0.0.1:33538 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "Capabilities": 196607,
+          "Collation": 8,
+          "Protocol": 10,
+          "Version": "5.7.25",
+          "Type": "Greeting"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.537936Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Login",
+          "ClientCapabilities": 696973,
+          "Collation": 45,
+          "ExtendedCapabilities": 0,
+          "MaxPacketSize": 0,
+          "Username": "site"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.537986Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 0,
+          "LastInsertID": 0,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538087Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Query",
+          "Query": "INSERT INTO test VALUES ( 2, 'TEST' )"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538141Z"
+        ]
+      },
+      {
+        "Data": {
+          "Code": 1146,
+          "Type": "Error",
+          "State": "42S02",
+          "Message": "Table 'demo.test' doesn't exist"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538262Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "QUIT"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538315Z"
+        ]
+      }
+    ]
+  },
+  {
+    "Address": "127.0.0.1:33540 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "Capabilities": 196607,
+          "Collation": 8,
+          "Protocol": 10,
+          "Version": "5.7.25",
+          "Type": "Greeting"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538752Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Login",
+          "ClientCapabilities": 696973,
+          "Collation": 45,
+          "ExtendedCapabilities": 0,
+          "MaxPacketSize": 0,
+          "Username": "site"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538785Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 0,
+          "LastInsertID": 0,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.538829Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Prepare",
+          "Query": "INSERT INTO peeps (name, age) VALUES ( ?, ? )"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.53886Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "PREPARE_OK",
+          "StatementID": 1,
+          "NumColumns": 0,
+          "NumParams": 2,
+          "Warnings": 0
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.543586Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 1,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": "AA==",
+          "Params": [
+            "person",
+            33
+          ]
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.54366Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "SQL results",
+          "Columns": [
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": 253,
+                "FieldDetail": 128,
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ],
+          "Results": [
+            [
+              ""
+            ]
+          ]
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.548367Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "MYSQL_STMT_CLOSE"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.548518Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "QUIT"
+        },
+        "Seen": [
+          "2021-04-04T17:28:50.548627Z"
+        ]
+      }
+    ]
+  }
+]
