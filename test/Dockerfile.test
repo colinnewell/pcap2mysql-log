@@ -13,5 +13,5 @@ RUN go mod download
 COPY *.go /src/tests/
 
 
-CMD ./wait-for -t 30 localhost:3306 -- go test --tags capturetest ./... -v
+CMD ./wait-for -t 60 localhost:3306 -- go test --tags capturetest ./... -v
 
