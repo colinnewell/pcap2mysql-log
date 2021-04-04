@@ -52,6 +52,9 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 		b.Responses = append(b.Responses, t)
 		b.justSeenGreeting = typeName == "Greeting"
 		if typeName == "PREPARE_OK" {
+			if rawPacket, ok := item.(structure.WithRawPacket); ok {
+				item = rawPacket.Transmission
+			}
 			// might be neat to store more info, and also be able to join up to
 			// the query too.
 			prepare := item.(structure.PrepareOKResponse)
