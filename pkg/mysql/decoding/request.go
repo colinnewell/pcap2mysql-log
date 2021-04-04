@@ -115,14 +115,53 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 			for n := uint16(0); n < paramCount; n++ {
 				switch params[n].FieldType {
 				case structure.FLOAT:
+					var val float32
+					if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					er.Params = append(er.Params, val)
+					// FLOAT is the IEEE 754 floating-point value in Little-endian format on 4 bytes.
 				case structure.DOUBLE:
+					var val float64
+					if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					er.Params = append(er.Params, val)
+					// DOUBLE is the IEEE 754 floating-point value in Little-endian format on 8 bytes.
 				case structure.LONGLONG:
+					// FIXME: need to determine if this is signed.
+					// probably in ParamFlag, need to figure out exactly what to pick out.
+					var val int64
+					if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					er.Params = append(er.Params, val)
 				case structure.INT24:
+					// FIXME: need to determine if this is signed.
 
+				case structure.LONG:
+					// FIXME: need to determine if this is signed.
+					// probably in ParamFlag, need to figure out exactly what to pick out.
+					var val int32
+					if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					er.Params = append(er.Params, val)
 				case structure.SHORT,
+					// FIXME: need to determine if this is signed.
 					structure.YEAR:
+					var val int16
+					if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					er.Params = append(er.Params, val)
 
 				case structure.TINY:
+					var val int8
+					if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					er.Params = append(er.Params, val)
 
 				case structure.DATE,
 					structure.DATETIME,

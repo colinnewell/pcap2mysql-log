@@ -117,7 +117,7 @@ func TestDecodeExecWithParams(t *testing.T) {
 			StatementID:    1,
 			IterationCount: 1,
 			NullMap:        []uint8{0},
-			Params:         []interface{}{"person"},
+			Params:         []interface{}{"person", int64(33)},
 			// FIXME: should have a second param too
 		},
 	}
