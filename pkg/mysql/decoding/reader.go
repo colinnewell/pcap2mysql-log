@@ -149,10 +149,7 @@ func (h *MySQLConnectionReaders) ConnectionBuilder(
 
 	b, ok := h.builders[address]
 	if !ok {
-		b = &MySQLConnectionBuilder{
-			Address: address,
-			Readers: h,
-		}
+		b = NewBuilder(address, h)
 		h.builders[address] = b
 	}
 	return b

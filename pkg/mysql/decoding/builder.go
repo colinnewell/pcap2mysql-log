@@ -26,6 +26,17 @@ type MySQLConnectionBuilder struct {
 	queryParams         map[uint32]uint16
 }
 
+func NewBuilder(
+	address structure.ConnectionAddress,
+	readers *MySQLConnectionReaders,
+) *MySQLConnectionBuilder {
+	return &MySQLConnectionBuilder{
+		Address:     address,
+		Readers:     readers,
+		queryParams: make(map[uint32]uint16),
+	}
+}
+
 func (b *MySQLConnectionBuilder) AddToConnection(
 	request bool, seen []time.Time, typeName string, item interface{},
 ) {
