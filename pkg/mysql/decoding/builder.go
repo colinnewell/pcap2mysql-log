@@ -13,6 +13,7 @@ type ConnectionBuilder interface {
 	)
 	JustSeenGreeting() bool
 	PreviousRequestType() string
+	ParamsForQuery(query uint32) uint16
 }
 
 type MySQLConnectionBuilder struct {
@@ -22,6 +23,7 @@ type MySQLConnectionBuilder struct {
 	Responses           []structure.Transmission
 	previousRequestType string
 	justSeenGreeting    bool
+	queryParams         map[uint32]uint16
 }
 
 func (b *MySQLConnectionBuilder) AddToConnection(
@@ -38,6 +40,12 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 	} else {
 		b.Responses = append(b.Responses, t)
 		b.justSeenGreeting = typeName == "Greeting"
+		if typeName == "PREPARE_OK" {
+			// might be neat to store more info, and also be able to join up to
+			// the query too.
+			prepare := item.(structure.PrepareOKResponse)
+			b.queryParams[prepare.StatementID] = prepare.NumParams
+		}
 	}
 }
 
@@ -65,4 +73,11 @@ func (b *MySQLConnectionBuilder) PreviousRequestType() string {
 
 func (b *MySQLConnectionBuilder) JustSeenGreeting() bool {
 	return b.justSeenGreeting
+}
+
+func (b *MySQLConnectionBuilder) ParamsForQuery(query uint32) uint16 {
+	if params, ok := b.queryParams[query]; ok {
+		return params
+	}
+	return 0
 }

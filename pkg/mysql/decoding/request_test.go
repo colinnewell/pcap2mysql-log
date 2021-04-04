@@ -6,6 +6,7 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/google/go-cmp/cmp"
+	"github.com/pkg/errors"
 )
 
 func TestDecodeRequest(t *testing.T) {
@@ -49,7 +50,8 @@ func TestDecodeExecute(t *testing.T) {
 			Params:         []interface{}{"Jobbbb"},
 		},
 	}
-	testRequestDecode(t, input, expected)
+	e := testEmitter{Builder: &prevRequestBuilder{Params: 1}}
+	testRequestDecodeEx(t, e, input, expected)
 }
 
 func TestDecodeLogin(t *testing.T) {
@@ -104,17 +106,53 @@ func TestDecodeLogin(t *testing.T) {
 	testRequestDecode(t, input, expected)
 }
 
+func TestDecodeExecWithParams(t *testing.T) {
+	input := []byte{
+		31, 0, 0, 0, 23, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 254, 0, 8, 0, 6, 112,
+		101, 114, 115, 111, 110, 33, 0, 0, 0, 0, 0, 0, 0,
+	}
+	expected := []interface{}{
+		structure.ExecuteRequest{
+			Type:           "Execute",
+			StatementID:    1,
+			IterationCount: 1,
+			NullMap:        []uint8{0},
+			Params:         []interface{}{"person"},
+			// FIXME: should have a second param too
+		},
+	}
+	e := testEmitter{Builder: &prevRequestBuilder{Params: 2}}
+	testRequestDecodeEx(t, e, input, expected)
+}
+
 func testRequestDecode(t *testing.T, input []byte, expected []interface{}) {
 	t.Helper()
 
 	e := testEmitter{}
+	testRequestDecodeEx(t, e, input, expected)
+}
+
+func testRequestDecodeEx(t *testing.T, e testEmitter, input []byte, expected []interface{}) {
+	t.Helper()
+
 	r := decoding.RequestDecoder{Emit: &e}
 	_, err := r.Write(input)
 	if err != nil {
-		t.Fatal(err)
+		type stackTracer interface {
+			StackTrace() errors.StackTrace
+		}
+
+		withStack, ok := err.(stackTracer)
+		if !ok {
+			t.Fatal(err)
+		}
+
+		st := withStack.StackTrace()
+
+		t.Fatal(st, err)
 	}
 
 	if diff := cmp.Diff(e.transmissions, expected); diff != "" {
-		t.Fatalf("Split doesn't match (-got +expected):\n%s\n", diff)
+		t.Fatalf("Transmission does not match (-got +expected):\n%s\n", diff)
 	}
 }

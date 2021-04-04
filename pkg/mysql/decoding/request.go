@@ -77,7 +77,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 		IterationCount uint32
 	}{}
 	if err := binary.Read(buf, binary.LittleEndian, &hdr); err != nil {
-		return 0, errors.Wrap(err, "deocde-execute")
+		return 0, errors.Wrap(err, "decode-execute")
 	}
 	er := structure.ExecuteRequest{
 		Type:           "Execute",
@@ -86,31 +86,32 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 		IterationCount: hdr.IterationCount,
 	}
 
+	paramCount := m.Emit.ConnectionBuilder().ParamsForQuery(hdr.StatementID)
+
 	//nolint:nestif
-	if buf.Len() > 1 {
-		for paramCount := 0; buf.Len() > 0; paramCount++ {
-			if paramCount%8 == 0 {
-				var nullBitmap uint8
-				if err := binary.Read(buf, binary.LittleEndian, &nullBitmap); err != nil {
-					return 0, errors.Wrap(err, "deocde-execute")
-				}
-				er.NullMap = append(er.NullMap, nullBitmap)
-			}
-			var send uint8
-			if err := binary.Read(buf, binary.LittleEndian, &send); err != nil {
-				return 0, errors.Wrap(err, "deocde-execute")
-			}
-			if send == 1 {
-				a := struct {
-					FieldType structure.FieldType
-					ParamFlag byte
-				}{}
+	if buf.Len() > 1 && paramCount > 0 {
+		nullBitmap := make([]byte, (paramCount+7)/8)
+		if _, err := buf.Read(nullBitmap); err != nil {
+			return 0, errors.Wrap(err, "failed to read nullmap")
+		}
+		er.NullMap = nullBitmap
+		var send uint8
+		if err := binary.Read(buf, binary.LittleEndian, &send); err != nil {
+			return 0, errors.Wrap(err, "decode-execute")
+		}
+		if send == 1 {
+			params := make([]struct {
+				FieldType structure.FieldType
+				ParamFlag byte
+			}, paramCount)
 
-				if err := binary.Read(buf, binary.LittleEndian, &a); err != nil {
-					return 0, errors.Wrap(err, "deocde-execute")
+			for n := uint16(0); n < paramCount; n++ {
+				if err := binary.Read(buf, binary.LittleEndian, &params[n]); err != nil {
+					return 0, errors.Wrap(err, "decode-execute")
 				}
-
-				switch a.FieldType {
+			}
+			for n := uint16(0); n < paramCount; n++ {
+				switch params[n].FieldType {
 				case structure.FLOAT:
 				case structure.DOUBLE:
 				case structure.LONGLONG:
@@ -133,14 +134,14 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 
 					data, err := readLenEncBytes(buf)
 					if err != nil {
-						return 0, errors.Wrap(err, "deocde-execute")
+						return 0, errors.Wrap(err, "decode-execute")
 					}
 					er.Params = append(er.Params, string(data))
 
 				default:
 					data, err := readLenEncBytes(buf)
 					if err != nil {
-						return 0, errors.Wrap(err, "deocde-execute")
+						return 0, errors.Wrap(err, "decode-execute")
 					}
 					er.Params = append(er.Params, data)
 					// FIXME: if this is a string, let's turn it into a
@@ -149,9 +150,6 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 					// starts with length encoded int for length,
 					// then we have the bytes
 				}
-			} else {
-				// FIXME: should check if this means null
-				er.Params = append(er.Params, nil)
 			}
 		}
 	}

@@ -72,6 +72,10 @@ func (b *testOneSidedConnectionBuilder) JustSeenGreeting() bool {
 	return false
 }
 
+func (b *testOneSidedConnectionBuilder) ParamsForQuery(query uint32) uint16 {
+	return 0
+}
+
 type testEmitter struct {
 	transmissions []interface{}
 	Builder       decoding.ConnectionBuilder
@@ -229,6 +233,7 @@ func TestPrepareOKResponse(t *testing.T) {
 
 type prevRequestBuilder struct {
 	PreviousRequest string
+	Params          uint16
 }
 
 func (b *prevRequestBuilder) AddToConnection(
@@ -241,6 +246,10 @@ func (b *prevRequestBuilder) PreviousRequestType() string {
 
 func (b *prevRequestBuilder) JustSeenGreeting() bool {
 	return false
+}
+
+func (b *prevRequestBuilder) ParamsForQuery(query uint32) uint16 {
+	return b.Params
 }
 
 func testResponse(t *testing.T, input []byte, expected []interface{}) {
