@@ -148,6 +148,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 						return 0, errors.Wrap(err, "decode-execute")
 					}
 					val, _ := binary.Varint(data[:])
+					// FIXME: do I need to deal with endianness now?
 					er.Params = append(er.Params, val)
 
 				case structure.LONG:
