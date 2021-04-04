@@ -25,10 +25,10 @@ func TestSimpleError(t *testing.T) {
 	defer db.Close()
 
 	insert, err := db.Query("INSERT INTO test VALUES ( 2, 'TEST' )")
-	if err != nil {
-		t.Fatal(err)
+	if err == nil {
+		defer insert.Close()
+		t.Fatal("Should have raised an error")
 	}
-	defer insert.Close()
 }
 
 func TestSimpleInsert(t *testing.T) {
