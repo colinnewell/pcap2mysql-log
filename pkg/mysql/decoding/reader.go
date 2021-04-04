@@ -38,7 +38,13 @@ func (h *MySQLConnectionReaders) GetConnections() []structure.Connection {
 		i++
 	}
 	sort.Slice(connections, func(i, j int) bool {
-		return connections[i].FirstSeen().Before(connections[j].FirstSeen())
+		if connections[i].FirstSeen().Before(connections[j].FirstSeen()) {
+			return true
+		} else if connections[j].FirstSeen().Before(connections[i].FirstSeen()) {
+			return false
+		} else {
+			return connections[i].Address.String() > connections[j].Address.String()
+		}
 	})
 	return connections
 }

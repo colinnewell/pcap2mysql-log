@@ -14,10 +14,14 @@ type ConnectionAddress struct {
 }
 
 func (c ConnectionAddress) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.String())
+}
+
+func (c ConnectionAddress) String() string {
 	src, dest := c.IP.Endpoints()
 	sPort, dPort := c.Port.Endpoints()
 
-	return json.Marshal(fmt.Sprintf("%s:%s - %s:%s", src, sPort, dest, dPort))
+	return fmt.Sprintf("%s:%s - %s:%s", src, sPort, dest, dPort)
 }
 
 type Connection struct {

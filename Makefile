@@ -6,8 +6,11 @@ all: pcap2mysql-log
 pcap2mysql-log: cmd/pcap2mysql-log/*.go internal/*/* pkg/*/* pkg/*/*/*
 	go build -o pcap2mysql-log -ldflags "-X main.Version=$(VERSION)" cmd/pcap2mysql-log/*.go
 
-test: .force
+test: .force e2e-test
 	go test ./...
+
+e2e-test: pcap2mysql-log
+	./e2e-test.sh
 
 # fake target (don't create a file or directory with this name)
 # allows us to ensure a target always gets run, even if there is a folder or
