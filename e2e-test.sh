@@ -1,4 +1,12 @@
 #!/bin/bash -e
 
-TZ= ./pcap2mysql-log test/captures/insecure.pcap > test/captures/insecure.actual
-diff test/captures/insecure.expected test/captures/insecure.actual
+for f in test/captures/*.pcap
+do
+    FILE=test/captures/$(basename -s.pcap "$f")
+    TZ= ./pcap2mysql-log $f > $FILE.actual
+    if [ ! -f $FILE.expected ]
+    then
+        cp $FILE.actual $FILE.expected
+    fi
+    diff $FILE.expected $FILE.actual
+done
