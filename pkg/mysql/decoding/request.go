@@ -9,6 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+const INT24Width = 3
+
 type RequestDecoder struct {
 	Emit Emitter
 }
@@ -138,6 +140,15 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 					er.Params = append(er.Params, val)
 				case structure.INT24:
 					// FIXME: need to determine if this is signed.
+					data := [INT24Width]byte{}
+					if n, err := buf.Read(data[:]); err != nil {
+						if n < INT24Width {
+							return 0, errors.Wrap(errRequestTooFewBytes, "reading int24 for execute")
+						}
+						return 0, errors.Wrap(err, "decode-execute")
+					}
+					val, _ := binary.Varint(data[:])
+					er.Params = append(er.Params, val)
 
 				case structure.LONG:
 					// FIXME: need to determine if this is signed.
