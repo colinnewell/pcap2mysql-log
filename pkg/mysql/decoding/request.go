@@ -178,8 +178,29 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 				case structure.DATE,
 					structure.DATETIME,
 					structure.TIMESTAMP:
+					// FIXME: would be good to know locale for timestamp from server info assuming that's provided.
+					// byte position	description
+					// 1	data length : 4 without hour/minute/second part, 7 without fractional seconds, 11 with fractional seconds
+					// 2-3	year on 2 bytes little-endian format
+					// 4	Month ( 1=january)
+					// 5	days of month
+
+					// 6	hour of day (0 if DATE type)
+					// 7	minutes (0 if DATE type)
+					// 8	secondes (0 if DATE type)
+
+					// 9-12	micro-second on 4 bytes little-endian format (only if data-length is > 7)
 
 				case structure.TIME:
+					// byte position	description
+					// 1	data length : 8 without fractional seconds, 12 with fractional seconds
+					// 2	is negative
+					// 3-6	date on 4 bytes little-endian format
+					// 7	hour of day
+					// 8	minutes
+					// 9	secondes
+
+					// 10-13	micro-second on 4 bytes little-endian format (only if data-length is > 7)
 
 				case structure.STRING,
 					structure.VAR_STRING,
@@ -197,8 +218,6 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 						return 0, errors.Wrap(err, "decode-execute")
 					}
 					er.Params = append(er.Params, data)
-					// FIXME: if this is a string, let's turn it into a
-					// string so it comes out nicely.
 					// byte<lenenc> encoding
 					// starts with length encoded int for length,
 					// then we have the bytes
