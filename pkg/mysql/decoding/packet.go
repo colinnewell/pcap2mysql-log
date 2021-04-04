@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 
 	"github.com/pkg/errors"
 )
@@ -60,7 +61,7 @@ func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 	return data, err
 }
 
-func readLenEncInt(buf *bytes.Buffer) (uint64, error) {
+func readLenEncInt(buf io.Reader) (uint64, error) {
 	var first [1]byte
 	if _, err := buf.Read(first[:]); err != nil {
 		return 0, errors.Wrap(err, "read-len-enc-int")
