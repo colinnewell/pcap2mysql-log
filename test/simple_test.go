@@ -41,3 +41,22 @@ func TestSimpleInsert(t *testing.T) {
 	}
 	defer insert.Close()
 }
+
+func TestInsertAndSelect(t *testing.T) {
+	db := connection(t)
+	defer db.Close()
+
+	insert, err := db.Prepare("INSERT INTO peeps (name, age) VALUES ( ?, ? )")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer insert.Close()
+	insert.Exec("person2", 33)
+	insert.Exec("person3", 34)
+	stmt, err := db.Prepare("SELECT * FROM peeps WHERE age = ?")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(33)
+}
