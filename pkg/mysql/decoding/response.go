@@ -35,7 +35,7 @@ type ResponseDecoder struct {
 	prepareOK structure.PrepareOKResponse
 }
 
-//nolint:funlen
+//nolint:funlen,gocognit
 func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have
 	switch m.State {
@@ -91,11 +91,12 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 
 	case fieldInfo, fieldInfoColumns, fieldInfoParams:
 		if structure.ResponseType(p[packet.HeaderLen]) == structure.MySQLEOF {
-			if m.State == fieldInfo {
+			switch {
+			case m.State == fieldInfo:
 				m.State = data
-			} else if m.State == fieldInfoParams && m.prepareOK.NumColumns > 0 {
+			case m.State == fieldInfoParams && m.prepareOK.NumColumns > 0:
 				m.State = fieldInfoColumns
-			} else {
+			default:
 				m.Emit.Transmission("PREPARE_OK", m.prepareOK)
 				m.State = start
 			}
@@ -274,13 +275,14 @@ func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
 		NumParams:   b.NumParams,
 		Warnings:    b.Warnings,
 	}
-	if b.NumParams > 0 {
+	switch {
+	case b.NumParams > 0:
 		m.State = fieldInfoParams
 		m.prepareOK = ok
-	} else if b.NumColumns > 0 {
+	case b.NumColumns > 0:
 		m.State = fieldInfoColumns
 		m.prepareOK = ok
-	} else {
+	default:
 		m.Emit.Transmission("PREPARE_OK", ok)
 	}
 
