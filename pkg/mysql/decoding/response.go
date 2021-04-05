@@ -74,9 +74,16 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			break
 		}
 
-		r := make([]string, len(m.Fields))
-
 		b := bytes.NewBuffer(p[packet.HeaderLen:])
+
+		if m.Emit.ConnectionBuilder().PreviousRequestType() == "Execute" {
+			if err := m.DecodeBinaryResult(b); err != nil {
+				return 0, errors.Wrap(err, "response-write")
+			}
+			break
+		}
+
+		r := make([]string, len(m.Fields))
 
 		for i := range r {
 			var err error
@@ -138,6 +145,13 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	}
 
 	return len(p), nil
+}
+
+func (m *ResponseDecoder) DecodeBinaryResult(b bytes.Buffer) error {
+	// first byte is header
+	// null bitmap
+	// for each column
+	// type decoding
 }
 
 func (m *ResponseDecoder) FlushResponse() {

@@ -95,7 +95,7 @@ func TestResultsFromExecute(t *testing.T) {
 	}
 
 	e := testEmitter{Builder: &prevRequestBuilder{
-		PreviousRequest: "Prepare",
+		PreviousRequest: "Execute",
 	}}
 
 	testResponsePackets(t, e, input, expected)
