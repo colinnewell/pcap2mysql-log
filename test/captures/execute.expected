@@ -183,7 +183,43 @@
           "StatementID": 1,
           "NumColumns": 0,
           "NumParams": 2,
-          "Warnings": 0
+          "Warnings": 0,
+          "Params": [
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": 253,
+                "FieldDetail": 128,
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": 253,
+                "FieldDetail": 128,
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ]
         },
         "Seen": [
           "2021-04-04T17:28:50.543586Z"
@@ -207,31 +243,12 @@
       },
       {
         "Data": {
-          "Type": "SQL results",
-          "Columns": [
-            {
-              "Catalog": "def",
-              "TableAlias": "",
-              "Table": "",
-              "Schema": "",
-              "Column": "",
-              "ColumnAlias": "?",
-              "TypeInfo": {
-                "LengthOfFixedFields": 12,
-                "CharacterSetNumber": 63,
-                "MaxColumnSize": 0,
-                "FieldTypes": 253,
-                "FieldDetail": 128,
-                "Decimals": 0,
-                "Unused": 0
-              }
-            }
-          ],
-          "Results": [
-            [
-              ""
-            ]
-          ]
+          "AffectedRows": 1,
+          "LastInsertID": 1,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
         },
         "Seen": [
           "2021-04-04T17:28:50.548367Z"
