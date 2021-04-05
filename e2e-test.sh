@@ -8,5 +8,5 @@ do
     then
         cp $FILE.actual $FILE.expected
     fi
-    diff $FILE.expected $FILE.actual
+    diff $FILE.expected $FILE.actual || (echo $f && exit 1)
 done
