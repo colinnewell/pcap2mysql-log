@@ -152,8 +152,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -169,8 +169,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -186,8 +186,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -203,8 +203,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -247,8 +247,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -264,8 +264,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -281,8 +281,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -298,8 +298,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -342,8 +342,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -359,8 +359,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -376,8 +376,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -393,8 +393,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -437,8 +437,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -454,8 +454,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -471,8 +471,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -488,8 +488,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -597,8 +597,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -614,8 +614,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -631,8 +631,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -648,8 +648,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -692,8 +692,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 4097,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "NOT_NULL|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -709,8 +709,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 10,
-                "FieldTypes": 3,
-                "FieldDetail": 4129,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|UNSIGNED|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -726,8 +726,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 19,
-                "FieldTypes": 12,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_DATETIME",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -743,8 +743,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -780,8 +780,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -797,8 +797,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -814,8 +814,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -831,8 +831,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -875,8 +875,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -892,8 +892,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -909,8 +909,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -926,8 +926,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1035,8 +1035,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1052,8 +1052,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1069,8 +1069,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1086,8 +1086,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1130,8 +1130,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 4097,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "NOT_NULL|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1147,8 +1147,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 10,
-                "FieldTypes": 3,
-                "FieldDetail": 4129,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|UNSIGNED|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1164,8 +1164,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 19,
-                "FieldTypes": 12,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_DATETIME",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1181,8 +1181,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1218,8 +1218,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1235,8 +1235,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1252,8 +1252,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1269,8 +1269,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1313,8 +1313,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1330,8 +1330,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1347,8 +1347,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1364,8 +1364,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1408,8 +1408,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 1,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1425,8 +1425,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1442,8 +1442,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1459,8 +1459,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 19,
-                "FieldTypes": 12,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_DATETIME",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1503,8 +1503,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1520,8 +1520,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1537,8 +1537,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1585,8 +1585,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1602,8 +1602,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1619,8 +1619,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1636,8 +1636,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1680,8 +1680,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1697,8 +1697,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1714,8 +1714,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1731,8 +1731,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1775,8 +1775,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 4097,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "NOT_NULL|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1792,8 +1792,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 10,
-                "FieldTypes": 3,
-                "FieldDetail": 4129,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|UNSIGNED|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1809,8 +1809,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 19,
-                "FieldTypes": 12,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_DATETIME",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1826,8 +1826,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1863,8 +1863,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1880,8 +1880,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1897,8 +1897,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1914,8 +1914,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1958,8 +1958,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 1,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1975,8 +1975,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -1992,8 +1992,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 65535,
-                "FieldTypes": 252,
-                "FieldDetail": 4113,
+                "FieldTypes": "MYSQL_TYPE_BLOB",
+                "FieldDetail": "NOT_NULL|BLOB|NO_DEFAULT_VALUE_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2009,8 +2009,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 19,
-                "FieldTypes": 12,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_DATETIME",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2046,8 +2046,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2063,8 +2063,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2080,8 +2080,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2166,8 +2166,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2183,8 +2183,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2200,8 +2200,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2217,8 +2217,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2261,8 +2261,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2278,8 +2278,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2295,8 +2295,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2338,8 +2338,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2355,8 +2355,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2372,8 +2372,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 255,
-                "FieldTypes": 253,
-                "FieldDetail": 16388,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "UNIQUE_KEY|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2389,8 +2389,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 3,
-                "FieldTypes": 1,
-                "FieldDetail": 33,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "NOT_NULL|UNSIGNED",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2476,8 +2476,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2493,8 +2493,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2510,8 +2510,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2527,8 +2527,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2607,8 +2607,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 11,
-                "FieldTypes": 3,
-                "FieldDetail": 16899,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2624,8 +2624,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2641,8 +2641,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -2658,8 +2658,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 8,
                 "MaxColumnSize": 128,
-                "FieldTypes": 253,
-                "FieldDetail": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "",
                 "Decimals": 0,
                 "Unused": 0
               }

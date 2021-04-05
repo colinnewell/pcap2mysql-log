@@ -236,6 +236,10 @@ const (
 	DETAIL_NUM_FLAG              FieldDetail = 32768
 )
 
+func (d FieldDetail) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.String())
+}
+
 func (d FieldDetail) String() string {
 	var b strings.Builder
 	for _, flag := range []string{
@@ -266,6 +270,10 @@ func (d FieldDetail) String() string {
 	}
 
 	return b.String()
+}
+
+func (f FieldType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(f.String())
 }
 
 //nolint:funlen,gocyclo

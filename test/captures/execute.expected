@@ -196,8 +196,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 0,
-                "FieldTypes": 253,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
@@ -213,8 +213,8 @@
                 "LengthOfFixedFields": 12,
                 "CharacterSetNumber": 63,
                 "MaxColumnSize": 0,
-                "FieldTypes": 253,
-                "FieldDetail": 128,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
                 "Decimals": 0,
                 "Unused": 0
               }
