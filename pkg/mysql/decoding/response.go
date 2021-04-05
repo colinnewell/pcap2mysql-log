@@ -15,6 +15,8 @@ type readState byte
 const (
 	start readState = iota
 	fieldInfo
+	fieldInfoColumns
+	fieldInfoParams
 	data
 
 	encodedNull  = 0xfb
@@ -27,9 +29,10 @@ const (
 type ResponseDecoder struct {
 	Emit Emitter
 
-	Fields  []structure.ColumnInfo
-	State   readState
-	Results [][]string
+	Fields    []structure.ColumnInfo
+	State     readState
+	Results   [][]string
+	prepareOK structure.PrepareOKResponse
 }
 
 //nolint:funlen
@@ -86,9 +89,16 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 		m.Results = append(m.Results, r)
 
-	case fieldInfo:
+	case fieldInfo, fieldInfoColumns, fieldInfoParams:
 		if structure.ResponseType(p[packet.HeaderLen]) == structure.MySQLEOF {
-			m.State = data
+			if m.State == fieldInfo {
+				m.State = data
+			} else if m.State == fieldInfoParams && m.prepareOK.NumColumns > 0 {
+				m.State = fieldInfoColumns
+			} else {
+				m.Emit.Transmission("PREPARE_OK", m.prepareOK)
+				m.State = start
+			}
 			break
 		}
 
@@ -116,7 +126,14 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			return 0, errors.Wrap(err, "response-write")
 		}
 
-		m.Fields = append(m.Fields, field)
+		switch m.State {
+		case fieldInfoColumns:
+			m.prepareOK.Columns = append(m.prepareOK.Columns, field)
+		case fieldInfoParams:
+			m.prepareOK.Params = append(m.prepareOK.Params, field)
+		case fieldInfo:
+			m.Fields = append(m.Fields, field)
+		}
 	}
 
 	return len(p), nil
@@ -250,13 +267,22 @@ func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
 		return errors.Wrap(err, "decode-prepare-ok")
 	}
 
-	m.Emit.Transmission("PREPARE_OK", structure.PrepareOKResponse{
+	ok := structure.PrepareOKResponse{
 		Type:        "PREPARE_OK",
 		StatementID: b.StatementID,
 		NumColumns:  b.NumColumns,
 		NumParams:   b.NumParams,
 		Warnings:    b.Warnings,
-	})
+	}
+	if b.NumParams > 0 {
+		m.State = fieldInfoParams
+		m.prepareOK = ok
+	} else if b.NumColumns > 0 {
+		m.State = fieldInfoColumns
+		m.prepareOK = ok
+	} else {
+		m.Emit.Transmission("PREPARE_OK", ok)
+	}
 
 	return nil
 }

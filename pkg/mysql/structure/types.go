@@ -128,6 +128,9 @@ type PrepareOKResponse struct {
 	NumColumns  uint16
 	NumParams   uint16
 	Warnings    int16
+
+	Columns []ColumnInfo `json:"Columns,omitempty"`
+	Params  []ColumnInfo `json:"Params,omitempty"`
 }
 
 type ErrorResponse struct {

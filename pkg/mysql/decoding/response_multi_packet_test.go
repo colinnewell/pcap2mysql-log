@@ -37,6 +37,38 @@ func TestPrepareOKResponse(t *testing.T) {
 			Type:        "PREPARE_OK",
 			StatementID: 1,
 			NumParams:   3,
+			Params: []structure.ColumnInfo{
+				{
+					Catalog:     "def",
+					ColumnAlias: "?",
+					TypeInfo: structure.TypeInfo{
+						LengthOfFixedFields: 12,
+						CharacterSetNumber:  63,
+						FieldTypes:          253,
+						FieldDetail:         128,
+					},
+				},
+				{
+					Catalog:     "def",
+					ColumnAlias: "?",
+					TypeInfo: structure.TypeInfo{
+						LengthOfFixedFields: 12,
+						CharacterSetNumber:  63,
+						FieldTypes:          253,
+						FieldDetail:         128,
+					},
+				},
+				{
+					Catalog:     "def",
+					ColumnAlias: "?",
+					TypeInfo: structure.TypeInfo{
+						LengthOfFixedFields: 12,
+						CharacterSetNumber:  63,
+						FieldTypes:          253,
+						FieldDetail:         128,
+					},
+				},
+			},
 		},
 		structure.OKResponse{
 			AffectedRows: 1,
@@ -46,7 +78,9 @@ func TestPrepareOKResponse(t *testing.T) {
 		},
 	}
 
-	e := testEmitter{Builder: &prevRequestBuilder{PreviousRequest: "Prepare"}}
+	e := testEmitter{Builder: &prevRequestBuilder{
+		PreviousRequests: []string{"Prepare", "Execute"},
+	}}
 
 	testResponsePackets(t, e, input, expected)
 }
