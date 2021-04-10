@@ -34,7 +34,7 @@ type ResponseDecoder struct {
 
 	Fields    []structure.ColumnInfo
 	State     readState
-	Results   [][]string
+	Results   [][]interface{}
 	prepareOK structure.PrepareOKResponse
 }
 
@@ -68,7 +68,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		default:
 			m.State = fieldInfo
 			m.Fields = []structure.ColumnInfo{}
-			m.Results = [][]string{}
+			m.Results = [][]interface{}{}
 		}
 	case data:
 		if structure.ResponseType(p[packet.HeaderLen]) == structure.MySQLEOF {
@@ -87,7 +87,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 		}
 
 		// FIXME: should I just check if first byte is 0?
-		r := make([]string, len(m.Fields))
+		r := make([]interface{}, len(m.Fields))
 
 		for i := range r {
 			var err error
@@ -174,6 +174,7 @@ func (m *ResponseDecoder) DecodeBinaryResult(b *bytes.Buffer) error {
 			r[i] = col.TypeInfo.FieldTypes
 		}
 	}
+	m.Results = append(m.Results, r)
 	return nil
 }
 

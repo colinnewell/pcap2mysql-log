@@ -156,7 +156,7 @@ func TestDecodeReponse(t *testing.T) {
 					},
 				},
 			},
-			Results: [][]string{{"1", "name", "username"}},
+			Results: [][]interface{}{{"1", "name", "username"}},
 		},
 	}
 

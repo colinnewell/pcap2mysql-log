@@ -71,9 +71,9 @@ type Response struct {
 }
 
 type ResultSetResponse struct {
-	Type    string       `json:"Type"`
-	Columns []ColumnInfo `json:"Columns"`
-	Results [][]string   `json:"Results"`
+	Type    string          `json:"Type"`
+	Columns []ColumnInfo    `json:"Columns"`
+	Results [][]interface{} `json:"Results"`
 }
 
 type StatusFlags uint16

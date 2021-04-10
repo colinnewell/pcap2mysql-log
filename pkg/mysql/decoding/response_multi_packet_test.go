@@ -90,7 +90,7 @@ func TestResultsFromExecute(t *testing.T) {
 					Schema:     "demo",
 				},
 			},
-			Results: [][]string{{"", "", "\x00"}, {"", "", "\x00\x00"}},
+			Results: [][]interface{}{{"", "", "\x00"}, {"", "", "\x00\x00"}},
 		},
 	}
 
