@@ -170,8 +170,11 @@ func (m *ResponseDecoder) DecodeBinaryResult(b *bytes.Buffer) error {
 		if nullMap.IsNull(i) {
 			r[i] = nil
 		} else {
-			// FIXME: decode result
-			r[i] = col.TypeInfo.FieldTypes
+			val, err := readType(b, col.TypeInfo.FieldTypes)
+			if err != nil {
+				return errors.Wrap(err, "decode-binary-result")
+			}
+			r[i] = val
 		}
 	}
 	m.Results = append(m.Results, r)

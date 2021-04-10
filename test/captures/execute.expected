@@ -231,7 +231,11 @@
           "StatementID": 1,
           "Flags": 0,
           "IterationCount": 1,
-          "NullMap": "AA==",
+          "NullMap": {
+            "Data": "AA==",
+            "Width": 7,
+            "Params": 2
+          },
           "Params": [
             "person",
             33

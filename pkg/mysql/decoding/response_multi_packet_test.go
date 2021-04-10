@@ -90,7 +90,10 @@ func TestResultsFromExecute(t *testing.T) {
 					Schema:     "demo",
 				},
 			},
-			Results: [][]interface{}{{"", "", "\x00"}, {"", "", "\x00\x00"}},
+			Results: [][]interface{}{
+				{int32(1), string("person"), int32(33)},
+				{int32(2), string("person2"), int32(33)},
+			},
 		},
 	}
 
