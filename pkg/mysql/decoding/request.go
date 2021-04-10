@@ -70,8 +70,6 @@ func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// NOTE: should refactor, just want more code before I figure out exactly where.
-//nolint:gocognit
 func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 	buf := bytes.NewBuffer(p[packet.HeaderLen+1:])
 	hdr := struct {
@@ -93,7 +91,6 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 
 	//nolint:nestif
 	if buf.Len() > 1 && paramCount > 0 {
-		//nolint:gomnd
 		var send uint8
 		nullMap, err := bitmap.ReadNullMap(buf, int(paramCount), bitmap.ExecuteParams)
 		if err != nil {

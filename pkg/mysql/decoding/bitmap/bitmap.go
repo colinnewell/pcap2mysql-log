@@ -1,8 +1,8 @@
 package bitmap
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 
 	"github.com/pkg/errors"
 )
@@ -11,6 +11,7 @@ var errReadPastEnd = errors.New("attempt to read past end of bitmap")
 
 const ResultSetRow = 9
 const ExecuteParams = 7
+const byteWidth = 8
 
 type NullBitMap struct {
 	Data   []byte
@@ -22,8 +23,8 @@ func New(data []byte, params int, width int) *NullBitMap {
 	return &NullBitMap{Data: data, Params: params, Width: width}
 }
 
-func ReadNullMap(buf *bytes.Buffer, paramCount int, width int) (*NullBitMap, error) {
-	neededBytes := (paramCount + width) / 8
+func ReadNullMap(buf io.Reader, paramCount int, width int) (*NullBitMap, error) {
+	neededBytes := (paramCount + width) / byteWidth
 	data := make([]byte, neededBytes)
 
 	if _, err := buf.Read(data); err != nil {
