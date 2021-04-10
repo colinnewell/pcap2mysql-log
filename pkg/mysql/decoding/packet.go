@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/pkg/errors"
 )
 
@@ -102,3 +103,115 @@ func readLenEncInt(buf io.Reader) (uint64, error) {
 // 	}
 // 	return string(b), nil
 // }
+
+func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, error) {
+	switch fieldType {
+	case structure.FLOAT:
+		var val float32
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return val, nil
+		// FLOAT is the IEEE 754 floating-point value in Little-endian format on 4 bytes.
+	case structure.DOUBLE:
+		var val float64
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return val, nil
+		// DOUBLE is the IEEE 754 floating-point value in Little-endian format on 8 bytes.
+	case structure.LONGLONG:
+		// FIXME: need to determine if this is signed.
+		// probably in ParamFlag, need to figure out exactly what to pick out.
+		var val int64
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return val, nil
+	case structure.INT24:
+		// FIXME: need to determine if this is signed.
+		data := [INT24Width]byte{}
+		if n, err := buf.Read(data[:]); err != nil {
+			if n < INT24Width {
+				return nil, errors.Wrap(errRequestTooFewBytes, "reading int24 for execute")
+			}
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		val, _ := binary.Varint(data[:])
+		// FIXME: do I need to deal with endianness now?
+		return val, nil
+
+	case structure.LONG:
+		// FIXME: need to determine if this is signed.
+		// probably in ParamFlag, need to figure out exactly what to pick out.
+		var val int32
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return val, nil
+	case structure.SHORT,
+		// FIXME: need to determine if this is signed.
+		structure.YEAR:
+		var val int16
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return val, nil
+
+	case structure.TINY:
+		var val int8
+		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return val, nil
+
+	case structure.DATE,
+		structure.DATETIME,
+		structure.TIMESTAMP:
+		// FIXME: would be good to know locale for timestamp from server info assuming that's provided.
+		// byte position	description
+		// 1	data length : 4 without hour/minute/second part, 7 without fractional seconds, 11 with fractional seconds
+		// 2-3	year on 2 bytes little-endian format
+		// 4	Month ( 1=january)
+		// 5	days of month
+
+		// 6	hour of day (0 if DATE type)
+		// 7	minutes (0 if DATE type)
+		// 8	secondes (0 if DATE type)
+
+		// 9-12	micro-second on 4 bytes little-endian format (only if data-length is > 7)
+
+	case structure.TIME:
+		// byte position	description
+		// 1	data length : 8 without fractional seconds, 12 with fractional seconds
+		// 2	is negative
+		// 3-6	date on 4 bytes little-endian format
+		// 7	hour of day
+		// 8	minutes
+		// 9	secondes
+
+		// 10-13	micro-second on 4 bytes little-endian format (only if data-length is > 7)
+
+	case structure.STRING,
+		structure.VAR_STRING,
+		structure.VARCHAR:
+
+		data, err := readLenEncBytes(buf)
+		if err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return string(data), nil
+
+	default:
+		data, err := readLenEncBytes(buf)
+		if err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		return data, nil
+		// byte<lenenc> encoding
+		// starts with length encoded int for length,
+		// then we have the bytes
+	}
+	// FIXME: need to fill in the switch statement above to ensure we don't get here.
+	panic(errors.New("Missing return"))
+}
