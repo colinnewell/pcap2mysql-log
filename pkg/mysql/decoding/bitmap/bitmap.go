@@ -53,8 +53,8 @@ func (nm *NullBitMap) IsNull(column int) bool {
 	}
 
 	bit := column % bitWidth
-	i := offset + (column / bitWidth)
-	mask := byte(1 << bit)
+	i := column / bitWidth
+	mask := byte(1 << (offset + bit))
 	return nm.Data[i]&mask > 0
 }
 
