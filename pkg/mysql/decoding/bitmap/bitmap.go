@@ -2,6 +2,7 @@ package bitmap
 
 import (
 	"bytes"
+	"fmt"
 
 	"github.com/pkg/errors"
 )
@@ -12,9 +13,13 @@ const ResultSetRow = 9
 const ExecuteParams = 7
 
 type NullBitMap struct {
-	bm     []byte
-	width  int
-	params int
+	Data   []byte
+	Width  int
+	Params int
+}
+
+func New(data []byte, params int, width int) *NullBitMap {
+	return &NullBitMap{Data: data, Params: params, Width: width}
 }
 
 func ReadNullMap(buf *bytes.Buffer, paramCount int, width int) (*NullBitMap, error) {
@@ -25,18 +30,19 @@ func ReadNullMap(buf *bytes.Buffer, paramCount int, width int) (*NullBitMap, err
 		return nil, errors.Wrap(err, "failed to read nullmap")
 	}
 
-	return &NullBitMap{bm: data, params: paramCount, width: width}, nil
+	return New(data, paramCount, width), nil
 }
 
 func (nm *NullBitMap) IsNull(column int) bool {
+	// FIXME: am I picking out the correct bit?
 	// expecting column to start at 0
-	if column >= nm.params {
+	if column >= nm.Params {
 		panic(errReadPastEnd)
 	}
 
 	var bitWidth, offset int
 
-	if nm.width == ExecuteParams {
+	if nm.Width == ExecuteParams {
 		bitWidth = 8
 		offset = 0
 		// simple figure out byte then bit
@@ -49,5 +55,10 @@ func (nm *NullBitMap) IsNull(column int) bool {
 	bit := column % bitWidth
 	i := offset + (column / bitWidth)
 	mask := byte(1 << bit)
-	return nm.bm[i]&mask > 0
+	return nm.Data[i]&mask > 0
+}
+
+func (nm *NullBitMap) String() string {
+	// FIXME: this needs tidying up.
+	return fmt.Sprintf("%b", nm.Data)
 }

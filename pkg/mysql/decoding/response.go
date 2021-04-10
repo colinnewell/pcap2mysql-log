@@ -5,10 +5,13 @@ import (
 	"encoding/binary"
 	"fmt"
 
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding/bitmap"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/pkg/errors"
 )
+
+var errUnexpectedValue = errors.New("unexpected value")
 
 type readState byte
 
@@ -83,6 +86,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			break
 		}
 
+		// FIXME: should I just check if first byte is 0?
 		r := make([]string, len(m.Fields))
 
 		for i := range r {
@@ -147,11 +151,30 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func (m *ResponseDecoder) DecodeBinaryResult(b bytes.Buffer) error {
-	// first byte is header
+func (m *ResponseDecoder) DecodeBinaryResult(b *bytes.Buffer) error {
+	h, err := b.ReadByte()
+	if err != nil {
+		return errors.Wrap(err, "decode-binary-result")
+	}
+	if h != 0 {
+		return errors.Wrap(errUnexpectedValue, "decode-binary-result")
+	}
+
 	// null bitmap
-	// for each column
-	// type decoding
+	nullMap, err := bitmap.ReadNullMap(b, len(m.Fields), bitmap.ResultSetRow)
+	if err != nil {
+		return err
+	}
+	r := make([]interface{}, len(m.Fields))
+	for i, col := range m.Fields {
+		if nullMap.IsNull(i) {
+			r[i] = nil
+		} else {
+			// FIXME: decode result
+			r[i] = col.TypeInfo.FieldTypes
+		}
+	}
+	return nil
 }
 
 func (m *ResponseDecoder) FlushResponse() {

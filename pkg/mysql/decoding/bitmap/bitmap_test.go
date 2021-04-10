@@ -8,7 +8,7 @@ import (
 )
 
 func TestParamBM(t *testing.T) {
-	bytes := bytes.NewBuffer([]byte{0xff})
+	bytes := bytes.NewBuffer([]byte{0x7})
 	bm, err := bitmap.ReadNullMap(bytes, 3, bitmap.ExecuteParams)
 	if err != nil {
 		t.Fatal(err)

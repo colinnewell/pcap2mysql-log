@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding/bitmap"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
@@ -46,8 +47,10 @@ func TestDecodeExecute(t *testing.T) {
 			Type:           "Execute",
 			StatementID:    23,
 			IterationCount: 1,
-			NullMap:        []uint8{0},
-			Params:         []interface{}{"Jobbbb"},
+			NullMap: bitmap.New(
+				[]uint8{0}, 1, bitmap.ExecuteParams,
+			),
+			Params: []interface{}{"Jobbbb"},
 		},
 	}
 	e := testEmitter{Builder: &prevRequestBuilder{Params: 1}}
@@ -116,8 +119,10 @@ func TestDecodeExecWithParams(t *testing.T) {
 			Type:           "Execute",
 			StatementID:    1,
 			IterationCount: 1,
-			NullMap:        []uint8{0},
-			Params:         []interface{}{"person", int64(33)},
+			NullMap: bitmap.New(
+				[]uint8{0}, 2, bitmap.ExecuteParams,
+			),
+			Params: []interface{}{"person", int64(33)},
 			// FIXME: should have a second param too
 		},
 	}

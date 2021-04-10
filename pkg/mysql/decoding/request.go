@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding/bitmap"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/pkg/errors"
@@ -93,13 +94,13 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 	//nolint:nestif
 	if buf.Len() > 1 && paramCount > 0 {
 		//nolint:gomnd
-		neededBytes := (paramCount + 7) / 8
-		nullBitmap := make([]byte, neededBytes)
-		if _, err := buf.Read(nullBitmap); err != nil {
-			return 0, errors.Wrap(err, "failed to read nullmap")
-		}
-		er.NullMap = nullBitmap
 		var send uint8
+		nullMap, err := bitmap.ReadNullMap(buf, int(paramCount), bitmap.ExecuteParams)
+		if err != nil {
+			return 0, err
+		}
+		er.NullMap = nullMap
+
 		if err := binary.Read(buf, binary.LittleEndian, &send); err != nil {
 			return 0, errors.Wrap(err, "decode-execute")
 		}

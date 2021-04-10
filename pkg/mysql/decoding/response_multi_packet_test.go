@@ -52,7 +52,7 @@ func TestResultsFromExecute(t *testing.T) {
 							structure.DETAIL_PRIMARY_KEY |
 							structure.DETAIL_AUTO_INCREMENT |
 							structure.DETAIL_PART_KEY_FLAG,
-						FieldTypes:          3,
+						FieldTypes:          structure.LONG,
 						LengthOfFixedFields: 12,
 						MaxColumnSize:       11,
 					},
