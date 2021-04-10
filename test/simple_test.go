@@ -53,6 +53,7 @@ func TestInsertAndSelect(t *testing.T) {
 	defer insert.Close()
 	insert.Exec("person2", 33)
 	insert.Exec("person3", 34)
+	insert.Exec("person4", nil)
 	stmt, err := db.Prepare("SELECT * FROM peeps WHERE age = ?")
 	if err != nil {
 		t.Fatal(err)
