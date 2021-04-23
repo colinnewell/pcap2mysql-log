@@ -202,6 +202,9 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		}
 		return string(data), nil
 
+	case structure.NULL:
+		return nil, nil
+
 	default:
 		data, err := readLenEncBytes(buf)
 		if err != nil {
