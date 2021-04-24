@@ -213,7 +213,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		// FIXME: does it look like text?  If so provide it in text.
 		// if not, should we encode it so it's clear it's binary?
 		// base64 can be confusing if you're not expecting it.
-		return data, nil
+		return struct{ Base64 []byte }{Base64: data}, nil
 		// byte<lenenc> encoding
 		// starts with length encoded int for length,
 		// then we have the bytes
