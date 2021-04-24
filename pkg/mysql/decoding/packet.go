@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"unicode"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/pkg/errors"
@@ -213,6 +214,9 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		// FIXME: does it look like text?  If so provide it in text.
 		// if not, should we encode it so it's clear it's binary?
 		// base64 can be confusing if you're not expecting it.
+		if isText(data) {
+			return struct{ Text string }{Text: string(data)}, nil
+		}
 		return struct{ Base64 []byte }{Base64: data}, nil
 		// byte<lenenc> encoding
 		// starts with length encoded int for length,
@@ -220,4 +224,14 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 	}
 	// FIXME: need to fill in the switch statement above to ensure we don't get here.
 	panic(errors.New("Missing return"))
+}
+
+func isText(b []byte) bool {
+	s := string(b)
+	for _, c := range s {
+		if !(unicode.IsPrint(c) || unicode.IsSpace(c)) {
+			return false
+		}
+	}
+	return true
 }
