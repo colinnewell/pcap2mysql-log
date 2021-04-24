@@ -210,6 +210,9 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		if err != nil {
 			return nil, errors.Wrap(err, "decode-execute")
 		}
+		// FIXME: does it look like text?  If so provide it in text.
+		// if not, should we encode it so it's clear it's binary?
+		// base64 can be confusing if you're not expecting it.
 		return data, nil
 		// byte<lenenc> encoding
 		// starts with length encoded int for length,
