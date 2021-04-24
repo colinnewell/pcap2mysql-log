@@ -209,7 +209,7 @@ func TestResultsFromExecuteWitNull(t *testing.T) {
 			},
 			Results: [][]interface{}{
 				{int32(1), string("person"), int32(33), nil},
-				{int32(2), string("person2"), int32(33), []byte("Foo")},
+				{int32(2), string("person2"), int32(33), struct{ Base64 []byte }{[]byte("Foo")}},
 			},
 		},
 	}
