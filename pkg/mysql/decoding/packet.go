@@ -3,6 +3,7 @@ package decoding
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"io"
 	"unicode"
@@ -22,10 +23,31 @@ type date struct {
 	Day    uint8
 }
 
+func (d date) String() string {
+	return fmt.Sprintf("%04d-%02d-%02d",
+		d.Year,
+		d.Month,
+		d.Day,
+	)
+}
+
+func (d date) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.String())
+}
+
 type timeS struct {
 	Hour    uint8
 	Minutes uint8
 	Seconds uint8
+}
+
+func (t timeS) String() string {
+	return fmt.Sprintf(
+		"%d:%d:%d",
+		t.Hour,
+		t.Minutes,
+		t.Seconds,
+	)
 }
 
 type timeMs struct {
@@ -41,6 +63,23 @@ type dateTime struct {
 type dateTimeMs struct {
 	date
 	timeMs
+}
+
+func (d dateTime) MarshalJSON() ([]byte, error) {
+	return json.Marshal(fmt.Sprintf(
+		"%s %s",
+		d.date.String(),
+		d.timeS.String(),
+	))
+}
+
+func (d dateTimeMs) MarshalJSON() ([]byte, error) {
+	return json.Marshal(fmt.Sprintf(
+		"%s %s.%04d",
+		d.date.String(),
+		d.timeS.String(),
+		d.MicroSeconds,
+	))
 }
 
 type timeInfo struct {
