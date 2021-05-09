@@ -14,6 +14,49 @@ import (
 var errRequestTooManyBytes = errors.New("requesting more bytes than are in the packet")
 var errRequestTooFewBytes = errors.New("not enough bytes")
 
+// FIXME: does date have time set to 0 or actually just take this much?
+type date struct {
+	Length uint8
+	Year   uint16
+	Month  uint8
+	Day    uint8
+}
+
+type timeS struct {
+	Hour    uint8
+	Minutes uint8
+	Seconds uint8
+}
+
+type timeMs struct {
+	timeS
+	MicroSeconds uint32
+}
+
+type dateTime struct {
+	date
+	timeS
+}
+
+type dateTimeMs struct {
+	date
+	timeMs
+}
+
+type timeInfo struct {
+	Length   uint8
+	Negative uint8
+	Date     uint32
+	Hour     uint8
+	Minutes  uint8
+	Seconds  uint8
+}
+
+type timeInfoMs struct {
+	timeInfo
+	MicroSeconds uint32
+}
+
 func readLenEncString(buf *bytes.Buffer) (string, error) {
 	count, err := buf.ReadByte()
 
@@ -169,6 +212,36 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 	case structure.DATE,
 		structure.DATETIME,
 		structure.TIMESTAMP:
+		var d date
+		if err := binary.Read(buf, binary.LittleEndian, &d); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+
+		if d.Length == 4 {
+			return d, nil
+		}
+		var t timeS
+		if err := binary.Read(buf, binary.LittleEndian, &t); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+		if d.Length == 7 {
+			return dateTime{
+				date:  d,
+				timeS: t,
+			}, nil
+		}
+		var ms uint32
+		if err := binary.Read(buf, binary.LittleEndian, &ms); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+
+		return dateTimeMs{
+			date: d,
+			timeMs: timeMs{
+				timeS:        t,
+				MicroSeconds: ms,
+			},
+		}, nil
 		// FIXME: would be good to know locale for timestamp from server info assuming that's provided.
 		// byte position	description
 		// 1	data length : 4 without hour/minute/second part, 7 without fractional seconds, 11 with fractional seconds
@@ -183,6 +256,21 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		// 9-12	micro-second on 4 bytes little-endian format (only if data-length is > 7)
 
 	case structure.TIME:
+		var t timeInfo
+		if err := binary.Read(buf, binary.LittleEndian, &t); err != nil {
+			return nil, errors.Wrap(err, "decode-execute")
+		}
+
+		if t.Length == 12 {
+			// read microseconds
+			var ms uint32
+			if err := binary.Read(buf, binary.LittleEndian, &ms); err != nil {
+				return nil, errors.Wrap(err, "decode-execute")
+			}
+			return timeInfoMs{timeInfo: t, MicroSeconds: ms}, nil
+		}
+
+		return t, nil
 		// byte position	description
 		// 1	data length : 8 without fractional seconds, 12 with fractional seconds
 		// 2	is negative
@@ -222,8 +310,6 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		// starts with length encoded int for length,
 		// then we have the bytes
 	}
-	// FIXME: need to fill in the switch statement above to ensure we don't get here.
-	panic(errors.New("Missing return"))
 }
 
 func isText(b []byte) bool {
