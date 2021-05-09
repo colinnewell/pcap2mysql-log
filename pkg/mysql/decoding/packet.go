@@ -148,6 +148,7 @@ func readLenEncInt(buf io.Reader) (uint64, error) {
 // 	return string(b), nil
 // }
 
+//nolint:gocognit
 func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, error) {
 	switch fieldType {
 	case structure.FLOAT:
@@ -217,6 +218,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 			return nil, errors.Wrap(err, "decode-execute")
 		}
 
+		//nolint:gomnd
 		if d.Length == 4 {
 			return d, nil
 		}
@@ -224,6 +226,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		if err := binary.Read(buf, binary.LittleEndian, &t); err != nil {
 			return nil, errors.Wrap(err, "decode-execute")
 		}
+		//nolint:gomnd
 		if d.Length == 7 {
 			return dateTime{
 				date:  d,
@@ -261,6 +264,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 			return nil, errors.Wrap(err, "decode-execute")
 		}
 
+		//nolint:gomnd
 		if t.Length == 12 {
 			// read microseconds
 			var ms uint32
