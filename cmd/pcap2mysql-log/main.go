@@ -34,15 +34,15 @@ func main() {
 		}
 	}
 
-	buildVersion := "unknown"
-	if bi, ok := debug.ReadBuildInfo(); ok {
-		// NOTE: right now this probably always returns (devel).  Hopefully
-		// will improve with new versions of Go.  It might be neat to add
-		// dep info too at some point since that's part of the build info.
-		buildVersion = bi.Main.Version
-	}
-
 	if displayVersion {
+		buildVersion := "unknown"
+		if bi, ok := debug.ReadBuildInfo(); ok {
+			// NOTE: right now this probably always returns (devel).  Hopefully
+			// will improve with new versions of Go.  It might be neat to add
+			// dep info too at some point since that's part of the build info.
+			buildVersion = bi.Main.Version
+		}
+
 		fmt.Printf("Version: %s %s\n", Version, buildVersion)
 		return
 	}
