@@ -1,8 +1,8 @@
 package decoding
 
 import (
+	"fmt"
 	"sort"
-	"sync"
 	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
@@ -67,6 +67,8 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 }
 
 func (b *MySQLConnectionBuilder) Connection() structure.Connection {
+	b.observers.Close()
+
 	items := append(b.Requests, b.Responses...)
 
 	sort.Slice(items, func(i, j int) bool {
@@ -126,18 +128,30 @@ func (l *TransmissionObserverList) AddObserver(need *[]structure.Transmission, h
 	return o
 }
 
+func (l *TransmissionObserverList) Close() error {
+	for _, o := range l.observers {
+		o.Close()
+	}
+	return nil
+}
+
 type TransmissionObserver struct {
-	a  *[]structure.Transmission
-	b  *[]structure.Transmission
-	wg sync.WaitGroup
+	a    *[]structure.Transmission
+	b    *[]structure.Transmission
+	ch   chan bool
+	done bool
 }
 
 func NewTransmissionObserver(need *[]structure.Transmission, have *[]structure.Transmission) *TransmissionObserver {
-	return &TransmissionObserver{a: need, b: have}
+	return &TransmissionObserver{a: need, b: have, ch: make(chan bool, 1)}
 }
 
 func (o *TransmissionObserver) TransmissionAdded() {
-	o.wg.Done()
+	if o.done {
+		return
+	}
+	fmt.Println("Transmission added")
+	o.ch <- true
 }
 
 func (o *TransmissionObserver) NextTransmission() int {
@@ -145,10 +159,16 @@ func (o *TransmissionObserver) NextTransmission() int {
 	// FIXME: would I be better with channels?
 	// and perhaps a timeout
 	i := len(*o.b)
-	for i < len(*o.a) {
-		o.wg.Add(1)
-		// wait for request to come in
-		o.wg.Wait()
+	for i > len(*o.a) {
+		fmt.Printf("Waiting for next transmission %d\n", i)
+		<-o.ch
 	}
+	o.done = true
 	return i
+}
+
+func (o *TransmissionObserver) Close() error {
+	close(o.ch)
+	o.done = true
+	return nil
 }
