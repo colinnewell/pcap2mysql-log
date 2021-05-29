@@ -2,6 +2,7 @@ package decoding
 
 import (
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
@@ -21,9 +22,10 @@ type MySQLConnectionBuilder struct {
 	Readers             *MySQLConnectionReaders
 	Requests            []structure.Transmission
 	Responses           []structure.Transmission
-	previousRequestType string
-	justSeenGreeting    bool
+	previousRequestType []string
+	justSeenGreeting    []bool
 	queryParams         map[uint32]uint16
+	observers           TransmissionObserverList
 }
 
 func NewBuilder(
@@ -47,10 +49,10 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 		// how do we know that this sync's with the processing of the
 		// other side.  For instance, could we have read all the requests, then
 		// read all the responses?
-		b.previousRequestType = typeName
+		b.previousRequestType = append(b.previousRequestType, typeName)
 	} else {
 		b.Responses = append(b.Responses, t)
-		b.justSeenGreeting = typeName == "Greeting"
+		b.justSeenGreeting = append(b.justSeenGreeting, typeName == "Greeting")
 		if typeName == "PREPARE_OK" {
 			if rawPacket, ok := item.(structure.WithRawPacket); ok {
 				item = rawPacket.Transmission
@@ -61,6 +63,7 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 			b.queryParams[prepare.StatementID] = prepare.NumParams
 		}
 	}
+	b.observers.TransmissionAdded()
 }
 
 func (b *MySQLConnectionBuilder) Connection() structure.Connection {
@@ -82,11 +85,22 @@ func (b *MySQLConnectionBuilder) Connection() structure.Connection {
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {
-	return b.previousRequestType
+	o := b.observers.AddObserver(&b.Requests, &b.Responses)
+	i := o.NextTransmission()
+
+	if i >= len(b.previousRequestType) {
+		return ""
+	}
+
+	return b.previousRequestType[i]
 }
 
 func (b *MySQLConnectionBuilder) JustSeenGreeting() bool {
-	return b.justSeenGreeting
+	if len(b.justSeenGreeting) == 0 {
+		return false
+	}
+
+	return b.justSeenGreeting[len(b.justSeenGreeting)-1]
 }
 
 func (b *MySQLConnectionBuilder) ParamsForQuery(query uint32) uint16 {
@@ -94,4 +108,47 @@ func (b *MySQLConnectionBuilder) ParamsForQuery(query uint32) uint16 {
 		return params
 	}
 	return 0
+}
+
+type TransmissionObserverList struct {
+	observers []*TransmissionObserver
+}
+
+func (l *TransmissionObserverList) TransmissionAdded() {
+	for _, o := range l.observers {
+		o.TransmissionAdded()
+	}
+}
+
+func (l *TransmissionObserverList) AddObserver(need *[]structure.Transmission, have *[]structure.Transmission) *TransmissionObserver {
+	o := NewTransmissionObserver(need, have)
+	l.observers = append(l.observers, o)
+	return o
+}
+
+type TransmissionObserver struct {
+	a  *[]structure.Transmission
+	b  *[]structure.Transmission
+	wg sync.WaitGroup
+}
+
+func NewTransmissionObserver(need *[]structure.Transmission, have *[]structure.Transmission) *TransmissionObserver {
+	return &TransmissionObserver{a: need, b: have}
+}
+
+func (o *TransmissionObserver) TransmissionAdded() {
+	o.wg.Done()
+}
+
+func (o *TransmissionObserver) NextTransmission() int {
+	// wait until next one appears
+	// FIXME: would I be better with channels?
+	// and perhaps a timeout
+	i := len(*o.b)
+	for i < len(*o.a) {
+		o.wg.Add(1)
+		// wait for request to come in
+		o.wg.Wait()
+	}
+	return i
 }
