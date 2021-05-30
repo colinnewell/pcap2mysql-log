@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
@@ -35,9 +36,11 @@ func NewBuilder(
 	readers *MySQLConnectionReaders,
 ) *MySQLConnectionBuilder {
 	return &MySQLConnectionBuilder{
-		Address:     address,
-		Readers:     readers,
-		queryParams: make(map[uint32]uint16),
+		Address:        address,
+		Readers:        readers,
+		requestBuffer:  &packet.Buffer{},
+		responseBuffer: &packet.Buffer{},
+		queryParams:    make(map[uint32]uint16),
 	}
 }
 
@@ -68,9 +71,9 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 }
 
 func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
-	items := append(b.Requests, b.Responses...)
+	b.DecodeConnection()
 
-	// FIXME: now flush the buffers and decode.
+	items := append(b.Requests, b.Responses...)
 
 	if !noSort {
 		sort.Slice(items, func(i, j int) bool {
@@ -86,6 +89,76 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 	return structure.Connection{
 		Address: b.Address,
 		Items:   items,
+	}
+}
+
+func (b *MySQLConnectionBuilder) DecodeConnection() {
+	// FIXME: now flush the buffers and decode.
+
+	var reqE, resE Emitter
+	reqE = &TransmissionEmitter{
+		Request: false,
+		Times:   b.requestBuffer,
+		Builder: b,
+	}
+	resE = &TransmissionEmitter{
+		Request: false,
+		Times:   b.responseBuffer,
+		Builder: b,
+	}
+
+	// FIXME: add raw data emitting back in
+	requestDecoder := RequestDecoder{Emit: reqE}
+	responseDecoder := ResponseDecoder{Emit: resE}
+
+	// now loop through the packets an emit them to the decoders
+	// in order we saw them.
+	var requestPacket, responsePacket *packet.Packet
+
+	fmt.Println("new loop")
+	for {
+		fmt.Println("loop")
+		requestPacket = b.requestBuffer.CurrentPacket()
+		responsePacket = b.responseBuffer.CurrentPacket()
+
+		if responsePacket == nil && requestPacket == nil {
+			break
+		}
+
+		var writeRequest, writeResponse bool
+		switch {
+		case responsePacket == nil:
+			writeRequest = true
+		case requestPacket == nil:
+			writeResponse = true
+		case responsePacket.FirstSeen().Before(requestPacket.FirstSeen()):
+			writeResponse = true
+		default:
+			writeRequest = true
+		}
+
+		fmt.Printf("writeRequest %v, writeResponse %v\n", writeRequest, writeResponse)
+		// FIXME: do I want to turn these into functions?
+		switch {
+		case writeRequest:
+			_, err := requestDecoder.Write(requestPacket.Data)
+			if err != nil {
+				// FIXME: do something useful here.
+				return
+			}
+			b.requestBuffer.Next()
+		case writeResponse:
+			// do I want to do a copy here?
+			_, err := responseDecoder.Write(responsePacket.Data)
+			if err != nil {
+				// FIXME: do something useful here.
+				fmt.Printf("Error: %v\n", err)
+				return
+			}
+			b.responseBuffer.Next()
+		default:
+			panic("wtf")
+		}
 	}
 }
 
@@ -105,15 +178,11 @@ func (b *MySQLConnectionBuilder) ParamsForQuery(query uint32) uint16 {
 }
 
 func (b *MySQLConnectionBuilder) ResponsePacketBuffer(t *tcp.TimeCaptureReader) *packet.Buffer {
-	b.responseBuffer = &packet.Buffer{
-		Times: t,
-	}
+	b.responseBuffer.SetTimes(t)
 	return b.responseBuffer
 }
 
 func (b *MySQLConnectionBuilder) RequestPacketBuffer(t *tcp.TimeCaptureReader) *packet.Buffer {
-	b.requestBuffer = &packet.Buffer{
-		Times: t,
-	}
+	b.requestBuffer.SetTimes(t)
 	return b.requestBuffer
 }

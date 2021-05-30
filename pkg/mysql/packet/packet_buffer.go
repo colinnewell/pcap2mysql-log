@@ -1,6 +1,7 @@
 package packet
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -19,17 +20,29 @@ type Packet struct {
 	Data []byte
 }
 
+func (p Packet) FirstSeen() time.Time {
+	if len(p.Seen) > 0 {
+		return p.Seen[0]
+	}
+	return time.Time{}
+}
+
 // Buffer buffers MySQL packets along with their times seen so they can
 // be played back in order.
 type Buffer struct {
-	Times   TimesSeen
+	times   TimesSeen
 	packets []Packet
+	pos     int
+}
+
+func (b *Buffer) SetTimes(t TimesSeen) {
+	b.times = t
 }
 
 // Write buffers up the packets and stores when they were seen.
 func (b *Buffer) Write(p []byte) (n int, err error) {
-	packet := Packet{Data: p, Seen: b.Times.Seen()}
-	b.Times.Reset()
+	packet := Packet{Data: p, Seen: b.times.Seen()}
+	b.times.Reset()
 	if len(packet.Seen) == 0 {
 		lastPacket := len(b.packets) - 1
 		if lastPacket >= 0 {
@@ -40,4 +53,30 @@ func (b *Buffer) Write(p []byte) (n int, err error) {
 	}
 	b.packets = append(b.packets, packet)
 	return len(p), nil
+}
+
+func (b *Buffer) CurrentPacket() *Packet {
+	fmt.Printf("pos: %d, len: %d\n", b.pos, len(b.packets))
+	if b.pos >= len(b.packets) {
+		return nil
+	}
+
+	return &b.packets[b.pos]
+}
+
+func (b *Buffer) Next() {
+	fmt.Printf("next --- pos: %d, len: %d\n", b.pos, len(b.packets))
+	b.pos++
+}
+
+func (*Buffer) Reset() {
+	// FIXME: this is awkward.  This is wanted for the times seen thing
+}
+
+func (b *Buffer) Seen() []time.Time {
+	p := b.CurrentPacket()
+	if p == nil {
+		return []time.Time{}
+	}
+	return p.Seen
 }

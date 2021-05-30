@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"sort"
@@ -73,6 +74,7 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 		address = structure.ConnectionAddress{IP: a, Port: b}
 	}
 
+	fmt.Println("Read stream")
 	builder := h.ConnectionBuilder(address)
 	var buf *packet.Buffer
 	if response {
@@ -83,10 +85,14 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 
 	for {
 		if _, err := packet.Copy(t, buf); err != nil {
+			if err == io.EOF {
+				break
+			}
 			if h.verbose {
 				log.Printf("Error on response: %s\n", err)
 			}
 			drain(t, nil, a, b)
+			break
 		}
 	}
 }
