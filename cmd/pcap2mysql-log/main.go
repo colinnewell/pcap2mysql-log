@@ -18,12 +18,13 @@ import (
 )
 
 func main() {
-	var assemblyDebug, displayVersion, rawData, verbose bool
+	var assemblyDebug, displayVersion, noSort, rawData, verbose bool
 	var serverPorts []int32
 
 	pflag.BoolVar(&assemblyDebug, "assembly-debug", false, "Debug log from the tcp assembly")
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
 	pflag.BoolVar(&rawData, "raw-data", false, "Include the raw packet data")
+	pflag.BoolVar(&noSort, "no-sort", false, "Don't sort packets by time")
 	pflag.BoolVar(&verbose, "verbose", false, "Vocalise error info")
 	pflag.Int32SliceVar(&serverPorts, "server-ports", []int32{}, "Server ports")
 	pflag.Parse()
@@ -50,14 +51,14 @@ func main() {
 	files := pflag.Args()
 
 	if len(files) > 0 {
-		processHarFiles(serverPorts, files, rawData, verbose)
+		processHarFiles(serverPorts, files, noSort, rawData, verbose)
 		return
 	}
 
 	fmt.Println("Specify pcap files to process")
 }
 
-func processHarFiles(serverPorts []int32, files []string, rawData bool, verbose bool) {
+func processHarFiles(serverPorts []int32, files []string, noSort bool, rawData bool, verbose bool) {
 	r := decoding.New(rawData, verbose)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
@@ -87,7 +88,7 @@ func processHarFiles(serverPorts []int32, files []string, rawData bool, verbose 
 	assembler.FlushAll()
 
 	streamFactory.Wait()
-	c := r.GetConnections()
+	c := r.GetConnections(noSort)
 	bytes, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		log.Println(err)

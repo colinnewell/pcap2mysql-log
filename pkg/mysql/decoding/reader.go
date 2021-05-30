@@ -30,23 +30,25 @@ func New(rawData bool, verbose bool) *MySQLConnectionReaders {
 	}
 }
 
-func (h *MySQLConnectionReaders) GetConnections() []structure.Connection {
+func (h *MySQLConnectionReaders) GetConnections(noSort bool) []structure.Connection {
 	connections := make([]structure.Connection, len(h.builders))
 	i := 0
 	for _, b := range h.builders {
-		connections[i] = b.Connection()
+		connections[i] = b.Connection(noSort)
 		i++
 	}
-	sort.Slice(connections, func(i, j int) bool {
-		switch {
-		case connections[i].FirstSeen().Before(connections[j].FirstSeen()):
-			return true
-		case connections[j].FirstSeen().Before(connections[i].FirstSeen()):
-			return false
-		default:
-			return connections[i].Address.String() > connections[j].Address.String()
-		}
-	})
+	if !noSort {
+		sort.Slice(connections, func(i, j int) bool {
+			switch {
+			case connections[i].FirstSeen().Before(connections[j].FirstSeen()):
+				return true
+			case connections[j].FirstSeen().Before(connections[i].FirstSeen()):
+				return false
+			default:
+				return connections[i].Address.String() > connections[j].Address.String()
+			}
+		})
+	}
 	return connections
 }
 

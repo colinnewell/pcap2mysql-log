@@ -63,17 +63,19 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 	}
 }
 
-func (b *MySQLConnectionBuilder) Connection() structure.Connection {
+func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 	items := append(b.Requests, b.Responses...)
 
-	sort.Slice(items, func(i, j int) bool {
-		if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
-			return items[i].Seen[0].Before(items[j].Seen[0])
-		} else if len(items[i].Seen) > 0 {
-			return true
-		}
-		return false
-	})
+	if !noSort {
+		sort.Slice(items, func(i, j int) bool {
+			if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
+				return items[i].Seen[0].Before(items[j].Seen[0])
+			} else if len(items[i].Seen) > 0 {
+				return true
+			}
+			return false
+		})
+	}
 
 	return structure.Connection{
 		Address: b.Address,

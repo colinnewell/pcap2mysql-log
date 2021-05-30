@@ -34,7 +34,7 @@ func TestHTTPStreamRead(t *testing.T) {
 		}
 	}
 	assembler.FlushAll()
-	c := r.GetConnections()
+	c := r.GetConnections(false)
 	// FIXME: test in more detail.
 	expected := 29
 	if len(c) != expected {
