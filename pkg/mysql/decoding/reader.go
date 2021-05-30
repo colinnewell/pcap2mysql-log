@@ -62,36 +62,32 @@ func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) error {
 // ReadStream tries to read tcp connections and extract MySQL connections.
 func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 	t := tcp.NewTimeCaptureReader(r)
-	spr := tcp.NewSavePointReader(t)
 	src, dest := b.Endpoints()
-	decoders := [2]streamDecoder{}
+
+	var response bool
+	var address structure.ConnectionAddress
 	if src.LessThan(dest) {
-		// assume response
-		decoders[0] = h.ReadMySQLResponse
+		address = structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
+		response = true
 	} else {
-		// assume request
-		decoders[0] = h.ReadRequestDecoder
+		address = structure.ConnectionAddress{IP: a, Port: b}
 	}
-	decoders[1] = drain
+
+	builder := h.ConnectionBuilder(address)
+	var buf *packet.Buffer
+	if response {
+		buf = builder.ResponsePacketBuffer(t)
+	} else {
+		buf = builder.RequestPacketBuffer(t)
+	}
 
 	for {
-		for i, decode := range decoders {
-			spr.SavePoint()
-			err := decode(spr, t, a, b)
-			if err == nil {
-				break
+		if _, err := packet.Copy(t, buf); err != nil {
+			if h.verbose {
+				log.Printf("Error on response: %s\n", err)
 			}
-			if err == io.EOF {
-				return
-			} else if err != nil {
-				// don't need to restore before the last one
-				if i+1 < len(decoders) {
-					// can discard the save point on the final restore
-					spr.Restore(i < len(decoders))
-				}
-			}
+			drain(t, nil, a, b)
 		}
-		t.Reset()
 	}
 }
 

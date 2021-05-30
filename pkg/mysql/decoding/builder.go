@@ -4,7 +4,9 @@ import (
 	"sort"
 	"time"
 
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
+	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 )
 
 type ConnectionBuilder interface {
@@ -24,6 +26,8 @@ type MySQLConnectionBuilder struct {
 	previousRequestType string
 	justSeenGreeting    bool
 	queryParams         map[uint32]uint16
+	requestBuffer       *packet.Buffer
+	responseBuffer      *packet.Buffer
 }
 
 func NewBuilder(
@@ -66,6 +70,8 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 	items := append(b.Requests, b.Responses...)
 
+	// FIXME: now flush the buffers and decode.
+
 	if !noSort {
 		sort.Slice(items, func(i, j int) bool {
 			if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
@@ -96,4 +102,18 @@ func (b *MySQLConnectionBuilder) ParamsForQuery(query uint32) uint16 {
 		return params
 	}
 	return 0
+}
+
+func (b *MySQLConnectionBuilder) ResponsePacketBuffer(t *tcp.TimeCaptureReader) *packet.Buffer {
+	b.responseBuffer = &packet.Buffer{
+		Times: t,
+	}
+	return b.responseBuffer
+}
+
+func (b *MySQLConnectionBuilder) RequestPacketBuffer(t *tcp.TimeCaptureReader) *packet.Buffer {
+	b.requestBuffer = &packet.Buffer{
+		Times: t,
+	}
+	return b.requestBuffer
 }
