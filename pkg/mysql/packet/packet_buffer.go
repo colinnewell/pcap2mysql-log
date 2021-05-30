@@ -1,7 +1,9 @@
 package packet
 
 import (
+	"encoding/base64"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -56,7 +58,6 @@ func (b *Buffer) Write(p []byte) (n int, err error) {
 }
 
 func (b *Buffer) CurrentPacket() *Packet {
-	fmt.Printf("pos: %d, len: %d\n", b.pos, len(b.packets))
 	if b.pos >= len(b.packets) {
 		return nil
 	}
@@ -65,7 +66,6 @@ func (b *Buffer) CurrentPacket() *Packet {
 }
 
 func (b *Buffer) Next() {
-	fmt.Printf("next --- pos: %d, len: %d\n", b.pos, len(b.packets))
 	b.pos++
 }
 
@@ -79,4 +79,12 @@ func (b *Buffer) Seen() []time.Time {
 		return []time.Time{}
 	}
 	return p.Seen
+}
+
+func (b *Buffer) String() string {
+	var sb strings.Builder
+	for _, p := range b.packets {
+		sb.WriteString(fmt.Sprintf("%v: %s\n", p.Seen, base64.StdEncoding.EncodeToString(p.Data)))
+	}
+	return sb.String()
 }

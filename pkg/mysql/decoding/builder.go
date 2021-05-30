@@ -94,6 +94,10 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 
 func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// FIXME: now flush the buffers and decode.
+	fmt.Println("Request")
+	fmt.Println(b.requestBuffer)
+	fmt.Println("Response")
+	fmt.Println(b.responseBuffer)
 
 	var reqE, resE Emitter
 	reqE = &TransmissionEmitter{
@@ -115,9 +119,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// in order we saw them.
 	var requestPacket, responsePacket *packet.Packet
 
-	fmt.Println("new loop")
 	for {
-		fmt.Println("loop")
 		requestPacket = b.requestBuffer.CurrentPacket()
 		responsePacket = b.responseBuffer.CurrentPacket()
 
@@ -137,7 +139,6 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			writeRequest = true
 		}
 
-		fmt.Printf("writeRequest %v, writeResponse %v\n", writeRequest, writeResponse)
 		// FIXME: do I want to turn these into functions?
 		switch {
 		case writeRequest:
