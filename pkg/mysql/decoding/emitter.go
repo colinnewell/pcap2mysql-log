@@ -3,15 +3,10 @@ package decoding
 import (
 	"bytes"
 	"io"
-	"time"
 
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
-
-type TimesSeen interface {
-	Reset()
-	Seen() []time.Time
-}
 
 type Emitter interface {
 	Transmission(typeName string, t interface{})
@@ -20,7 +15,7 @@ type Emitter interface {
 
 type TransmissionEmitter struct {
 	Request bool
-	Times   TimesSeen
+	Times   packet.TimesSeen
 	Builder *MySQLConnectionBuilder
 }
 
