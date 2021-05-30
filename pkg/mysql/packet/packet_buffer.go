@@ -4,6 +4,10 @@ import (
 	"time"
 )
 
+// TimesSeen interface for something that gathers the times that data was seen.
+// Due to the nature of how ip packets and then mysql packets, and then
+// 'requests' and 'responses' etc. may not have a one to one relationship there
+// may be multiple time stamps associated with parts of the data.
 type TimesSeen interface {
 	Reset()
 	Seen() []time.Time
