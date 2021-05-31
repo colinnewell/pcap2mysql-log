@@ -41,21 +41,12 @@ func (nm *NullBitMap) IsNull(column int) bool {
 		panic(errReadPastEnd)
 	}
 
-	var bitWidth, offset int
-
-	if nm.Width == ExecuteParams {
-		bitWidth = 8
-		offset = 0
-		// simple figure out byte then bit
-	} else {
-		bitWidth = 6
-		offset = 2
-		// data starts at bit 3 (what are the first 2 ?)
+	if nm.Width == ResultSetRow {
+		column += 2
 	}
 
-	bit := column % bitWidth
-	bit += offset
-	i := column / bitWidth
+	bit := column % byteWidth
+	i := column / byteWidth
 	mask := byte(1 << bit)
 	return nm.Data[i]&mask > 0
 }
