@@ -52,11 +52,8 @@ func (h *MySQLConnectionReaders) GetConnections(noSort bool) []structure.Connect
 	return connections
 }
 
-type streamDecoder func(io.Reader, *tcp.TimeCaptureReader, gopacket.Flow, gopacket.Flow) error
-
-func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) error {
+func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) {
 	tcpreader.DiscardBytesToEOF(spr)
-	return nil
 }
 
 // ReadStream tries to read tcp connections and extract MySQL connections.

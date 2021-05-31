@@ -6,7 +6,6 @@ import (
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
-	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 )
 
 type ConnectionBuilder interface {
@@ -172,12 +171,12 @@ func (b *MySQLConnectionBuilder) ParamsForQuery(query uint32) uint16 {
 	return 0
 }
 
-func (b *MySQLConnectionBuilder) ResponsePacketBuffer(t *tcp.TimeCaptureReader) *packet.Buffer {
+func (b *MySQLConnectionBuilder) ResponsePacketBuffer(t packet.TimesSeen) *packet.Buffer {
 	b.responseBuffer.SetTimes(t)
 	return b.responseBuffer
 }
 
-func (b *MySQLConnectionBuilder) RequestPacketBuffer(t *tcp.TimeCaptureReader) *packet.Buffer {
+func (b *MySQLConnectionBuilder) RequestPacketBuffer(t packet.TimesSeen) *packet.Buffer {
 	b.requestBuffer.SetTimes(t)
 	return b.requestBuffer
 }
