@@ -3,6 +3,7 @@
 for f in test/captures/*.pcap
 do
     FILE=test/captures/$(basename -s.pcap "$f")
+    echo Testing $f
     TZ= ./pcap2mysql-log $f > $FILE.actual
     if [ ! -f $FILE.expected ]
     then
