@@ -36,7 +36,15 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 
 	for length > 0 {
 		if int(length)+HeaderLen <= len(data) {
-			wrote, err := w.Receiver.Write(data[:HeaderLen+length])
+			// we aren't passed a safe slice, since the caller isn't sure what
+			// size chunk we need, it's left to us to copy the memory into a
+			// safe chunk for the end receiver to store.
+			safeCopy := make([]byte, HeaderLen+length)
+			n := copy(safeCopy, data[:HeaderLen+length])
+			if n < int(length)+HeaderLen {
+				panic("should be able to copy the full amount")
+			}
+			wrote, err := w.Receiver.Write(safeCopy)
 			written += wrote
 			if err != nil {
 				return written, errors.Wrap(err, "packet write failed")
