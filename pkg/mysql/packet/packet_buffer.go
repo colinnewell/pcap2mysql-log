@@ -1,9 +1,6 @@
 package packet
 
 import (
-	"encoding/base64"
-	"fmt"
-	"strings"
 	"time"
 )
 
@@ -79,12 +76,4 @@ func (b *Buffer) Seen() []time.Time {
 		return []time.Time{}
 	}
 	return p.Seen
-}
-
-func (b *Buffer) String() string {
-	var sb strings.Builder
-	for _, p := range b.packets {
-		sb.WriteString(fmt.Sprintf("%v: %s\n", p.Seen, base64.StdEncoding.EncodeToString(p.Data)))
-	}
-	return sb.String()
 }
