@@ -95,61 +95,6 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 	}
 }
 
-// ReadMySQLResponse try to read the stream as an MySQL response.
-func (h *MySQLConnectionReaders) ReadMySQLResponse(
-	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
-) error {
-	address := structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
-	var e Emitter
-	e = &TransmissionEmitter{
-		Request: false,
-		Times:   t,
-		Builder: h.ConnectionBuilder(address),
-	}
-	if h.rawData {
-		spr, e = SetupRawDataEmitter(e, spr)
-	}
-	interpreter := ResponseDecoder{Emit: e}
-
-	if _, err := packet.Copy(spr, &interpreter); err != nil {
-		if h.verbose {
-			log.Printf("Error on response: %s\n", err)
-		}
-		return err
-	}
-	interpreter.FlushResponse()
-
-	return nil
-}
-
-// ReadRequestDecoder try to read the stream as an MySQL request.
-func (h *MySQLConnectionReaders) ReadRequestDecoder(
-	spr io.Reader, t *tcp.TimeCaptureReader, a, b gopacket.Flow,
-) error {
-	address := structure.ConnectionAddress{IP: a, Port: b}
-	var e Emitter
-	e = &TransmissionEmitter{
-		Request: true,
-		Times:   t,
-		Builder: h.ConnectionBuilder(address),
-	}
-	if h.rawData {
-		spr, e = SetupRawDataEmitter(e, spr)
-	}
-	interpreter := RequestDecoder{
-		Emit: e,
-	}
-
-	if _, err := packet.Copy(spr, &interpreter); err != nil {
-		if h.verbose {
-			log.Printf("Error on request: %s\n", err)
-		}
-		return err
-	}
-
-	return nil
-}
-
 func (h *MySQLConnectionReaders) ConnectionBuilder(
 	address structure.ConnectionAddress,
 ) *MySQLConnectionBuilder {

@@ -154,6 +154,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			panic("wtf")
 		}
 	}
+	responseDecoder.FlushResponse()
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {
