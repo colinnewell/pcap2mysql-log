@@ -1,7 +1,6 @@
 package decoding
 
 import (
-	"fmt"
 	"sort"
 	"time"
 
@@ -94,14 +93,9 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 
 func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// FIXME: now flush the buffers and decode.
-	fmt.Println("Request")
-	fmt.Println(b.requestBuffer)
-	fmt.Println("Response")
-	fmt.Println(b.responseBuffer)
-
 	var reqE, resE Emitter
 	reqE = &TransmissionEmitter{
-		Request: false,
+		Request: true,
 		Times:   b.requestBuffer,
 		Builder: b,
 	}
@@ -153,7 +147,6 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			_, err := responseDecoder.Write(responsePacket.Data)
 			if err != nil {
 				// FIXME: do something useful here.
-				fmt.Printf("Error: %v\n", err)
 				return
 			}
 			b.responseBuffer.Next()
