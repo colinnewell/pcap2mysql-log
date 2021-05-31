@@ -2,6 +2,7 @@ package decoding_test
 
 import (
 	"bytes"
+	"io"
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
@@ -301,7 +302,7 @@ func testResponsePackets(t *testing.T, e testEmitter, input []byte, expected []i
 
 	r := decoding.ResponseDecoder{Emit: &e}
 	buf := bytes.NewBuffer(input)
-	if _, err := packet.Copy(buf, &r); err != nil {
+	if _, err := packet.Copy(buf, &r); err != nil && err != io.EOF {
 		t.Fatal(err)
 	}
 	r.FlushResponse()
