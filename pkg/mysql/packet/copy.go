@@ -19,13 +19,17 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 	copied := 0
 	n, err := rdr.Read(read[:])
 
+	var writeError error
 	for err == nil && n > 0 {
 		buf.Write(read[:n])
-		w, err := m.Write(buf.Bytes())
+		var w int
+		w, writeError = m.Write(buf.Bytes())
 
 		copied += w
-		if err != nil && errors.Is(err, ErrIncompletePacket) {
-			return copied, err
+		if writeError != nil {
+			if !errors.Is(writeError, ErrIncompletePacket) {
+				break
+			}
 		}
 		if w > 0 {
 			// suck up the data
@@ -33,8 +37,12 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 		}
 
 		// err checked as we come back around in the for loop.
-		//nolint:ineffassign,staticcheck
 		n, err = rdr.Read(read[:])
+	}
+
+	if writeError != nil {
+		// if we had an incomplete packet error, return that
+		return copied, writeError
 	}
 
 	return copied, err
