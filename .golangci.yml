@@ -8,6 +8,7 @@ linters:
     - dogsled
     - dupl
     - errcheck
+    - exportloopref
       # - funlen
     - gochecknoglobals
     - gochecknoinits
@@ -19,23 +20,21 @@ linters:
     - goerr113
     - gofmt
     - goimports
-    - golint
     - gomnd
     - goprintffuncname
     - gosec
     - gosimple
     - govet
     - ineffassign
-    - interfacer
     - lll
-    - maligned
     - misspell
     - nakedret
     - nestif
     - nolintlint
+    - revive
     - rowserrcheck
-    - exportloopref
     - staticcheck
+    - structcheck
     - structcheck
     - stylecheck
       #- testpackage

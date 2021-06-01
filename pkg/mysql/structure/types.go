@@ -179,13 +179,17 @@ type FieldDetail uint16
 type ResponseType byte
 
 const (
-	MySQLError       ResponseType = 0xff
-	MySQLEOF         ResponseType = 0xfe
-	MySQLOK          ResponseType = 0
+	// MySQLError type.
+	MySQLError ResponseType = 0xff
+	// MySQLEOF type.
+	MySQLEOF ResponseType = 0xfe
+	// MySQLOK type.
+	MySQLOK ResponseType = 0
+	// MySQLLocalInfile type.
 	MySQLLocalInfile ResponseType = 0xfb
 )
 
-//nolint:golint,stylecheck
+//nolint:revive,stylecheck
 const (
 	DECIMAL     FieldType = 0
 	TINY        FieldType = 1

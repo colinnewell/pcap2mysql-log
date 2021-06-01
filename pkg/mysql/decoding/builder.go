@@ -64,7 +64,9 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 }
 
 func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
-	items := append(b.Requests, b.Responses...)
+	var items []structure.Transmission
+	items = append(items, b.Requests...)
+	items = append(items, b.Responses...)
 
 	if !noSort {
 		sort.Slice(items, func(i, j int) bool {
