@@ -11,6 +11,12 @@ It is currently being developed as a quick tool to aid development, and is only
 really being developed as needed.  To develop it properly it really needs a lot
 of effort, and so far that isn't being expended on this.
 
+Rather than try to be clever with threads and synchronisation this is making a
+first pass at the data and breaking it into the MySQL packets.  Then it
+processes them in the order they appeared on the wire.  That does mean it holds
+onto large chunks of data in memory.  Very large capture files may be a
+struggle to process.
+
 ## Building
 
 This program requires libpcap to build and run.  On Linux you typically install
