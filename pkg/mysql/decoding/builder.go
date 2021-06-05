@@ -136,12 +136,14 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			// FIXME: should at least record errors probably
 			// for future study.
 			// we actually continue on, because in general we get more data that way.
+			//nolint:errcheck
 			requestDecoder.Write(requestPacket.Data)
 			b.requestBuffer.Next()
 		case writeResponse:
 			// FIXME: should at least record errors probably
 			// for future study.
 			// we actually continue on, because in general we get more data that way.
+			//nolint:errcheck
 			responseDecoder.Write(responsePacket.Data)
 			b.responseBuffer.Next()
 		default:
