@@ -91,7 +91,6 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 }
 
 func (b *MySQLConnectionBuilder) DecodeConnection() {
-	// FIXME: now flush the buffers and decode.
 	var reqE, resE Emitter
 	reqE = &TransmissionEmitter{
 		Request: true,
@@ -132,25 +131,21 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			writeRequest = true
 		}
 
-		// FIXME: do I want to turn these into functions?
 		switch {
 		case writeRequest:
-			_, err := requestDecoder.Write(requestPacket.Data)
-			if err != nil {
-				// FIXME: do something useful here.
-				return
-			}
+			// FIXME: should at least record errors probably
+			// for future study.
+			// we actually continue on, because in general we get more data that way.
+			requestDecoder.Write(requestPacket.Data)
 			b.requestBuffer.Next()
 		case writeResponse:
-			// do I want to do a copy here?
-			_, err := responseDecoder.Write(responsePacket.Data)
-			if err != nil {
-				// FIXME: do something useful here.
-				return
-			}
+			// FIXME: should at least record errors probably
+			// for future study.
+			// we actually continue on, because in general we get more data that way.
+			responseDecoder.Write(responsePacket.Data)
 			b.responseBuffer.Next()
 		default:
-			panic("wtf")
+			panic("wat")
 		}
 	}
 	responseDecoder.FlushResponse()
