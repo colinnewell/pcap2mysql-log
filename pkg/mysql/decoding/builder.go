@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"io"
 	"sort"
 	"time"
 
@@ -24,6 +25,7 @@ type MySQLConnectionBuilder struct {
 	Responses           []structure.Transmission
 	previousRequestType string
 	justSeenGreeting    bool
+	rawData             bool
 	queryParams         map[uint32]uint16
 	requestBuffer       *packet.Buffer
 	responseBuffer      *packet.Buffer
@@ -105,11 +107,18 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		Builder: b,
 	}
 
-	// FIXME: add raw data emitting back in
-	requestDecoder := RequestDecoder{Emit: reqE}
-	responseDecoder := ResponseDecoder{Emit: resE}
+	var requestDecoder, responseDecoder io.Writer
+	rqd := &RequestDecoder{Emit: reqE}
+	requestDecoder = rqd
+	resd := &ResponseDecoder{Emit: resE}
+	responseDecoder = resd
 
-	// now loop through the packets an emit them to the decoders
+	if b.Readers.RawData {
+		requestDecoder, rqd.Emit = SetupRawDataEmitter(rqd.Emit, requestDecoder)
+		responseDecoder, resd.Emit = SetupRawDataEmitter(resd.Emit, responseDecoder)
+	}
+
+	// now loop through the packets and emit them to the decoders
 	// in order we saw them.
 	var requestPacket, responsePacket *packet.Packet
 
@@ -152,7 +161,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			panic("wat")
 		}
 	}
-	responseDecoder.FlushResponse()
+	resd.FlushResponse()
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {

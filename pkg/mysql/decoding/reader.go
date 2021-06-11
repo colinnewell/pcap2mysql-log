@@ -17,7 +17,7 @@ import (
 type MySQLConnectionReaders struct {
 	mu       sync.Mutex
 	builders map[structure.ConnectionAddress]*MySQLConnectionBuilder
-	rawData  bool
+	RawData  bool
 	verbose  bool
 }
 
@@ -25,7 +25,7 @@ func New(rawData bool, verbose bool) *MySQLConnectionReaders {
 	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
 		builders: builders,
-		rawData:  rawData,
+		RawData:  rawData,
 		verbose:  verbose,
 	}
 }

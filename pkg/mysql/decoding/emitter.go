@@ -33,9 +33,9 @@ type RawDataEmitter struct {
 	emitter Emitter
 }
 
-func SetupRawDataEmitter(e Emitter, rdr io.Reader) (io.Reader, *RawDataEmitter) {
+func SetupRawDataEmitter(e Emitter, wrt io.Writer) (io.Writer, *RawDataEmitter) {
 	emitter := RawDataEmitter{emitter: e}
-	return io.TeeReader(rdr, &emitter.read), &emitter
+	return io.MultiWriter(&emitter.read, wrt), &emitter
 }
 
 func (e *RawDataEmitter) Transmission(typeName string, t interface{}) {
