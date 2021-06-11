@@ -88,10 +88,9 @@ func (r *TCPReaderStream) stripEmpty() {
 	}
 }
 
-// DataLost is returned by the TCPReaderStream's Read function when it encounters
+// ErrDataLost is returned by the TCPReaderStream's Read function when it encounters
 // a Reassembly with Skip != 0.
-//nolint:gochecknoglobals,golint,stylecheck
-var DataLost = errors.New("lost data")
+var ErrDataLost = errors.New("lost data")
 
 // Read implements io.Reader's Read function.
 // Given a byte slice, it will either copy a non-zero number of bytes into
@@ -119,7 +118,7 @@ func (r *TCPReaderStream) Read(p []byte) (int, error) {
 		current := &r.current[0]
 		if r.LossErrors && !r.lossReported && current.Skip != 0 {
 			r.lossReported = true
-			return 0, DataLost
+			return 0, ErrDataLost
 		}
 		length := copy(p, current.Bytes)
 		current.Bytes = current.Bytes[length:]
