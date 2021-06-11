@@ -25,7 +25,6 @@ type MySQLConnectionBuilder struct {
 	Responses           []structure.Transmission
 	previousRequestType string
 	justSeenGreeting    bool
-	rawData             bool
 	queryParams         map[uint32]uint16
 	requestBuffer       *packet.Buffer
 	responseBuffer      *packet.Buffer
