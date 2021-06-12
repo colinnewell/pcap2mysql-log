@@ -2,6 +2,7 @@ package packet_test
 
 import (
 	"bytes"
+	"io"
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
@@ -45,7 +46,7 @@ func TestOnePacketExample(t *testing.T) {
 
 	var b bytes.Buffer
 	d := packet.MySQLPacketDecompressor{Receiver: &b}
-	if _, err := d.Write(input); err != nil {
+	if _, err := d.Write(input); err != nil && err != io.EOF {
 		t.Fatal(err)
 	}
 
