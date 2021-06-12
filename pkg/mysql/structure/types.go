@@ -44,10 +44,12 @@ type Transmission struct {
 }
 
 type DecodeError struct {
-	DecodeError       error
-	DecodeErrorString string
-	Direction         string
-	Packet            *packet.Packet
+	DecodeError         error
+	DecodeErrorString   string
+	Direction           string
+	JustSeenGreeting    bool `json:"JustSeenGreeting,omitempty"`
+	Packet              *packet.Packet
+	PreviousRequestType string `json:"JustSeenGreeting,omitempty"`
 }
 
 type Request struct {
