@@ -143,18 +143,26 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 
 		switch {
 		case writeRequest:
-			// FIXME: should at least record errors probably
-			// for future study.
-			// we actually continue on, because in general we get more data that way.
-			//nolint:errcheck
-			requestDecoder.Write(requestPacket.Data)
+			if _, err := requestDecoder.Write(requestPacket.Data); err != nil {
+				rqd.Emit.Transmission("DECODE_ERROR",
+					structure.DecodeError{
+						Direction:   "Request",
+						DecodeError: err,
+						Packet:      requestPacket,
+					},
+				)
+			}
 			b.requestBuffer.Next()
 		case writeResponse:
-			// FIXME: should at least record errors probably
-			// for future study.
-			// we actually continue on, because in general we get more data that way.
-			//nolint:errcheck
-			responseDecoder.Write(responsePacket.Data)
+			if _, err := responseDecoder.Write(responsePacket.Data); err != nil {
+				resd.Emit.Transmission("DECODE_ERROR",
+					structure.DecodeError{
+						Direction:   "Response",
+						DecodeError: err,
+						Packet:      responsePacket,
+					},
+				)
+			}
 			b.responseBuffer.Next()
 		default:
 			panic("wat")

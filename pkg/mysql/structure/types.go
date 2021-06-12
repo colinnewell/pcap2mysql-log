@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding/bitmap"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/google/gopacket"
 )
 
@@ -40,6 +41,12 @@ func (c Connection) FirstSeen() time.Time {
 type Transmission struct {
 	Data interface{}
 	Seen []time.Time
+}
+
+type DecodeError struct {
+	DecodeError error
+	Direction   string
+	Packet      *packet.Packet
 }
 
 type Request struct {
