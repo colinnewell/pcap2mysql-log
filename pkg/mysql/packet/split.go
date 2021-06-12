@@ -16,7 +16,8 @@ const InProgress = 0xffff
 // writer receives single MySQL packets for each Write call.  Will return an
 // error if it can't, or if the underlying writer errors.
 type MySQLPacketWriter struct {
-	Receiver io.Writer
+	Receiver            io.Writer
+	CompressionDetected bool
 }
 
 // ErrIncompletePacket the data being written didn't form a complete set of
@@ -31,15 +32,20 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 	var written int
 
 	length := mySQLPacketLength(data[:3])
+	var compressionLength uint32
+	if w.CompressionDetected {
+		// expecting to see 3 more bytes
+		compressionLength = 3
+	}
 
 	for length > 0 {
-		if int(length)+HeaderLen <= len(data) {
+		if int(length)+HeaderLen+int(compressionLength) <= len(data) {
 			// we aren't passed a safe slice, since the caller isn't sure what
 			// size chunk we need, it's left to us to copy the memory into a
 			// safe chunk for the end receiver to store.
-			safeCopy := make([]byte, HeaderLen+length)
-			n := copy(safeCopy, data[:HeaderLen+length])
-			if n < int(length)+HeaderLen {
+			safeCopy := make([]byte, compressionLength+length+HeaderLen)
+			n := copy(safeCopy, data[:HeaderLen+compressionLength+length])
+			if n < int(length)+HeaderLen+int(compressionLength) {
 				panic("should be able to copy the full amount")
 			}
 			wrote, err := w.Receiver.Write(safeCopy)
@@ -47,7 +53,7 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 			if err != nil {
 				return written, errors.Wrap(err, "packet write failed")
 			}
-			data = data[HeaderLen+length:]
+			data = data[HeaderLen+length+compressionLength:]
 		} else {
 			return written, ErrIncompletePacket
 		}
@@ -56,7 +62,7 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 			// hit the end
 			break
 		}
-		if len(data) < HeaderLen {
+		if len(data) < HeaderLen+int(compressionLength) {
 			return written, ErrIncompletePacket
 		}
 		length = mySQLPacketLength(data[:3])
