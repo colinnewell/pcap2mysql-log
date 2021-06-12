@@ -69,7 +69,7 @@ type ExecuteRequest struct {
 
 type LoginRequest struct {
 	Type                 string
-	ClientCapabilities   uint32
+	ClientCapabilities   ClientCapabilities
 	Collation            byte
 	ExtendedCapabilities uint32
 	MaxPacketSize        uint32
@@ -85,6 +85,66 @@ type ResultSetResponse struct {
 	Columns []ColumnInfo    `json:"Columns"`
 	Results [][]interface{} `json:"Results"`
 }
+
+type ClientCapabilities uint32
+
+func (c ClientCapabilities) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.String())
+}
+
+func (c ClientCapabilities) String() string {
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf("%d: ", c))
+	startLen := b.Len()
+	for _, flag := range []string{
+		"CLIENT_MYSQL",
+		"FOUND_ROWS",
+		"LONG_FLAG", // referenced in wireshark
+		"CONNECT_WITH_DB",
+		"NO SCHEMA",
+		"COMPRESS",
+		"ODBC",
+		"LOCAL_FILES",
+		"IGNORE_SPACE",
+		"CLIENT_PROTOCOL_41",
+		"CLIENT_INTERACTIVE",
+		"SSL",
+		"TRANSACTIONS",
+		"SECURE_CONNECTION",
+		"UNKNOWN",
+		"UNKNOWN",
+		"MULTI_STATEMENTS",
+		"MULTI_RESULTS",
+		"PS_MULTI_RESULTS",
+		"PLUGIN_AUTH",
+		"CONNECT_ATTRS",
+		"PLUGIN_AUTH_LENENC_CLIENT_DATA",
+		"UNKNOWN",
+		"CLIENT_SESSION_TRACK",
+		"CLIENT_DEPRECATE_EOF",
+		"UNKNOWN",
+		"CLIENT_ZSTD_COMPRESSION_ALGORITHM",
+		"UNKNOWN",
+		"UNKNOWN",
+		"CLIENT_CAPABILITY_EXTENSION",
+	} {
+		if c&1 == 1 {
+			if b.Len() > startLen {
+				b.WriteString("|")
+			}
+			b.WriteString(flag)
+		}
+		c >>= 1
+	}
+
+	return b.String()
+}
+
+// Extended capabilities?
+// MARIADB_CLIENT_PROGRESS	1 << 32	Client support progress indicator (since 10.2)
+// MARIADB_CLIENT_COM_MULTI	1 << 33	Permit COM_MULTI protocol
+// MARIADB_CLIENT_STMT_BULK_OPERATIONS	1 << 34	Permit bulk insert
+// MARIADB_CLIENT_EXTENDED_TYPE_INFO	1 << 35	add extended metadata information
 
 type StatusFlags uint16
 
@@ -172,7 +232,7 @@ type TypeInfo struct {
 }
 
 type Greeting struct {
-	Capabilities uint32
+	Capabilities ClientCapabilities
 	Collation    byte
 	Protocol     byte
 	Version      string
@@ -249,6 +309,28 @@ const (
 	DETAIL_ON_UPDATE_NOW_FLAG    FieldDetail = 8192
 	DETAIL_PART_KEY_FLAG         FieldDetail = 16384
 	DETAIL_NUM_FLAG              FieldDetail = 32768
+
+	CCAP_CLIENT_MYSQL                      ClientCapabilities = 1
+	CCAP_FOUND_ROWS                        ClientCapabilities = 2
+	CCAP_CONNECT_WITH_DB                   ClientCapabilities = 8
+	CCAP_COMPRESS                          ClientCapabilities = 32
+	CCAP_LOCAL_FILES                       ClientCapabilities = 128
+	CCAP_IGNORE_SPACE                      ClientCapabilities = 256
+	CCAP_CLIENT_PROTOCOL_41                ClientCapabilities = 1 << 9
+	CCAP_CLIENT_INTERACTIVE                ClientCapabilities = 1 << 10
+	CCAP_SSL                               ClientCapabilities = 1 << 11
+	CCAP_TRANSACTIONS                      ClientCapabilities = 1 << 12
+	CCAP_SECURE_CONNECTION                 ClientCapabilities = 1 << 13
+	CCAP_MULTI_STATEMENTS                  ClientCapabilities = 1 << 16
+	CCAP_MULTI_RESULTS                     ClientCapabilities = 1 << 17
+	CCAP_PS_MULTI_RESULTS                  ClientCapabilities = 1 << 18
+	CCAP_PLUGIN_AUTH                       ClientCapabilities = 1 << 19
+	CCAP_CONNECT_ATTRS                     ClientCapabilities = 1 << 20
+	CCAP_PLUGIN_AUTH_LENENC_CLIENT_DATA    ClientCapabilities = 1 << 21
+	CCAP_CLIENT_SESSION_TRACK              ClientCapabilities = 1 << 23
+	CCAP_CLIENT_DEPRECATE_EOF              ClientCapabilities = 1 << 24
+	CCAP_CLIENT_ZSTD_COMPRESSION_ALGORITHM ClientCapabilities = 1 << 26
+	CCAP_CLIENT_CAPABILITY_EXTENSION       ClientCapabilities = 1 << 29
 )
 
 func (d FieldDetail) MarshalJSON() ([]byte, error) {

@@ -44,7 +44,7 @@ func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
 	login := structure.LoginRequest{Type: "Login"}
 	b := bytes.NewBuffer(p[packet.HeaderLen:])
 	v := struct {
-		ClientCapabilities   uint32
+		ClientCapabilities   structure.ClientCapabilities
 		MaxPacketSize        uint32
 		Collation            byte
 		Reserved             [19]byte

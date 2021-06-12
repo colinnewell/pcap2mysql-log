@@ -256,7 +256,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 	// FIXME: not sure if this is the best way to decode the capability info
 	capabilities := binary.LittleEndian.Uint32(capabilityBytes[:])
 	m.Emit.Transmission("Greeting", structure.Greeting{
-		Capabilities: capabilities,
+		Capabilities: structure.ClientCapabilities(capabilities),
 		Collation:    collation,
 		Protocol:     protocol,
 		Type:         "Greeting",
