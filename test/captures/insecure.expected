@@ -92,7 +92,7 @@
     "Items": [
       {
         "Data": {
-          "Capabilities": 196607,
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
           "Collation": 8,
           "Protocol": 10,
           "Version": "5.7.25",
@@ -105,7 +105,7 @@
       {
         "Data": {
           "Type": "Login",
-          "ClientCapabilities": 10396303,
+          "ClientCapabilities": "10396303: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|CLIENT_SESSION_TRACK",
           "Collation": 8,
           "ExtendedCapabilities": 0,
           "MaxPacketSize": 1073741824,
@@ -537,7 +537,7 @@
     "Items": [
       {
         "Data": {
-          "Capabilities": 196607,
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
           "Collation": 8,
           "Protocol": 10,
           "Version": "5.7.25",
@@ -550,7 +550,7 @@
       {
         "Data": {
           "Type": "Login",
-          "ClientCapabilities": 10396303,
+          "ClientCapabilities": "10396303: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|CLIENT_SESSION_TRACK",
           "Collation": 8,
           "ExtendedCapabilities": 0,
           "MaxPacketSize": 1073741824,
@@ -975,7 +975,7 @@
     "Items": [
       {
         "Data": {
-          "Capabilities": 196607,
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
           "Collation": 8,
           "Protocol": 10,
           "Version": "5.7.25",
@@ -988,7 +988,7 @@
       {
         "Data": {
           "Type": "Login",
-          "ClientCapabilities": 10396303,
+          "ClientCapabilities": "10396303: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|CLIENT_SESSION_TRACK",
           "Collation": 8,
           "ExtendedCapabilities": 0,
           "MaxPacketSize": 1073741824,
@@ -2106,7 +2106,7 @@
     "Items": [
       {
         "Data": {
-          "Capabilities": 196607,
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
           "Collation": 8,
           "Protocol": 10,
           "Version": "5.7.25",
@@ -2119,7 +2119,7 @@
       {
         "Data": {
           "Type": "Login",
-          "ClientCapabilities": 10396303,
+          "ClientCapabilities": "10396303: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|CLIENT_SESSION_TRACK",
           "Collation": 8,
           "ExtendedCapabilities": 0,
           "MaxPacketSize": 1073741824,
@@ -2416,7 +2416,7 @@
     "Items": [
       {
         "Data": {
-          "Capabilities": 196607,
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
           "Collation": 8,
           "Protocol": 10,
           "Version": "5.7.25",
@@ -2429,7 +2429,7 @@
       {
         "Data": {
           "Type": "Login",
-          "ClientCapabilities": 10396303,
+          "ClientCapabilities": "10396303: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|CLIENT_SESSION_TRACK",
           "Collation": 8,
           "ExtendedCapabilities": 0,
           "MaxPacketSize": 1073741824,
@@ -2547,7 +2547,7 @@
     "Items": [
       {
         "Data": {
-          "Capabilities": 196607,
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
           "Collation": 8,
           "Protocol": 10,
           "Version": "5.7.25",
@@ -2560,7 +2560,7 @@
       {
         "Data": {
           "Type": "Login",
-          "ClientCapabilities": 10396303,
+          "ClientCapabilities": "10396303: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|CLIENT_SESSION_TRACK",
           "Collation": 8,
           "ExtendedCapabilities": 0,
           "MaxPacketSize": 1073741824,
