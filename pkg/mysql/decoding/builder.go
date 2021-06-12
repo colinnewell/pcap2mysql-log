@@ -25,6 +25,7 @@ type MySQLConnectionBuilder struct {
 	Responses           []structure.Transmission
 	previousRequestType string
 	justSeenGreeting    bool
+	compressed          bool
 	queryParams         map[uint32]uint16
 	requestBuffer       *packet.Buffer
 	responseBuffer      *packet.Buffer
@@ -49,11 +50,14 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 	t := structure.Transmission{Data: item, Seen: seen}
 	if request {
 		b.Requests = append(b.Requests, t)
-		// FIXME: could this be problematic?
-		// how do we know that this sync's with the processing of the
-		// other side.  For instance, could we have read all the requests, then
-		// read all the responses?
 		b.previousRequestType = typeName
+		if typeName == "Login" {
+			if rawPacket, ok := item.(structure.WithRawPacket); ok {
+				item = rawPacket.Transmission
+			}
+			login := item.(structure.LoginRequest)
+			b.compressed = login.ClientCapabilities&structure.CCAP_COMPRESS != 0
+		}
 	} else {
 		b.Responses = append(b.Responses, t)
 		b.justSeenGreeting = typeName == "Greeting"
@@ -61,8 +65,6 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 			if rawPacket, ok := item.(structure.WithRawPacket); ok {
 				item = rawPacket.Transmission
 			}
-			// might be neat to store more info, and also be able to join up to
-			// the query too.
 			prepare := item.(structure.PrepareOKResponse)
 			b.queryParams[prepare.StatementID] = prepare.NumParams
 		}
@@ -115,6 +117,10 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	if b.Readers.RawData {
 		requestDecoder, rqd.Emit = SetupRawDataEmitter(rqd.Emit, requestDecoder)
 		responseDecoder, resd.Emit = SetupRawDataEmitter(resd.Emit, responseDecoder)
+	}
+
+	if b.compressed {
+		// add an extra compression decoder onto the front of the writers.
 	}
 
 	// now loop through the packets and emit them to the decoders
