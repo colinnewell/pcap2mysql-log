@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 for f in test/captures/*.pcap
 do
@@ -9,5 +9,5 @@ do
     then
         cp $FILE.actual $FILE.expected
     fi
-    diff $FILE.expected $FILE.actual || (echo $f && exit 1)
+    diff $FILE.expected $FILE.actual || (echo diff $FILE.expected $FILE.actual && exit 1)
 done
