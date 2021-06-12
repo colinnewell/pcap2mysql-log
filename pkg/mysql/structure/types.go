@@ -44,9 +44,10 @@ type Transmission struct {
 }
 
 type DecodeError struct {
-	DecodeError error
-	Direction   string
-	Packet      *packet.Packet
+	DecodeError       error
+	DecodeErrorString string
+	Direction         string
+	Packet            *packet.Packet
 }
 
 type Request struct {

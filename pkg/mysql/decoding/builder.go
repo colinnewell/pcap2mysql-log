@@ -146,9 +146,10 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			if _, err := requestDecoder.Write(requestPacket.Data); err != nil {
 				rqd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
-						Direction:   "Request",
-						DecodeError: err,
-						Packet:      requestPacket,
+						Direction:         "Request",
+						DecodeError:       err,
+						DecodeErrorString: err.Error(),
+						Packet:            requestPacket,
 					},
 				)
 			}
@@ -157,9 +158,10 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			if _, err := responseDecoder.Write(responsePacket.Data); err != nil {
 				resd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
-						Direction:   "Response",
-						DecodeError: err,
-						Packet:      responsePacket,
+						Direction:         "Response",
+						DecodeError:       err,
+						DecodeErrorString: err.Error(),
+						Packet:            responsePacket,
 					},
 				)
 			}
