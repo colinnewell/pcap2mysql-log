@@ -49,7 +49,7 @@ type DecodeError struct {
 	Direction           string
 	JustSeenGreeting    bool `json:"JustSeenGreeting,omitempty"`
 	Packet              *packet.Packet
-	PreviousRequestType string `json:"JustSeenGreeting,omitempty"`
+	PreviousRequestType string `json:"PreviousRequestType,omitempty"`
 }
 
 type Request struct {
