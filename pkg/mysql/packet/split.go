@@ -30,9 +30,7 @@ var ErrIncompletePacket = er.New("packet: incomplete packet")
 func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 	var written int
 
-	var lengthBuffer [HeaderLen]byte
-	copy(lengthBuffer[:], data[:3])
-	length := binary.LittleEndian.Uint32(lengthBuffer[:])
+	length := mySQLPacketLength(data[:3])
 
 	for length > 0 {
 		if int(length)+HeaderLen <= len(data) {
@@ -61,9 +59,14 @@ func (w *MySQLPacketWriter) Write(data []byte) (n int, err error) {
 		if len(data) < HeaderLen {
 			return written, ErrIncompletePacket
 		}
-		copy(lengthBuffer[:], data[:3])
-		length = binary.LittleEndian.Uint32(lengthBuffer[:])
+		length = mySQLPacketLength(data[:3])
 	}
 
 	return written, nil
+}
+
+func mySQLPacketLength(block []byte) uint32 {
+	var lengthBuffer [HeaderLen]byte
+	copy(lengthBuffer[:], block)
+	return binary.LittleEndian.Uint32(lengthBuffer[:])
 }
