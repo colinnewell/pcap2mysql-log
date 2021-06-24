@@ -77,6 +77,7 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 	} else {
 		buf = builder.RequestPacketBuffer(t)
 	}
+	defer builder.ReadDone()
 
 	for {
 		if _, err := packet.Copy(t, buf); err != nil {
