@@ -10,6 +10,8 @@ import (
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
 
+const bothSides = 2
+
 type ConnectionBuilder interface {
 	AddToConnection(
 		request bool, seen []time.Time, typeName string, item interface{},
@@ -218,7 +220,7 @@ func (b *MySQLConnectionBuilder) ReadDone() {
 	b.mu.Lock()
 	b.readsCompleted++
 	b.mu.Unlock()
-	if b.readsCompleted == 2 {
+	if b.readsCompleted == bothSides {
 		b.DecodeConnection()
 	}
 }
