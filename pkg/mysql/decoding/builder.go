@@ -3,6 +3,7 @@ package decoding
 import (
 	"io"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
@@ -30,6 +31,7 @@ type MySQLConnectionBuilder struct {
 	responseBuffer      *packet.Buffer
 	readsCompleted      int
 	decoded             bool
+	mu                  sync.Mutex
 }
 
 func NewBuilder(
@@ -96,6 +98,8 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 }
 
 func (b *MySQLConnectionBuilder) DecodeConnection() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	if b.decoded {
 		return
 	}
@@ -211,7 +215,9 @@ func (b *MySQLConnectionBuilder) RequestPacketBuffer(t packet.TimesSeen) *packet
 }
 
 func (b *MySQLConnectionBuilder) ReadDone() {
+	b.mu.Lock()
 	b.readsCompleted++
+	b.mu.Unlock()
 	if b.readsCompleted == 2 {
 		b.DecodeConnection()
 	}
