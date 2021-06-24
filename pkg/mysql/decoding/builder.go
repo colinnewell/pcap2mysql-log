@@ -28,6 +28,8 @@ type MySQLConnectionBuilder struct {
 	queryParams         map[uint32]uint16
 	requestBuffer       *packet.Buffer
 	responseBuffer      *packet.Buffer
+	readsCompleted      int
+	decoded             bool
 }
 
 func NewBuilder(
@@ -94,6 +96,10 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 }
 
 func (b *MySQLConnectionBuilder) DecodeConnection() {
+	if b.decoded {
+		return
+	}
+
 	var reqE, resE Emitter
 	reqE = &TransmissionEmitter{
 		Request: true,
@@ -173,6 +179,10 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		}
 	}
 	resd.FlushResponse()
+	b.decoded = true
+	// don't need to hang onto these.
+	b.requestBuffer = nil
+	b.responseBuffer = nil
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {
@@ -198,4 +208,11 @@ func (b *MySQLConnectionBuilder) ResponsePacketBuffer(t packet.TimesSeen) *packe
 func (b *MySQLConnectionBuilder) RequestPacketBuffer(t packet.TimesSeen) *packet.Buffer {
 	b.requestBuffer.SetTimes(t)
 	return b.requestBuffer
+}
+
+func (b *MySQLConnectionBuilder) ReadDone() {
+	b.readsCompleted++
+	if b.readsCompleted == 2 {
+		b.DecodeConnection()
+	}
 }
