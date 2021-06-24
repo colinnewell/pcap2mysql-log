@@ -129,8 +129,9 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		responseDecoder, resd.Emit = SetupRawDataEmitter(resd.Emit, responseDecoder)
 	}
 
-	// now loop through the packets and emit them to the decoders
-	// in order we saw them.
+	// now loop through the packets and emit
+	// them to the decoders in order we saw
+	// them.
 	var requestPacket, responsePacket *packet.Packet
 
 	for {

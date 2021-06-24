@@ -45,7 +45,8 @@ func (b *Buffer) Write(p []byte) (n int, err error) {
 	if len(packet.Seen) == 0 {
 		lastPacket := len(b.packets) - 1
 		if lastPacket >= 0 {
-			// assume it must have come in at the same time as the previous
+			// assume it must have come in at
+			// the same time as the previous
 			// packet.
 			packet.Seen = b.packets[lastPacket].Seen
 		}
