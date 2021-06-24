@@ -7,7 +7,7 @@ import (
 )
 
 func TestFieldDetailString(t *testing.T) {
-	var d FieldDetail = DETAIL_UNIQUE_KEY
+	var d = DETAIL_UNIQUE_KEY
 
 	if diff := cmp.Diff(d.String(), "UNIQUE_KEY"); diff != "" {
 		t.Fatalf("Stringified version doesn't match (-got +expected):\n%s\n", diff)
