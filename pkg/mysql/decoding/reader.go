@@ -80,7 +80,7 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 	defer builder.ReadDone()
 
 	for {
-		if _, err := packet.Copy(t, buf); err != nil {
+		if _, err := io.Copy(buf, t); err != nil {
 			if err == io.EOF {
 				break
 			}

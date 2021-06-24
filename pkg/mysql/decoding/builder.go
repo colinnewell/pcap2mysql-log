@@ -134,6 +134,9 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// them.
 	var requestPacket, responsePacket *packet.Packet
 
+	// set up a copy to write to the decoders
+	// using a pipe
+
 	for {
 		requestPacket = b.requestBuffer.CurrentPacket()
 		responsePacket = b.responseBuffer.CurrentPacket()

@@ -11,6 +11,8 @@ import (
 // MySQL data at a time.  Makes use of the MySQLPacketWriter to even out the
 // data.
 func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
+	// FIXME: params to this function are backwards compared to io.Copy
+	// consider making consistent. also should be int64
 	var read [2048]byte
 	var buf bytes.Buffer
 
