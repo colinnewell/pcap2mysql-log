@@ -7,54 +7,45 @@ import (
 	"github.com/pkg/errors"
 )
 
-// PacketSplitter takes writes for the packets and ensures we emit full
+// Splitter takes writes for the packets and ensures we emit full
 // MySQL packets to the writer provided.  This will buffer up data as
 // necessary.  To check if there was left over, call the
 // IncompletePacket() function once done writing.
-type PacketSplitter struct {
+type Splitter struct {
 	buf              bytes.Buffer
 	writer           io.Writer
 	wrappedWriter    io.Writer
 	incompletePacket bool
 }
 
-func NewPacketSplitter(wrt io.Writer) *PacketSplitter {
-	return &PacketSplitter{
+func NewSplitter(wrt io.Writer) *Splitter {
+	return &Splitter{
 		writer:        wrt,
 		wrappedWriter: &MySQLPacketWriter{Receiver: wrt},
 	}
 }
 
-func (c *PacketSplitter) CompressionDetected() {
+func (c *Splitter) CompressionDetected() {
 	c.wrappedWriter = &MySQLPacketDecompressor{Receiver: c.writer}
 }
 
-func (c *PacketSplitter) Write(p []byte) (n int, err error) {
-
-	var writeError error
-	c.buf.Write(p[:n])
-	var w int
-	w, writeError = c.wrappedWriter.Write(c.buf.Bytes())
-
-	if writeError != nil {
-		if errors.Is(writeError, ErrIncompletePacket) {
+func (c *Splitter) Write(p []byte) (int, error) {
+	c.buf.Write(p)
+	n, err := c.wrappedWriter.Write(c.buf.Bytes())
+	if err != nil {
+		if errors.Is(err, ErrIncompletePacket) {
 			c.incompletePacket = true
-			return w, nil
+			return n, nil
 		}
+		return n, err
 	}
-	if w > 0 {
+	if n > 0 {
 		// suck up the data
-		c.buf.Next(w)
+		c.buf.Next(n)
 	}
-
-	if writeError != nil {
-		// if we had an incomplete packet error, return that
-		return w, writeError
-	}
-
-	return w, err
+	return n, nil
 }
 
-func (c *PacketSplitter) IncompletePacket() bool {
+func (c *Splitter) IncompletePacket() bool {
 	return c.incompletePacket
 }
