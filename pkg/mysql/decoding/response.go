@@ -68,7 +68,6 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			// check if it's really an EOF
 			m.Emit.Transmission("In file", structure.Response{Type: "In file"})
 		default:
-			fmt.Printf("Default: packetType: %v, %v\n", packetType, p)
 			m.State = fieldInfo
 			m.Fields = []structure.ColumnInfo{}
 			m.Results = [][]interface{}{}
@@ -131,7 +130,6 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			s, err := readLenEncString(buf)
 
 			if err != nil {
-				fmt.Printf("Error %v: %v\n", err, p)
 				return 0, errors.Wrap(err, "response-write")
 			}
 

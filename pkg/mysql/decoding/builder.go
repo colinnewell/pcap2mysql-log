@@ -1,7 +1,6 @@
 package decoding
 
 import (
-	"fmt"
 	"io"
 	"sort"
 	"sync"
@@ -172,10 +171,8 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		case requestPacket == nil:
 			writeResponse = true
 		case responsePacket.FirstSeen().Before(requestPacket.FirstSeen()):
-			fmt.Printf("res: %v, req: %v, compressionSet: %v\n", responsePacket.FirstSeen(), requestPacket.FirstSeen(), compressionSet)
 			writeResponse = true
 		default:
-			fmt.Printf("req: %v, res: %v, compressionSet: %v\n", requestPacket.FirstSeen(), responsePacket.FirstSeen(), compressionSet)
 			writeRequest = true
 		}
 
@@ -208,6 +205,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			b.responseBuffer.Next()
 			if compressionSet {
 				responsesSinceCompression++
+				// first response from server is uncompressed
 				if responsesSinceCompression == 1 {
 					resSplitter.CompressionDetected()
 				}
