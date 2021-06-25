@@ -178,7 +178,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 
 		switch {
 		case writeRequest:
-			if _, err := reqSplitter.Write(requestPacket.Data); err != nil {
+			if _, err := reqSplitter.Write(requestPacket.Data); err != nil && err != io.EOF {
 				rqd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
 						DecodeError:       err,
@@ -191,7 +191,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			}
 			b.requestBuffer.Next()
 		case writeResponse:
-			if _, err := resSplitter.Write(responsePacket.Data); err != nil {
+			if _, err := resSplitter.Write(responsePacket.Data); err != nil && err != io.EOF {
 				resd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
 						DecodeError:         err,
