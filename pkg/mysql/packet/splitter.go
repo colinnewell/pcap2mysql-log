@@ -14,24 +14,22 @@ import (
 type Splitter struct {
 	buf              bytes.Buffer
 	writer           io.Writer
-	wrappedWriter    io.Writer
 	incompletePacket bool
 }
 
 func NewSplitter(wrt io.Writer) *Splitter {
 	return &Splitter{
-		writer:        wrt,
-		wrappedWriter: &MySQLPacketWriter{Receiver: wrt},
+		writer: &MySQLPacketWriter{Receiver: wrt},
 	}
 }
 
 func (c *Splitter) CompressionDetected() {
-	c.wrappedWriter = &MySQLPacketDecompressor{Receiver: c.writer}
+	c.writer = &MySQLPacketDecompressor{Receiver: c.writer}
 }
 
 func (c *Splitter) Write(p []byte) (int, error) {
 	c.buf.Write(p)
-	n, err := c.wrappedWriter.Write(c.buf.Bytes())
+	n, err := c.writer.Write(c.buf.Bytes())
 	if err != nil {
 		if errors.Is(err, ErrIncompletePacket) {
 			c.incompletePacket = true

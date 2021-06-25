@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"fmt"
 	"io"
 	"sort"
 	"sync"
@@ -16,7 +17,7 @@ type ConnectionBuilder interface {
 	AddToConnection(
 		request bool, seen []time.Time, typeName string, item interface{},
 	)
-	LoginProcessed() bool
+	Compressed() bool
 	JustSeenGreeting() bool
 	PreviousRequestType() string
 	ParamsForQuery(query uint32) uint16
@@ -30,7 +31,6 @@ type MySQLConnectionBuilder struct {
 	compressed          bool
 	previousRequestType string
 	justSeenGreeting    bool
-	loginProcessed      bool
 	queryParams         map[uint32]uint16
 	requestBuffer       *packet.Buffer
 	responseBuffer      *packet.Buffer
@@ -65,7 +65,7 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 		// read all the responses?
 		b.previousRequestType = typeName
 		if typeName == "Login" {
-			b.loginProcessed = true
+			b.compressed = true
 			if rawPacket, ok := item.(structure.WithRawPacket); ok {
 				item = rawPacket.Transmission
 			}
@@ -172,8 +172,10 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		case requestPacket == nil:
 			writeResponse = true
 		case responsePacket.FirstSeen().Before(requestPacket.FirstSeen()):
+			fmt.Printf("res: %v, req: %v, compressionSet: %v\n", responsePacket.FirstSeen(), requestPacket.FirstSeen(), compressionSet)
 			writeResponse = true
 		default:
+			fmt.Printf("req: %v, res: %v, compressionSet: %v\n", requestPacket.FirstSeen(), responsePacket.FirstSeen(), compressionSet)
 			writeRequest = true
 		}
 
@@ -221,8 +223,8 @@ func (b *MySQLConnectionBuilder) PreviousRequestType() string {
 	return b.previousRequestType
 }
 
-func (b *MySQLConnectionBuilder) LoginProcessed() bool {
-	return b.loginProcessed
+func (b *MySQLConnectionBuilder) Compressed() bool {
+	return b.compressed
 }
 
 func (b *MySQLConnectionBuilder) JustSeenGreeting() bool {

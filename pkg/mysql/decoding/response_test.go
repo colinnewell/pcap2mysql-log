@@ -68,7 +68,7 @@ func (b *testOneSidedConnectionBuilder) PreviousRequestType() string {
 	return ""
 }
 
-func (b *testOneSidedConnectionBuilder) LoginProcessed() bool {
+func (b *testOneSidedConnectionBuilder) Compressed() bool {
 	return false
 }
 
@@ -243,7 +243,7 @@ func (b *prevRequestBuilder) PreviousRequestType() string {
 	return b.PreviousRequest
 }
 
-func (b *prevRequestBuilder) LoginProcessed() bool {
+func (b *prevRequestBuilder) Compressed() bool {
 	return false
 }
 

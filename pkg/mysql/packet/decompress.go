@@ -14,8 +14,17 @@ type MySQLPacketDecompressor struct {
 const compressedHeaderLen = 7
 
 func (w *MySQLPacketDecompressor) Write(data []byte) (int, error) {
+	if len(data) < compressedHeaderLen {
+		return 0, ErrIncompletePacket
+	}
+
 	compLength := mySQLPacketLength(data[:3])
 	unCompLength := mySQLPacketLength(data[4:6])
+
+	if len(data) < compressedHeaderLen+int(compLength) {
+		return 0, ErrIncompletePacket
+	}
+
 	dataBlock := data[compressedHeaderLen : compressedHeaderLen+compLength]
 	if unCompLength == 0 {
 		// not compressed, just strip off the extra header
