@@ -1,6 +1,7 @@
 package decoding
 
 import (
+	"fmt"
 	"io"
 	"sort"
 	"sync"
@@ -101,6 +102,7 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 
 func (b *MySQLConnectionBuilder) DecodeConnection() {
 	b.mu.Lock()
+	fmt.Println("Decode start")
 	defer b.mu.Unlock()
 	if b.decoded {
 		return
@@ -134,10 +136,46 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// them.
 	var requestPacket, responsePacket *packet.Packet
 
-	// set up a copy to write to the decoders
-	// using a pipe
+	reqReader, reqWriter := io.Pipe()
+	resReader, resWriter := io.Pipe()
+	go func() {
+		fmt.Println("Copy req")
+		if _, err := packet.Copy(reqReader, requestDecoder); err != nil {
+			fmt.Println("Read request error: ", err)
+			rqd.Emit.Transmission("DECODE_ERROR",
+				structure.DecodeError{
+					DecodeError:       err,
+					DecodeErrorString: err.Error(),
+					Direction:         "Request",
+					JustSeenGreeting:  b.justSeenGreeting,
+					Packet:            requestPacket,
+				},
+			)
+		}
+		fmt.Println("Done reading req")
+		reqReader.Close()
+	}()
+	go func() {
+		fmt.Println("Copy res")
+		if _, err := packet.Copy(resReader, responseDecoder); err != nil {
+			fmt.Println("Read response error: ", err)
+			rqd.Emit.Transmission("DECODE_ERROR",
+				structure.DecodeError{
+					DecodeError:         err,
+					DecodeErrorString:   err.Error(),
+					Direction:           "Response",
+					Packet:              responsePacket,
+					PreviousRequestType: b.previousRequestType,
+				},
+			)
+		}
+		fmt.Println("Done reading res")
+		resReader.Close()
+	}()
 
+	fmt.Println("Start loop")
 	for {
+		fmt.Println("loop")
 		requestPacket = b.requestBuffer.CurrentPacket()
 		responsePacket = b.responseBuffer.CurrentPacket()
 
@@ -159,7 +197,9 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 
 		switch {
 		case writeRequest:
-			if _, err := requestDecoder.Write(requestPacket.Data); err != nil {
+			fmt.Println("Write request")
+			if _, err := reqWriter.Write(requestPacket.Data); err != nil {
+				fmt.Println("Write request error: ", err)
 				rqd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
 						DecodeError:       err,
@@ -172,7 +212,9 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			}
 			b.requestBuffer.Next()
 		case writeResponse:
-			if _, err := responseDecoder.Write(responsePacket.Data); err != nil {
+			fmt.Println("Write response")
+			if _, err := resWriter.Write(responsePacket.Data); err != nil {
+				fmt.Println("Write response error: ", err)
 				resd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
 						DecodeError:         err,
@@ -188,11 +230,15 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			panic("wat")
 		}
 	}
+	fmt.Println("Loop complete done writing")
+	reqWriter.Close()
+	resWriter.Close()
 	resd.FlushResponse()
 	b.decoded = true
 	// don't need to hang onto these.
 	b.requestBuffer = nil
 	b.responseBuffer = nil
+	fmt.Println("Decode complete")
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {

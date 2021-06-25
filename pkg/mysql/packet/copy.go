@@ -2,6 +2,7 @@ package packet
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
 	"github.com/pkg/errors"
@@ -30,6 +31,7 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 		copied += w
 		if writeError != nil {
 			if !errors.Is(writeError, ErrIncompletePacket) {
+				fmt.Printf("Breaking: %v\n", writeError)
 				break
 			}
 		}
@@ -42,6 +44,9 @@ func Copy(rdr io.Reader, wrt io.Writer) (int, error) {
 		n, err = rdr.Read(read[:])
 	}
 
+	if err != nil {
+		fmt.Println("Copy read error: ", err)
+	}
 	if writeError != nil {
 		// if we had an incomplete packet error, return that
 		return copied, writeError
