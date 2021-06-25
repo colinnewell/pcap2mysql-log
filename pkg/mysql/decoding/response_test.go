@@ -68,6 +68,10 @@ func (b *testOneSidedConnectionBuilder) PreviousRequestType() string {
 	return ""
 }
 
+func (b *testOneSidedConnectionBuilder) LoginProcessed() bool {
+	return false
+}
+
 func (b *testOneSidedConnectionBuilder) JustSeenGreeting() bool {
 	return false
 }
@@ -237,6 +241,10 @@ func (b *prevRequestBuilder) PreviousRequestType() string {
 	}
 
 	return b.PreviousRequest
+}
+
+func (b *prevRequestBuilder) LoginProcessed() bool {
+	return false
 }
 
 func (b *prevRequestBuilder) JustSeenGreeting() bool {

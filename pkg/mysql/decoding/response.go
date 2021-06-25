@@ -44,7 +44,9 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	switch m.State {
 	case start:
 		packetType := structure.ResponseType(p[packet.HeaderLen])
-		if p[packet.PacketNo] == 0 && packetType != structure.MySQLError {
+		builder := m.Emit.ConnectionBuilder()
+		if p[packet.PacketNo] == 0 && !builder.LoginProcessed() &&
+			packetType != structure.MySQLError {
 			err := m.decodeGreeting(p[packet.HeaderLen:])
 			if err != nil {
 				return 0, errors.Wrap(err, "response-write")
