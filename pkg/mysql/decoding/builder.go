@@ -56,6 +56,7 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 	request bool, seen []time.Time, typeName string, item interface{},
 ) {
 	t := structure.Transmission{Data: item, Seen: seen}
+	//nolint:nestif
 	if request {
 		b.Requests = append(b.Requests, t)
 		// FIXME: could this be problematic?
