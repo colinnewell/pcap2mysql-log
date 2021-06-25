@@ -80,7 +80,8 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 	defer builder.ReadDone()
 
 	for {
-		if _, err := io.Copy(buf, t); err != nil {
+		n, err := io.Copy(buf, t)
+		if err != nil {
 			if err == io.EOF {
 				break
 			}
@@ -88,6 +89,9 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 				log.Printf("Error on response: %s\n", err)
 			}
 			drain(t, nil, a, b)
+			break
+		}
+		if n == 0 {
 			break
 		}
 	}
