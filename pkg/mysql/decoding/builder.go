@@ -26,6 +26,7 @@ type MySQLConnectionBuilder struct {
 	Readers             *MySQLConnectionReaders
 	Requests            []structure.Transmission
 	Responses           []structure.Transmission
+	compressed          bool
 	previousRequestType string
 	justSeenGreeting    bool
 	queryParams         map[uint32]uint16
@@ -60,6 +61,13 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 		// other side.  For instance, could we have read all the requests, then
 		// read all the responses?
 		b.previousRequestType = typeName
+		if typeName == "Login" {
+			if rawPacket, ok := item.(structure.WithRawPacket); ok {
+				item = rawPacket.Transmission
+			}
+			login := item.(structure.LoginRequest)
+			b.compressed = login.ClientCapabilities&structure.CCAP_COMPRESS != 0
+		}
 	} else {
 		b.Responses = append(b.Responses, t)
 		b.justSeenGreeting = typeName == "Greeting"
@@ -138,12 +146,19 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	reqSplitter := packet.NewSplitter(requestDecoder)
 	resSplitter := packet.NewSplitter(responseDecoder)
 
+	compressionSet := false
 	for {
 		requestPacket = b.requestBuffer.CurrentPacket()
 		responsePacket = b.responseBuffer.CurrentPacket()
 
 		if responsePacket == nil && requestPacket == nil {
 			break
+		}
+
+		if b.compressed && !compressionSet {
+			reqSplitter.CompressionDetected()
+			resSplitter.CompressionDetected()
+			compressionSet = true
 		}
 
 		var writeRequest, writeResponse bool
