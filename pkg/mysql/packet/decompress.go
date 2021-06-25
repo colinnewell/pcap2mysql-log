@@ -11,14 +11,16 @@ type MySQLPacketDecompressor struct {
 	Receiver io.Writer
 }
 
+const compressedHeaderLen = 7
+
 func (w *MySQLPacketDecompressor) Write(data []byte) (int, error) {
 	compLength := mySQLPacketLength(data[:3])
 	unCompLength := mySQLPacketLength(data[4:6])
-	dataBlock := data[7 : 7+compLength]
+	dataBlock := data[compressedHeaderLen : compressedHeaderLen+compLength]
 	if unCompLength == 0 {
 		// not compressed, just strip off the extra header
 		n, err := w.Receiver.Write(dataBlock)
-		return n + 7, err
+		return n + compressedHeaderLen, err
 	}
 
 	b := bytes.NewBuffer(dataBlock)
@@ -39,5 +41,5 @@ func (w *MySQLPacketDecompressor) Write(data []byte) (int, error) {
 	}
 
 	n, err := Copy(bytes.NewBuffer(enflated), w.Receiver)
-	return n + 7, err
+	return n + compressedHeaderLen, err
 }
