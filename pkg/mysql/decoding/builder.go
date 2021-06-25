@@ -110,6 +110,7 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 	}
 }
 
+//nolint:gocognit
 func (b *MySQLConnectionBuilder) DecodeConnection() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
