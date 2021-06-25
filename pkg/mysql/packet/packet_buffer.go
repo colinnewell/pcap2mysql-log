@@ -40,7 +40,9 @@ func (b *Buffer) SetTimes(t TimesSeen) {
 
 // Write buffers up the packets and stores when they were seen.
 func (b *Buffer) Write(p []byte) (n int, err error) {
-	packet := Packet{Data: p, Seen: b.times.Seen()}
+	data := make([]byte, len(p))
+	copy(data, p)
+	packet := Packet{Data: data, Seen: b.times.Seen()}
 	b.times.Reset()
 	if len(packet.Seen) == 0 {
 		lastPacket := len(b.packets) - 1
