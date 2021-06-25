@@ -134,8 +134,9 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// them.
 	var requestPacket, responsePacket *packet.Packet
 
-	// set up a copy to write to the decoders
-	// using a pipe
+	// FIXME: need to be able to set compression
+	reqSplitter := packet.NewSplitter(requestDecoder)
+	resSplitter := packet.NewSplitter(responseDecoder)
 
 	for {
 		requestPacket = b.requestBuffer.CurrentPacket()
@@ -159,7 +160,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 
 		switch {
 		case writeRequest:
-			if _, err := requestDecoder.Write(requestPacket.Data); err != nil {
+			if _, err := reqSplitter.Write(requestPacket.Data); err != nil {
 				rqd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
 						DecodeError:       err,
@@ -172,7 +173,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			}
 			b.requestBuffer.Next()
 		case writeResponse:
-			if _, err := responseDecoder.Write(responsePacket.Data); err != nil {
+			if _, err := resSplitter.Write(responsePacket.Data); err != nil {
 				resd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
 						DecodeError:         err,
@@ -193,6 +194,8 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// don't need to hang onto these.
 	b.requestBuffer = nil
 	b.responseBuffer = nil
+	// FIXME: perhaps check splitters to see if there is an incomplete
+	// packet in the pipe
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {
