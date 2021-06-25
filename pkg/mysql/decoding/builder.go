@@ -151,6 +151,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	resSplitter := packet.NewSplitter(responseDecoder)
 
 	compressionSet := false
+	responsesSinceCompression := 0
 	for {
 		requestPacket = b.requestBuffer.CurrentPacket()
 		responsePacket = b.responseBuffer.CurrentPacket()
@@ -161,7 +162,6 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 
 		if b.compressed && !compressionSet {
 			reqSplitter.CompressionDetected()
-			resSplitter.CompressionDetected()
 			compressionSet = true
 		}
 
@@ -206,6 +206,12 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 				)
 			}
 			b.responseBuffer.Next()
+			if compressionSet {
+				responsesSinceCompression++
+				if responsesSinceCompression == 1 {
+					resSplitter.CompressionDetected()
+				}
+			}
 		default:
 			panic("wat")
 		}
