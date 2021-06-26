@@ -30,16 +30,16 @@ func (c *Splitter) CompressionDetected() {
 func (c *Splitter) Write(p []byte) (int, error) {
 	c.buf.Write(p)
 	n, err := c.writer.Write(c.buf.Bytes())
+	if n > 0 {
+		// suck up the data
+		c.buf.Next(n)
+	}
 	if err != nil {
 		if errors.Is(err, ErrIncompletePacket) {
 			c.incompletePacket = true
 			return n, nil
 		}
 		return n, err
-	}
-	if n > 0 {
-		// suck up the data
-		c.buf.Next(n)
 	}
 	return n, nil
 }
