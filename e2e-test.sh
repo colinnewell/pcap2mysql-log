@@ -9,5 +9,5 @@ do
     then
         cp $FILE.actual $FILE.expected
     fi
-    diff $FILE.expected $FILE.actual || (echo Failed diff $FILE.expected $FILE.actual && exit 1)
+    diff -q $FILE.expected $FILE.actual || (echo Failed diff $FILE.expected $FILE.actual && exit 1)
 done
