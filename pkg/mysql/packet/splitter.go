@@ -34,14 +34,11 @@ func (c *Splitter) Write(p []byte) (int, error) {
 		// suck up the data
 		c.buf.Next(n)
 	}
-	if err != nil {
-		if errors.Is(err, ErrIncompletePacket) {
-			c.incompletePacket = true
-			return n, nil
-		}
-		return n, err
+	if err != nil && errors.Is(err, ErrIncompletePacket) {
+		c.incompletePacket = true
+		err = nil
 	}
-	return n, nil
+	return n, err
 }
 
 func (c *Splitter) IncompletePacket() bool {
