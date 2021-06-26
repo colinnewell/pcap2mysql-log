@@ -59,7 +59,9 @@ func main() {
 	fmt.Println("Specify pcap files to process")
 }
 
-func processHarFiles(serverPorts []int32, files []string, intermediateData bool, noSort bool, rawData bool, verbose bool) {
+func processHarFiles(
+	serverPorts []int32, files []string, intermediateData bool, noSort bool, rawData bool, verbose bool,
+) {
 	r := decoding.New(intermediateData, rawData, verbose)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
