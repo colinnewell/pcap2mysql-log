@@ -58,10 +58,6 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 	//nolint:nestif
 	if request {
 		b.Requests = append(b.Requests, t)
-		// FIXME: could this be problematic?
-		// how do we know that this sync's with the processing of the
-		// other side.  For instance, could we have read all the requests, then
-		// read all the responses?
 		b.previousRequestType = typeName
 		if typeName == "Login" {
 			b.compressed = true
