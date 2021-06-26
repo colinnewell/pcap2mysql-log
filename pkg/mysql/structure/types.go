@@ -44,6 +44,7 @@ type Transmission struct {
 }
 
 type DecodeError struct {
+	CompressionOn       bool
 	DecodeError         error
 	DecodeErrorString   string
 	Direction           string

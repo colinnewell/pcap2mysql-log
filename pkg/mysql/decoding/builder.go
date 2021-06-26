@@ -182,6 +182,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			if _, err := reqSplitter.Write(requestPacket.Data); err != nil && err != io.EOF {
 				rqd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
+						CompressionOn:     b.compressed,
 						DecodeError:       err,
 						DecodeErrorString: err.Error(),
 						Direction:         "Request",
@@ -195,6 +196,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			if _, err := resSplitter.Write(responsePacket.Data); err != nil && err != io.EOF {
 				resd.Emit.Transmission("DECODE_ERROR",
 					structure.DecodeError{
+						CompressionOn:       b.compressed,
 						DecodeError:         err,
 						DecodeErrorString:   err.Error(),
 						Direction:           "Response",
