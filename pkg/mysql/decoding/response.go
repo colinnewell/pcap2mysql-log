@@ -121,7 +121,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 				m.State = fieldInfoColumns
 			default:
 				m.Emit.Transmission("PREPARE_OK", m.prepareOK)
-				m.State = start
+				m.ResetState()
 			}
 			break
 		}
@@ -208,6 +208,7 @@ func (m *ResponseDecoder) FlushResponse() {
 
 func (m *ResponseDecoder) ResetState() {
 	m.State = start
+	m.prepareOK = structure.PrepareOKResponse{}
 }
 
 func (m *ResponseDecoder) decodeError(p []byte) {
