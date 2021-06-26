@@ -39,9 +39,6 @@ func SetupRawDataEmitter(e Emitter, wrt io.Writer) (io.Writer, *RawDataEmitter) 
 }
 
 func (e *RawDataEmitter) Transmission(typeName string, t interface{}) {
-	// take the buffer that has been emitted and tag that onto what we're
-	// emitting
-	// this feels flawed, should I be copying the byte array?
 	data := make([]byte, e.read.Len())
 	if e.read.Len() > 0 {
 		if _, err := e.read.Read(data); err != nil {
