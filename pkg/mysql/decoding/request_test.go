@@ -27,8 +27,8 @@ func TestDecodeRequest(t *testing.T) {
 
 	expected := []interface{}{
 		structure.Request{
-			Type:  "Query",
-			Query: "SELECT id, password, u2f, totp FROM users WHERE username = 'username'",
+			CorePacket: structure.CorePacket{Type: "Query"},
+			Query:      "SELECT id, password, u2f, totp FROM users WHERE username = 'username'",
 		},
 	}
 
@@ -44,7 +44,7 @@ func TestDecodeExecute(t *testing.T) {
 	}
 	expected := []interface{}{
 		structure.ExecuteRequest{
-			Type:           "Execute",
+			CorePacket:     structure.CorePacket{Type: "Execute"},
 			StatementID:    23,
 			IterationCount: 1,
 			NullMap: bitmap.New(
@@ -67,7 +67,7 @@ func TestDecodeExecuteNilParam(t *testing.T) {
 	}
 	expected := []interface{}{
 		structure.ExecuteRequest{
-			Type:           "Execute",
+			CorePacket:     structure.CorePacket{Type: "Execute"},
 			StatementID:    1,
 			IterationCount: 1,
 			NullMap: bitmap.New(
@@ -122,7 +122,7 @@ func TestDecodeLogin(t *testing.T) {
 	}
 	expected := []interface{}{
 		structure.LoginRequest{
-			Type:               "Login",
+			CorePacket:         structure.CorePacket{Type: "Login"},
 			ClientCapabilities: 10396303,
 			Collation:          8,
 			MaxPacketSize:      1073741824,
@@ -139,7 +139,7 @@ func TestDecodeExecWithParams(t *testing.T) {
 	}
 	expected := []interface{}{
 		structure.ExecuteRequest{
-			Type:           "Execute",
+			CorePacket:     structure.CorePacket{Type: "Execute"},
 			StatementID:    1,
 			IterationCount: 1,
 			NullMap: bitmap.New(

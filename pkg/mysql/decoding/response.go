@@ -58,7 +58,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			m.decodeError(p)
 		case structure.MySQLEOF:
 			// check if it's really an EOF
-			m.Emit.Transmission("EOF", structure.Response{Type: "EOF"})
+			m.Emit.Transmission("EOF", structure.Response{CorePacket: structure.CorePacket{Type: "EOF"}})
 		case structure.MySQLOK:
 			err := m.decodeOK(p[packet.HeaderLen+1:])
 			if err != nil {
@@ -66,7 +66,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			}
 		case structure.MySQLLocalInfile:
 			// check if it's really an EOF
-			m.Emit.Transmission("In file", structure.Response{Type: "In file"})
+			m.Emit.Transmission("In file", structure.Response{CorePacket: structure.CorePacket{Type: "In file"}})
 		default:
 			m.State = fieldInfo
 			m.Fields = []structure.ColumnInfo{}
@@ -190,9 +190,9 @@ func (m *ResponseDecoder) FlushResponse() {
 	}
 	// flush out all the data we have stored up.
 	m.Emit.Transmission("SQL results", structure.ResultSetResponse{
-		Type:    "SQL results",
-		Columns: m.Fields,
-		Results: m.Results,
+		CorePacket: structure.CorePacket{Type: "SQL results"},
+		Columns:    m.Fields,
+		Results:    m.Results,
 	})
 }
 
@@ -201,7 +201,7 @@ func (m *ResponseDecoder) ResetState() {
 }
 
 func (m *ResponseDecoder) decodeError(p []byte) {
-	errorMsg := structure.ErrorResponse{Type: "Error"}
+	errorMsg := structure.ErrorResponse{CorePacket: structure.CorePacket{Type: "Error"}}
 	if len(p) > packet.HeaderLen+3 {
 		errorCode := binary.LittleEndian.Uint16(p[packet.HeaderLen+1:])
 		errorMsg.Code = errorCode
@@ -261,7 +261,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 		Capabilities: structure.ClientCapabilities(capabilities),
 		Collation:    collation,
 		Protocol:     protocol,
-		Type:         "Greeting",
+		CorePacket:   structure.CorePacket{Type: "Greeting"},
 		Version:      version,
 	})
 	return nil
@@ -272,7 +272,7 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 		return m.decodePrepareOK(p)
 	}
 	ok := structure.OKResponse{
-		Type: "OK",
+		CorePacket: structure.CorePacket{Type: "OK"},
 	}
 	b := bytes.NewBuffer(p)
 	for _, val := range []*uint64{&ok.AffectedRows, &ok.LastInsertID} {
@@ -312,7 +312,7 @@ func (m *ResponseDecoder) decodePrepareOK(p []byte) error {
 	}
 
 	ok := structure.PrepareOKResponse{
-		Type:        "PREPARE_OK",
+		CorePacket:  structure.CorePacket{Type: "PREPARE_OK"},
 		StatementID: b.StatementID,
 		NumColumns:  b.NumColumns,
 		NumParams:   b.NumParams,

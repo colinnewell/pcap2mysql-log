@@ -49,7 +49,9 @@ func (e *RawDataEmitter) Transmission(typeName string, t interface{}) {
 			panic(err)
 		}
 	}
-	e.emitter.Transmission(typeName, structure.WithRawPacket{RawData: data, Transmission: t})
+	p := t.(structure.CorePacket)
+	p.SetData(data)
+	e.emitter.Transmission(typeName, t)
 	e.read.Reset()
 }
 

@@ -65,9 +65,6 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 		b.previousRequestType = typeName
 		if typeName == "Login" {
 			b.compressed = true
-			if rawPacket, ok := item.(structure.WithRawPacket); ok {
-				item = rawPacket.Transmission
-			}
 			login := item.(structure.LoginRequest)
 			b.compressed = login.ClientCapabilities&structure.CCAP_COMPRESS != 0
 		}
@@ -75,9 +72,6 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 		b.Responses = append(b.Responses, t)
 		b.justSeenGreeting = typeName == "Greeting"
 		if typeName == "PREPARE_OK" {
-			if rawPacket, ok := item.(structure.WithRawPacket); ok {
-				item = rawPacket.Transmission
-			}
 			// might be neat to store more info, and also be able to join up to
 			// the query too.
 			prepare := item.(structure.PrepareOKResponse)

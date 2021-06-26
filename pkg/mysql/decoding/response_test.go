@@ -110,7 +110,7 @@ func TestDecodeReponse(t *testing.T) {
 
 	expected := []interface{}{
 		structure.ResultSetResponse{
-			Type: "SQL results",
+			CorePacket: structure.CorePacket{Type: "SQL results"},
 			Columns: []structure.ColumnInfo{
 				{
 					Catalog:     "def",
@@ -179,7 +179,7 @@ func TestOKResponse(t *testing.T) {
 			AffectedRows: 1,
 			LastInsertID: 2,
 			ServerStatus: 2,
-			Type:         "OK",
+			CorePacket:   structure.CorePacket{Type: "OK"},
 		},
 	}
 
@@ -198,7 +198,7 @@ func TestOKResponseOnLogin(t *testing.T) {
 			AffectedRows: 0,
 			LastInsertID: 0,
 			ServerStatus: 0x4002,
-			Type:         "OK",
+			CorePacket:   structure.CorePacket{Type: "OK"},
 		},
 	}
 	testResponse(t, input, expected)
@@ -214,7 +214,7 @@ func TestDecodeExecuteOK(t *testing.T) {
 			AffectedRows: 1,
 			LastInsertID: 1,
 			ServerStatus: 2,
-			Type:         "OK",
+			CorePacket:   structure.CorePacket{Type: "OK"},
 		},
 	}
 	e := testEmitter{

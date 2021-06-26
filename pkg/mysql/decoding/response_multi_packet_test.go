@@ -42,7 +42,7 @@ func TestResultsFromExecute(t *testing.T) {
 	}
 	expected := []interface{}{
 		structure.ResultSetResponse{
-			Type: "SQL results",
+			CorePacket: structure.CorePacket{Type: "SQL results"},
 			Columns: []structure.ColumnInfo{
 				{
 					Catalog: "def",
@@ -144,7 +144,7 @@ func TestResultsFromExecuteWitNull(t *testing.T) {
 	}
 	expected := []interface{}{
 		structure.ResultSetResponse{
-			Type: "SQL results",
+			CorePacket: structure.CorePacket{Type: "SQL results"},
 			Columns: []structure.ColumnInfo{
 				{
 					Catalog: "def",
@@ -246,7 +246,7 @@ func TestPrepareOKResponse(t *testing.T) {
 
 	expected := []interface{}{
 		structure.PrepareOKResponse{
-			Type:        "PREPARE_OK",
+			CorePacket:  structure.CorePacket{Type: "PREPARE_OK"},
 			StatementID: 1,
 			NumParams:   3,
 			Params: []structure.ColumnInfo{
@@ -286,7 +286,7 @@ func TestPrepareOKResponse(t *testing.T) {
 			AffectedRows: 1,
 			LastInsertID: 1,
 			ServerStatus: 2,
-			Type:         "OK",
+			CorePacket:   structure.CorePacket{Type: "OK"},
 		},
 	}
 

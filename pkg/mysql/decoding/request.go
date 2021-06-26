@@ -21,12 +21,12 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 	switch t := CommandCode(p[packet.HeaderLen]); t {
 	case reqStmtPrepare:
 		query := p[packet.HeaderLen+1:]
-		m.Emit.Transmission("Prepare", structure.Request{Type: "Prepare", Query: string(query)})
+		m.Emit.Transmission("Prepare", structure.Request{CorePacket: structure.CorePacket{Type: "Prepare"}, Query: string(query)})
 	case reqQuery:
 		query := p[packet.HeaderLen+1:]
-		m.Emit.Transmission("Query", structure.Request{Type: "Query", Query: string(query)})
+		m.Emit.Transmission("Query", structure.Request{CorePacket: structure.CorePacket{Type: "Query"}, Query: string(query)})
 	case reqQuit:
-		m.Emit.Transmission("QUIT", structure.Request{Type: "QUIT"})
+		m.Emit.Transmission("QUIT", structure.Request{CorePacket: structure.CorePacket{Type: "QUIT"}})
 	case reqStmtExecute:
 		return m.decodeExecute(p)
 	default:
@@ -35,13 +35,13 @@ func (m *RequestDecoder) Write(p []byte) (int, error) {
 			(builder.PreviousRequestType() == "" && p[packet.PacketNo] == 1) {
 			return m.decodeLoginPacket(p)
 		}
-		m.Emit.Transmission(t.String(), structure.Request{Type: t.String()})
+		m.Emit.Transmission(t.String(), structure.Request{CorePacket: structure.CorePacket{Type: t.String()}})
 	}
 	return len(p), nil
 }
 
 func (m *RequestDecoder) decodeLoginPacket(p []byte) (int, error) {
-	login := structure.LoginRequest{Type: "Login"}
+	login := structure.LoginRequest{CorePacket: structure.CorePacket{Type: "Login"}}
 	b := bytes.NewBuffer(p[packet.HeaderLen:])
 	v := struct {
 		ClientCapabilities   structure.ClientCapabilities
@@ -81,7 +81,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 		return 0, errors.Wrap(err, "decode-execute")
 	}
 	er := structure.ExecuteRequest{
-		Type:           "Execute",
+		CorePacket:     structure.CorePacket{Type: "Execute"},
 		StatementID:    hdr.StatementID,
 		Flags:          hdr.Flags,
 		IterationCount: hdr.IterationCount,

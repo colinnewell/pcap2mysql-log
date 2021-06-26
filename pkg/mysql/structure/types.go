@@ -54,12 +54,12 @@ type DecodeError struct {
 }
 
 type Request struct {
-	Type  string `json:"Type"`
+	CorePacket
 	Query string `json:"Query,omitempty"`
 }
 
 type ExecuteRequest struct {
-	Type           string
+	CorePacket
 	StatementID    uint32
 	Flags          uint8
 	IterationCount uint32
@@ -69,7 +69,7 @@ type ExecuteRequest struct {
 }
 
 type LoginRequest struct {
-	Type                 string
+	CorePacket
 	ClientCapabilities   ClientCapabilities
 	Collation            byte
 	ExtendedCapabilities uint32
@@ -78,11 +78,11 @@ type LoginRequest struct {
 }
 
 type Response struct {
-	Type string `json:"Type"`
+	CorePacket
 }
 
 type ResultSetResponse struct {
-	Type    string          `json:"Type"`
+	CorePacket
 	Columns []ColumnInfo    `json:"Columns"`
 	Results [][]interface{} `json:"Results"`
 }
@@ -190,12 +190,12 @@ type OKResponse struct {
 	ServerStatus StatusFlags
 	WarningCount uint16
 	// FIXME: deal with session tracking
-	Type string `json:"Type"`
+	CorePacket
 	Info string
 }
 
 type PrepareOKResponse struct {
-	Type        string `json:"Type"`
+	CorePacket
 	StatementID uint32
 	NumColumns  uint16
 	NumParams   uint16
@@ -206,8 +206,8 @@ type PrepareOKResponse struct {
 }
 
 type ErrorResponse struct {
-	Code    uint16
-	Type    string
+	Code uint16
+	CorePacket
 	State   string `json:"State,omitempty"`
 	Message string
 }
@@ -237,12 +237,16 @@ type Greeting struct {
 	Collation    byte
 	Protocol     byte
 	Version      string
-	Type         string
+	CorePacket
 }
 
-type WithRawPacket struct {
-	RawData      []byte
-	Transmission interface{}
+type CorePacket struct {
+	RawData []byte `json:"RawData,omitempty"`
+	Type    string
+}
+
+func (p *CorePacket) SetData(d []byte) {
+	p.RawData = d
 }
 
 type FieldType byte
