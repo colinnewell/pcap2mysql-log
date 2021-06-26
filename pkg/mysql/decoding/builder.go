@@ -101,8 +101,10 @@ func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
 	}
 
 	return structure.Connection{
-		Address: b.Address,
-		Items:   items,
+		Address:            b.Address,
+		Items:              items,
+		RawRequestPackets:  b.requestBuffer,
+		RawResponsePackets: b.responseBuffer,
 	}
 }
 
@@ -217,9 +219,11 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	}
 	resd.FlushResponse()
 	b.decoded = true
-	// don't need to hang onto these.
-	b.requestBuffer = nil
-	b.responseBuffer = nil
+	if !b.Readers.IntermediateData {
+		// don't need to hang onto these.
+		b.requestBuffer = nil
+		b.responseBuffer = nil
+	}
 	// FIXME: perhaps check splitters to see if there is an incomplete
 	// packet in the pipe
 }

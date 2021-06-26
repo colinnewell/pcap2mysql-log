@@ -18,11 +18,12 @@ import (
 )
 
 func main() {
-	var assemblyDebug, displayVersion, noSort, rawData, verbose bool
+	var assemblyDebug, displayVersion, intermediateData, noSort, rawData, verbose bool
 	var serverPorts []int32
 
 	pflag.BoolVar(&assemblyDebug, "assembly-debug", false, "Debug log from the tcp assembly")
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
+	pflag.BoolVar(&intermediateData, "intermediate-data", false, "Emit the data before processing")
 	pflag.BoolVar(&rawData, "raw-data", false, "Include the raw packet data")
 	pflag.BoolVar(&noSort, "no-sort", false, "Don't sort packets by time")
 	pflag.BoolVar(&verbose, "verbose", false, "Vocalise error info")
@@ -51,15 +52,15 @@ func main() {
 	files := pflag.Args()
 
 	if len(files) > 0 {
-		processHarFiles(serverPorts, files, noSort, rawData, verbose)
+		processHarFiles(serverPorts, files, intermediateData, noSort, rawData, verbose)
 		return
 	}
 
 	fmt.Println("Specify pcap files to process")
 }
 
-func processHarFiles(serverPorts []int32, files []string, noSort bool, rawData bool, verbose bool) {
-	r := decoding.New(rawData, verbose)
+func processHarFiles(serverPorts []int32, files []string, intermediateData bool, noSort bool, rawData bool, verbose bool) {
+	r := decoding.New(intermediateData, rawData, verbose)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}

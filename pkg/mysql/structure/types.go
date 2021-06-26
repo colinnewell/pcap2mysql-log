@@ -27,8 +27,10 @@ func (c ConnectionAddress) String() string {
 }
 
 type Connection struct {
-	Address ConnectionAddress
-	Items   []Transmission
+	Address            ConnectionAddress
+	Items              []Transmission
+	RawRequestPackets  *packet.Buffer `json:"RawRequestPackets,omitempty"`
+	RawResponsePackets *packet.Buffer `json:"RawResponsePackets,omitempty"`
 }
 
 func (c Connection) FirstSeen() time.Time {

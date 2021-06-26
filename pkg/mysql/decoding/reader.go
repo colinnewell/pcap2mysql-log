@@ -15,18 +15,20 @@ import (
 )
 
 type MySQLConnectionReaders struct {
-	mu       sync.Mutex
-	builders map[structure.ConnectionAddress]*MySQLConnectionBuilder
-	RawData  bool
-	verbose  bool
+	mu               sync.Mutex
+	builders         map[structure.ConnectionAddress]*MySQLConnectionBuilder
+	IntermediateData bool
+	RawData          bool
+	verbose          bool
 }
 
-func New(rawData bool, verbose bool) *MySQLConnectionReaders {
+func New(intermediateData bool, rawData bool, verbose bool) *MySQLConnectionReaders {
 	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
-		builders: builders,
-		RawData:  rawData,
-		verbose:  verbose,
+		builders:         builders,
+		IntermediateData: intermediateData,
+		RawData:          rawData,
+		verbose:          verbose,
 	}
 }
 

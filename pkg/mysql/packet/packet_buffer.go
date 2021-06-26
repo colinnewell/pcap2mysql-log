@@ -29,40 +29,40 @@ func (p Packet) FirstSeen() time.Time {
 // Buffer buffers MySQL packets along with their times seen so they can
 // be played back in order.
 type Buffer struct {
-	times   TimesSeen
-	packets []Packet
+	Times   TimesSeen
+	Packets []Packet
 	pos     int
 }
 
 func (b *Buffer) SetTimes(t TimesSeen) {
-	b.times = t
+	b.Times = t
 }
 
 // Write buffers up the packets and stores when they were seen.
 func (b *Buffer) Write(p []byte) (n int, err error) {
 	data := make([]byte, len(p))
 	copy(data, p)
-	packet := Packet{Data: data, Seen: b.times.Seen()}
-	b.times.Reset()
+	packet := Packet{Data: data, Seen: b.Times.Seen()}
+	b.Times.Reset()
 	if len(packet.Seen) == 0 {
-		lastPacket := len(b.packets) - 1
+		lastPacket := len(b.Packets) - 1
 		if lastPacket >= 0 {
 			// assume it must have come in at
 			// the same time as the previous
 			// packet.
-			packet.Seen = b.packets[lastPacket].Seen
+			packet.Seen = b.Packets[lastPacket].Seen
 		}
 	}
-	b.packets = append(b.packets, packet)
+	b.Packets = append(b.Packets, packet)
 	return len(p), nil
 }
 
 func (b *Buffer) CurrentPacket() *Packet {
-	if b.pos >= len(b.packets) {
+	if b.pos >= len(b.Packets) {
 		return nil
 	}
 
-	return &b.packets[b.pos]
+	return &b.Packets[b.pos]
 }
 
 func (b *Buffer) Next() {
