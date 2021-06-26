@@ -51,6 +51,7 @@ type DecodeError struct {
 	JustSeenGreeting    bool `json:"JustSeenGreeting,omitempty"`
 	Packet              *packet.Packet
 	PreviousRequestType string `json:"PreviousRequestType,omitempty"`
+	DecoderState        string
 }
 
 type Request struct {

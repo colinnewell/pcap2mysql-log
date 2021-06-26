@@ -38,6 +38,16 @@ type ResponseDecoder struct {
 	prepareOK structure.PrepareOKResponse
 }
 
+func (m *ResponseDecoder) String() string {
+	return fmt.Sprintf(
+		"ResponseDecoder{\n\tFields: %v\n\tState: %v\n\tResults: %v\n\tprepareOK: %v\n}",
+		m.Fields,
+		m.State,
+		m.Results,
+		m.prepareOK,
+	)
+}
+
 //nolint:funlen,gocognit
 func (m *ResponseDecoder) Write(p []byte) (int, error) {
 	// FIXME: check how much data we have

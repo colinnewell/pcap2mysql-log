@@ -16,6 +16,10 @@ type RequestDecoder struct {
 	Emit Emitter
 }
 
+func (m *RequestDecoder) String() string {
+	return "RequestDecoder{}\n"
+}
+
 func (m *RequestDecoder) Write(p []byte) (int, error) {
 	// FIXME: check we have enough bytes
 	switch t := CommandCode(p[packet.HeaderLen]); t {
