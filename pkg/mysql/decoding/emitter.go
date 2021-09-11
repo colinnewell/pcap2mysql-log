@@ -35,8 +35,7 @@ type RawDataEmitter struct {
 
 func SetupRawDataEmitter(e Emitter, wrt io.Writer) (io.Writer, *RawDataEmitter) {
 	emitter := RawDataEmitter{emitter: e}
-	// FIXME: need to do a multiwriter that deals with the way we construct data.
-	return io.MultiWriter(wrt, &emitter.read), &emitter
+	return io.MultiWriter(&emitter.read, wrt), &emitter
 }
 
 func (e *RawDataEmitter) Transmission(typeName string, t interface{}) {
