@@ -11,7 +11,7 @@ for (1..100) {
     select(undef, undef, undef, 0.25);
 }
 die "Failed to connect $@" unless $dbh;
-ok $dbh, 'Connceted';
+ok $dbh, 'Connected';
 
 my $res = $dbh->selectall_arrayref('SELECT * FROM peeps', { Slice => {} });
 use Data::Dumper;
