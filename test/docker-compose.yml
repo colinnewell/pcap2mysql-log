@@ -28,3 +28,11 @@ services:
     depends_on:
       - mysql
     network_mode: service:tcpdump
+
+  test-perl:
+    build:
+      context: .
+      dockerfile: Dockerfile.perl
+    depends_on:
+      - mysql
+    network_mode: service:tcpdump
