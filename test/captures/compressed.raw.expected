@@ -1,0 +1,142 @@
+[
+  {
+    "Address": "127.0.0.1:52998 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "RawData": "SgAAAAo1LjcuMjUAAwAAAEkKESBMSExdAP//CAIA/8EVAAAAAAAAAAAAAGpQVV8cExp5NUYHWgBteXNxbF9uYXRpdmVfcGFzc3dvcmQA",
+          "Transmission": {
+            "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
+            "Collation": 8,
+            "Protocol": 10,
+            "Version": "5.7.25",
+            "Type": "Greeting"
+          }
+        },
+        "Seen": [
+          "2021-09-11T10:00:53.081649Z"
+        ]
+      },
+      {
+        "Data": {
+          "RawData": "1AAAAa+ivgAAAABACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc2l0ZQAUjZDvpOLi1tH9jJhyyqtqSWvDZllkZW1vAG15c3FsX25hdGl2ZV9wYXNzd29yZAB+A19vcwVMaW51eAxfY2xpZW50X25hbWUKbGlibWFyaWFkYgRfcGlkATcPX2NsaWVudF92ZXJzaW9uBjMuMS4xMwlfcGxhdGZvcm0GeDg2XzY0DHByb2dyYW1fbmFtZQhzaW1wbGUudAxfc2VydmVyX2hvc3QJMTI3LjAuMC4x",
+          "Transmission": {
+            "Type": "Login",
+            "ClientCapabilities": "12493487: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|COMPRESS|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|PLUGIN_AUTH_LENENC_CLIENT_DATA|CLIENT_SESSION_TRACK",
+            "Collation": 8,
+            "ExtendedCapabilities": 0,
+            "MaxPacketSize": 1073741824,
+            "Username": "site"
+          }
+        },
+        "Seen": [
+          "2021-09-11T10:00:53.081759Z"
+        ]
+      },
+      {
+        "Data": {
+          "RawData": "EAAAAgAAAAJAAAAABwEFBGRlbW8=",
+          "Transmission": {
+            "AffectedRows": 0,
+            "LastInsertID": 0,
+            "ServerStatus": "4002: SERVER_STATUS_AUTOCOMMIT|SERVER_SESSION_STATE_CHANGED",
+            "WarningCount": 0,
+            "Type": "OK",
+            "Info": ""
+          }
+        },
+        "Seen": [
+          "2021-09-11T10:00:53.082099Z"
+        ]
+      },
+      {
+        "Data": {
+          "RawData": "FAAAAANTRUxFQ1QgKiBGUk9NIHBlZXBz",
+          "Transmission": {
+            "Type": "Query",
+            "Query": "SELECT * FROM peeps"
+          }
+        },
+        "Seen": [
+          "2021-09-11T10:00:53.092126Z"
+        ]
+      },
+      {
+        "Data": {
+          "RawData": "AQAAAQMoAAACA2RlZgRkZW1vBXBlZXBzBXBlZXBzAmlkAmlkDD8ACwAAAAMDQgAAACwAAAMDZGVmBGRlbW8FcGVlcHMFcGVlcHMEbmFtZQRuYW1lDAgARgAAAP0AAAAAACoAAAQDZGVmBGRlbW8FcGVlcHMFcGVlcHMDYWdlA2FnZQw/AAsAAAADAAAAAAAFAAAF/gAAIgAFAAAG/gAAIgA=",
+          "Transmission": {
+            "Type": "SQL results",
+            "Columns": [
+              {
+                "Catalog": "def",
+                "TableAlias": "peeps",
+                "Table": "peeps",
+                "Schema": "demo",
+                "Column": "id",
+                "ColumnAlias": "id",
+                "TypeInfo": {
+                  "LengthOfFixedFields": 12,
+                  "CharacterSetNumber": 63,
+                  "MaxColumnSize": 11,
+                  "FieldTypes": "MYSQL_TYPE_LONG",
+                  "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
+                  "Decimals": 0,
+                  "Unused": 0
+                }
+              },
+              {
+                "Catalog": "def",
+                "TableAlias": "peeps",
+                "Table": "peeps",
+                "Schema": "demo",
+                "Column": "name",
+                "ColumnAlias": "name",
+                "TypeInfo": {
+                  "LengthOfFixedFields": 12,
+                  "CharacterSetNumber": 8,
+                  "MaxColumnSize": 70,
+                  "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                  "FieldDetail": "",
+                  "Decimals": 0,
+                  "Unused": 0
+                }
+              },
+              {
+                "Catalog": "def",
+                "TableAlias": "peeps",
+                "Table": "peeps",
+                "Schema": "demo",
+                "Column": "age",
+                "ColumnAlias": "age",
+                "TypeInfo": {
+                  "LengthOfFixedFields": 12,
+                  "CharacterSetNumber": 63,
+                  "MaxColumnSize": 11,
+                  "FieldTypes": "MYSQL_TYPE_LONG",
+                  "FieldDetail": "",
+                  "Decimals": 0,
+                  "Unused": 0
+                }
+              }
+            ],
+            "Results": []
+          }
+        },
+        "Seen": [
+          "2021-09-11T10:00:53.105225Z"
+        ]
+      },
+      {
+        "Data": {
+          "RawData": "AQAAAAE=",
+          "Transmission": {
+            "Type": "QUIT"
+          }
+        },
+        "Seen": [
+          "2021-09-11T10:00:53.107216Z"
+        ]
+      }
+    ]
+  }
+]
