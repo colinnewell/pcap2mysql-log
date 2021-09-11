@@ -32,10 +32,18 @@ lint:
 	golangci-lint run
 	gofmt -l -s .
 
-captures:
+captures: go-captures perl-captures
+
+go-captures:
 	${DC} down
 	${DC} build
 	${DC} run --rm test || ${DC} logs
+	${DC} down
+
+perl-captures:
+	${DC} down
+	${DC} build
+	${DC} run --rm test-perl || ${DC} logs
 	${DC} down
 
 fuzz:
