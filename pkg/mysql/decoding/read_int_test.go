@@ -28,8 +28,8 @@ func TestReadLenEncInt16(t *testing.T) {
 }
 
 func TestReadLenEncInt32(t *testing.T) {
-	expected := uint64(0x1000000)
-	got, err := readLenEncInt(bytes.NewBuffer([]byte{0xfd, 0, 0, 0, 1}))
+	expected := uint64(65536)
+	got, err := readLenEncInt(bytes.NewBuffer([]byte{0xfd, 0, 0, 1, 1}))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,6 +41,20 @@ func TestReadLenEncInt32(t *testing.T) {
 func TestReadLenEncInt64(t *testing.T) {
 	expected := uint64(1)
 	got, err := readLenEncInt(bytes.NewBuffer([]byte{0xfe, 1, 0, 0, 0, 0, 0, 0, 0}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if expected != got {
+		t.Fatalf("Wrong answer expected %d got %d", expected, got)
+	}
+}
+
+func TestReadLenEncBug(t *testing.T) {
+	expected := uint64(110001)
+	b := bytes.NewBuffer([]byte{
+		0xfd, 0xb1, 0xad, 0x01,
+	})
+	got, err := readLenEncInt(b)
 	if err != nil {
 		t.Fatal(err)
 	}

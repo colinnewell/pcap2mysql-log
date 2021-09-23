@@ -219,6 +219,25 @@ func TestDecodeExecuteOK(t *testing.T) {
 	testResponseEx(t, e, input, expected)
 }
 
+func TestDecodeExecuteOKBug(t *testing.T) {
+	input := []byte{
+		0x0a, 0x00, 0x00, 0x01, 0x00, 0x01, 0xfd, 0xb1, // ........
+		0xad, 0x01, 0x03, 0x00, 0x00, 0x00, // ......
+	}
+	expected := []interface{}{
+		structure.OKResponse{
+			AffectedRows: 1,
+			LastInsertID: 110001,
+			ServerStatus: 3,
+			Type:         "OK",
+		},
+	}
+	e := testEmitter{
+		Builder: &prevRequestBuilder{PreviousRequest: "Execute"},
+	}
+	testResponseEx(t, e, input, expected)
+}
+
 type prevRequestBuilder struct {
 	PreviousRequest  string
 	PreviousRequests []string

@@ -74,19 +74,20 @@ func readLenEncInt(buf io.Reader) (uint64, error) {
 	case encodedNull:
 		// FIXME: actually null, not sure how to express this.
 		return 0, nil
-	case encoded16bit:
+	case encodedInNext2Bytes:
 		var val uint16
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
 			return 0, errors.Wrap(err, "read-len-enc-int")
 		}
 		return uint64(val), nil
-	case encoded32bit:
-		var val uint32
-		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+	case encodedInNext3Bytes:
+		chunk := make([]byte, 4)
+		if _, err := buf.Read(chunk[:3]); err != nil {
 			return 0, errors.Wrap(err, "read-len-enc-int")
 		}
+		val := binary.LittleEndian.Uint32(chunk)
 		return uint64(val), nil
-	case encoded64bit:
+	case encodedInNext8Bytes:
 		var val uint64
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
 			return 0, errors.Wrap(err, "read-len-enc-int")
