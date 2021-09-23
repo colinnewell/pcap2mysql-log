@@ -22,10 +22,10 @@ const (
 	fieldInfoParams
 	data
 
-	encodedNull  = 0xfb
-	encoded16bit = 0xfc
-	encoded32bit = 0xfd
-	encoded64bit = 0xfe
+	encodedNull         = 0xfb
+	encodedInNext2Bytes = 0xfc
+	encodedInNext3Bytes = 0xfd
+	encodedInNext8Bytes = 0xfe
 )
 
 // ResponseDecoder - dealing with the response.
