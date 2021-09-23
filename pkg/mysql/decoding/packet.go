@@ -81,6 +81,7 @@ func readLenEncInt(buf io.Reader) (uint64, error) {
 		}
 		return uint64(val), nil
 	case encodedInNext3Bytes:
+		//nolint:gomnd
 		chunk := make([]byte, 4)
 		if _, err := buf.Read(chunk[:3]); err != nil {
 			return 0, errors.Wrap(err, "read-len-enc-int")
