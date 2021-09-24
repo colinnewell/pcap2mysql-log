@@ -144,7 +144,6 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// them.
 	var requestPacket, responsePacket *packet.Packet
 
-	// FIXME: need to be able to set compression
 	reqSplitter := packet.NewSplitter(requestDecoder)
 	resSplitter := packet.NewSplitter(responseDecoder)
 
