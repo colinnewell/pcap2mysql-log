@@ -4,6 +4,8 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -60,4 +62,166 @@ func TestInsertAndSelect(t *testing.T) {
 	}
 	defer stmt.Close()
 	stmt.Exec(33)
+}
+
+func TestLargeTable(t *testing.T) {
+	db := connection(t)
+	defer db.Close()
+
+	insert, err := db.Prepare(`
+	INSERT INTO demo.lots
+		(Neque_tempore_est_expedita_omn,
+		 Incidunt_deleniti_sunt_ea_reru,
+		 Labore_distinctio_cum_vero_mol,
+		 Aut_suscipit_nihil_voluptatum_,
+		 Corporis_et_facere_voluptatem,
+		 Minus_sunt_ut_repudiandae,
+		 Sed_dolor_est_reprehenderit_a_)
+	VALUES ( ?, ?, ?, ?, ?, ?, ? )`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer insert.Close()
+	insert.Exec("person2", "foo", "blah", "booo", "dskaods", "mdsamdskm", 4)
+	insert.Exec("person3", nil, "oo", "a", "b", "c", 5)
+	var sb strings.Builder
+	for i := 0; i < 1500; i++ {
+		sb.WriteString(fmt.Sprintf("this is another long line of text line %d\n", i))
+	}
+
+	insert.Exec(
+		"foo",
+		"ksmlkmdsalmdlsamdlmsamdskmad lksmsakdma slkmd lsamdkmals da",
+		"mdksamkdsmd msakdmskam dsa",
+		"ksmlkmdsalmdlsamdlmsamdskmad lksmsakdma slkmd lsamdkmals da",
+		"ksmlkmdsalmdlsamdlmsamdskmad lksmsakdma slkmd lsamdkmals da",
+		sb.String(),
+		6,
+	)
+
+	stmt, err := db.Prepare("SELECT * FROM demo.lots")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stmt.Close()
+	stmt.Exec(33)
+	rows, err := stmt.Query()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		v := [101]interface{}{}
+		err := rows.Scan(
+			&v[0],
+			&v[1],
+			&v[2],
+			&v[3],
+			&v[4],
+			&v[5],
+			&v[6],
+			&v[7],
+			&v[8],
+			&v[9],
+			&v[10],
+			&v[11],
+			&v[12],
+			&v[13],
+			&v[14],
+			&v[15],
+			&v[16],
+			&v[17],
+			&v[18],
+			&v[19],
+			&v[20],
+			&v[21],
+			&v[22],
+			&v[23],
+			&v[24],
+			&v[25],
+			&v[26],
+			&v[27],
+			&v[28],
+			&v[29],
+			&v[30],
+			&v[31],
+			&v[32],
+			&v[33],
+			&v[34],
+			&v[35],
+			&v[36],
+			&v[37],
+			&v[38],
+			&v[39],
+			&v[40],
+			&v[41],
+			&v[42],
+			&v[43],
+			&v[44],
+			&v[45],
+			&v[46],
+			&v[47],
+			&v[48],
+			&v[49],
+			&v[50],
+			&v[51],
+			&v[52],
+			&v[53],
+			&v[54],
+			&v[55],
+			&v[56],
+			&v[57],
+			&v[58],
+			&v[59],
+			&v[60],
+			&v[61],
+			&v[62],
+			&v[63],
+			&v[64],
+			&v[65],
+			&v[66],
+			&v[67],
+			&v[68],
+			&v[69],
+			&v[70],
+			&v[71],
+			&v[72],
+			&v[73],
+			&v[74],
+			&v[75],
+			&v[76],
+			&v[77],
+			&v[78],
+			&v[79],
+			&v[80],
+			&v[81],
+			&v[82],
+			&v[83],
+			&v[84],
+			&v[85],
+			&v[86],
+			&v[87],
+			&v[88],
+			&v[89],
+			&v[90],
+			&v[91],
+			&v[92],
+			&v[93],
+			&v[94],
+			&v[95],
+			&v[96],
+			&v[97],
+			&v[98],
+			&v[99],
+			&v[100],
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("%#v\n", v)
+	}
+	err = rows.Err()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
