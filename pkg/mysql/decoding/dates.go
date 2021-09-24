@@ -93,7 +93,7 @@ type timeInfoMs struct {
 func readDate(buf io.Reader) (interface{}, error) {
 	var d date
 	if err := binary.Read(buf, binary.LittleEndian, &d); err != nil {
-		return nil, errors.Wrap(err, "decode-execute")
+		return nil, errors.Wrap(err, "read-date")
 	}
 
 	//nolint:gomnd
@@ -102,7 +102,7 @@ func readDate(buf io.Reader) (interface{}, error) {
 	}
 	var t timeS
 	if err := binary.Read(buf, binary.LittleEndian, &t); err != nil {
-		return nil, errors.Wrap(err, "decode-execute")
+		return nil, errors.Wrap(err, "read-date")
 	}
 	//nolint:gomnd
 	if d.Length == 7 {
@@ -113,7 +113,7 @@ func readDate(buf io.Reader) (interface{}, error) {
 	}
 	var ms uint32
 	if err := binary.Read(buf, binary.LittleEndian, &ms); err != nil {
-		return nil, errors.Wrap(err, "decode-execute")
+		return nil, errors.Wrap(err, "read-date")
 	}
 
 	return dateTimeMs{
@@ -140,7 +140,7 @@ func readDate(buf io.Reader) (interface{}, error) {
 func readTime(buf io.Reader) (interface{}, error) {
 	var t timeInfo
 	if err := binary.Read(buf, binary.LittleEndian, &t); err != nil {
-		return nil, errors.Wrap(err, "decode-execute")
+		return nil, errors.Wrap(err, "read-time")
 	}
 
 	//nolint:gomnd
@@ -148,7 +148,7 @@ func readTime(buf io.Reader) (interface{}, error) {
 		// read microseconds
 		var ms uint32
 		if err := binary.Read(buf, binary.LittleEndian, &ms); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-time")
 		}
 		return timeInfoMs{timeInfo: t, MicroSeconds: ms}, nil
 	}

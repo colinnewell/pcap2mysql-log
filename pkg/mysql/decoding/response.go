@@ -184,7 +184,7 @@ func (m *ResponseDecoder) DecodeBinaryResult(b *bytes.Buffer) error {
 		} else {
 			val, err := readType(b, col.TypeInfo.FieldTypes)
 			if err != nil {
-				return errors.Wrap(err, "decode-binary-result")
+				return errors.Wrap(err, fmt.Sprintf("decode-binary-result: %s.%s", col.TableAlias, col.ColumnAlias))
 			}
 			r[i] = val
 		}

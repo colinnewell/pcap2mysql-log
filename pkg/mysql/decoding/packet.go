@@ -112,14 +112,14 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 	case structure.FLOAT:
 		var val float32
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-float")
 		}
 		return val, nil
 		// FLOAT is the IEEE 754 floating-point value in Little-endian format on 4 bytes.
 	case structure.DOUBLE:
 		var val float64
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-double")
 		}
 		return val, nil
 		// DOUBLE is the IEEE 754 floating-point value in Little-endian format on 8 bytes.
@@ -128,7 +128,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		// probably in ParamFlag, need to figure out exactly what to pick out.
 		var val int64
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-longlong")
 		}
 		return val, nil
 	case structure.INT24:
@@ -138,7 +138,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 			if n < INT24Width {
 				return nil, errors.Wrap(errRequestTooFewBytes, "reading int24 for execute")
 			}
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-int24")
 		}
 		val, _ := binary.Varint(data[:])
 		// FIXME: do I need to deal with endianness now?
@@ -149,7 +149,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		// probably in ParamFlag, need to figure out exactly what to pick out.
 		var val int32
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-long")
 		}
 		return val, nil
 	case structure.SHORT,
@@ -157,14 +157,14 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 		structure.YEAR:
 		var val int16
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-short")
 		}
 		return val, nil
 
 	case structure.TINY:
 		var val int8
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-tiny")
 		}
 		return val, nil
 
@@ -182,7 +182,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 
 		data, err := readLenEncBytes(buf)
 		if err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-string")
 		}
 		return string(data), nil
 
@@ -192,7 +192,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 	default:
 		data, err := readLenEncBytes(buf)
 		if err != nil {
-			return nil, errors.Wrap(err, "decode-execute")
+			return nil, errors.Wrap(err, "read-default")
 		}
 		// FIXME: does it look like text?  If so provide it in text.
 		// if not, should we encode it so it's clear it's binary?
