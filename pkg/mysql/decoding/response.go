@@ -184,7 +184,13 @@ func (m *ResponseDecoder) DecodeBinaryResult(b *bytes.Buffer) error {
 		} else {
 			val, err := readType(b, col.TypeInfo.FieldTypes)
 			if err != nil {
-				return errors.Wrap(err, fmt.Sprintf("decode-binary-result: field(%s.%s %s) nullmap %#v", col.TableAlias, col.ColumnAlias, col.TypeInfo.FieldTypes, nullMap))
+				return errors.Wrap(err, fmt.Sprintf(
+					"decode-binary-result: field(%s.%s %s) nullmap %#v",
+					col.TableAlias,
+					col.ColumnAlias,
+					col.TypeInfo.FieldTypes,
+					nullMap,
+				))
 			}
 			r[i] = val
 		}
