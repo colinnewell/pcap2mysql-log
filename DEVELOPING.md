@@ -93,7 +93,8 @@ This can then be inserted into a test easily like:
 There is a docker-compose environment that spins up MySQL and then talks to it
 to allow the creation of packet captures of the traffic.
 
-	make captures
+    make go-captures
+    make perl-captures
 
 Capture files are produced in the tcpdump/ folder (in gitignore).
 
@@ -101,8 +102,9 @@ This docker-compose environment pushes all the containers onto the same ip
 address so that the tcpdump can capture the traffic on localhost where the
 communication occurs.
 
-Currently the code to generate the MySQL traffic is in Go tests located in the
-`test/` directory.  They have a build tag added to ensure they don't get
+The perl and Go test code in the tests folder generates MySQL traffic.
+
+The go code in the test/ folder has a  build tag added to ensure it doesn't get
 dragged into the regular build process.
 
     // +build capturetest
@@ -110,6 +112,6 @@ dragged into the regular build process.
 The location of this test code feels awkward and may move.  It might actually
 make sense to move all this infrastructure to an entirely different project.
 
-Right now this is Go code, but of course it ought to be simple enough to create
-containers running other language clients to capture traffic from them to
-highlight whatever differences they have.
+There is both Go and Perl to generate traffic.  The Go library deliberately
+doesn't support compression, so the Perl is useful to generate traffic using
+that.
