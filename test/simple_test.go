@@ -301,3 +301,50 @@ func TestNumericTypes(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestDateTypes(t *testing.T) {
+	db := connection(t)
+	defer db.Close()
+
+	insert, err := db.Prepare(`
+	INSERT INTO demo.dates
+		(created, start, endYear, y2k)
+	VALUES
+		(?, ?, ?, ?)
+	`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer insert.Close()
+	insert.Exec("2013-03-04", "20:33", "2021", "97")
+
+	stmt, err := db.Prepare("SELECT * FROM demo.dates")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		v := [6]interface{}{}
+		err := rows.Scan(
+			&v[0],
+			&v[1],
+			&v[2],
+			&v[3],
+			&v[4],
+			&v[5],
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("%#v\n", v)
+	}
+	err = rows.Err()
+	if err != nil {
+		t.Fatal(err)
+	}
+}

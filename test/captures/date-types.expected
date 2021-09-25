@@ -1,0 +1,462 @@
+[
+  {
+    "Address": "127.0.0.1:42416 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
+          "Collation": 8,
+          "Protocol": 10,
+          "Version": "5.7.25",
+          "Type": "Greeting"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.362139Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Login",
+          "ClientCapabilities": "696973: CLIENT_MYSQL|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PLUGIN_AUTH",
+          "Collation": 45,
+          "ExtendedCapabilities": 0,
+          "MaxPacketSize": 0,
+          "Username": "site"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.362177Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 0,
+          "LastInsertID": 0,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.362273Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Prepare",
+          "Query": "\n\tINSERT INTO demo.dates\n\t\t(created, start, endYear, y2k)\n\tVALUES\n\t\t(?, ?, ?, ?)\n\t"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.362328Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "PREPARE_OK",
+          "StatementID": 1,
+          "NumColumns": 0,
+          "NumParams": 4,
+          "Warnings": 0,
+          "Params": [
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.366914Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 1,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": {
+            "Data": "AA==",
+            "Width": 7,
+            "Params": 4
+          },
+          "Params": [
+            "2013-03-04",
+            "20:33",
+            "2021",
+            "97"
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.367039Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 1,
+          "LastInsertID": 1,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.407899Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Prepare",
+          "Query": "SELECT * FROM demo.dates"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408046Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "PREPARE_OK",
+          "StatementID": 2,
+          "NumColumns": 6,
+          "NumParams": 0,
+          "Warnings": 0,
+          "Columns": [
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "id",
+              "ColumnAlias": "id",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 11,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "created",
+              "ColumnAlias": "created",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 10,
+                "FieldTypes": "MYSQL_TYPE_DATE",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "updated",
+              "ColumnAlias": "updated",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 19,
+                "FieldTypes": "MYSQL_TYPE_TIMESTAMP",
+                "FieldDetail": "NOT_NULL|BINARY_COLLATION|TIMESTAMP|ON_UPDATE_NOW_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "start",
+              "ColumnAlias": "start",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 10,
+                "FieldTypes": "MYSQL_TYPE_TIME",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "endYear",
+              "ColumnAlias": "endYear",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 4,
+                "FieldTypes": "MYSQL_TYPE_YEAR",
+                "FieldDetail": "UNSIGNED|ZEROFILL_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "y2k",
+              "ColumnAlias": "y2k",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 4,
+                "FieldTypes": "MYSQL_TYPE_YEAR",
+                "FieldDetail": "UNSIGNED|ZEROFILL_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408243Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 2,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": null,
+          "Params": null
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408377Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "SQL results",
+          "Columns": [
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "id",
+              "ColumnAlias": "id",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 11,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "created",
+              "ColumnAlias": "created",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 10,
+                "FieldTypes": "MYSQL_TYPE_DATE",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "updated",
+              "ColumnAlias": "updated",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 19,
+                "FieldTypes": "MYSQL_TYPE_TIMESTAMP",
+                "FieldDetail": "NOT_NULL|BINARY_COLLATION|TIMESTAMP|ON_UPDATE_NOW_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "start",
+              "ColumnAlias": "start",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 10,
+                "FieldTypes": "MYSQL_TYPE_TIME",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "endYear",
+              "ColumnAlias": "endYear",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 4,
+                "FieldTypes": "MYSQL_TYPE_YEAR",
+                "FieldDetail": "UNSIGNED|ZEROFILL_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dates",
+              "Table": "dates",
+              "Schema": "demo",
+              "Column": "y2k",
+              "ColumnAlias": "y2k",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 4,
+                "FieldTypes": "MYSQL_TYPE_YEAR",
+                "FieldDetail": "UNSIGNED|ZEROFILL_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ],
+          "Results": [
+            [
+              1,
+              "2013-03-04",
+              "2021-09-25 17:21:23",
+              {
+                "Length": 8,
+                "Negative": 0,
+                "Date": 0,
+                "Hour": 20,
+                "Minutes": 33,
+                "Seconds": 0
+              },
+              2021,
+              1997
+            ]
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408574Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "MYSQL_STMT_CLOSE"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408819Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "MYSQL_STMT_CLOSE"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408892Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "QUIT"
+        },
+        "Seen": [
+          "2021-09-25T17:21:23.408916Z"
+        ]
+      }
+    ]
+  }
+]
