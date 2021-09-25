@@ -107,7 +107,7 @@ func readLenEncInt(buf io.Reader) (uint64, error) {
 // 	return string(b), nil
 // }
 
-func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, error) {
+func readType(buf *bytes.Buffer, fieldType structure.FieldType, unsigned bool) (interface{}, error) {
 	switch fieldType {
 	case structure.FLOAT:
 		var val float32
@@ -126,34 +126,66 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 	case structure.LONGLONG:
 		// FIXME: need to determine if this is signed.
 		// probably in ParamFlag, need to figure out exactly what to pick out.
-		var val int64
-		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "read-longlong")
+		if unsigned {
+			var val uint64
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-longlong")
+			}
+			return val, nil
+		} else {
+			var val int64
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-longlong")
+			}
+			return val, nil
 		}
-		return val, nil
 	case structure.INT24, structure.LONG:
 		// FIXME: need to determine if this is signed.
 		// probably in ParamFlag, need to figure out exactly what to pick out.
-		var val int32
-		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "read-long")
+		if unsigned {
+			var val uint32
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-long")
+			}
+			return val, nil
+		} else {
+			var val int32
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-long")
+			}
+			return val, nil
 		}
-		return val, nil
 	case structure.SHORT,
 		// FIXME: need to determine if this is signed.
 		structure.YEAR:
-		var val int16
-		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "read-short")
+		if unsigned {
+			var val uint16
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-short")
+			}
+			return val, nil
+		} else {
+			var val int16
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-short")
+			}
+			return val, nil
 		}
-		return val, nil
 
 	case structure.TINY:
-		var val int8
-		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return nil, errors.Wrap(err, "read-tiny")
+		if unsigned {
+			var val uint8
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-tiny")
+			}
+			return val, nil
+		} else {
+			var val int8
+			if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
+				return nil, errors.Wrap(err, "read-tiny")
+			}
+			return val, nil
 		}
-		return val, nil
 
 	case structure.DATE,
 		structure.DATETIME,

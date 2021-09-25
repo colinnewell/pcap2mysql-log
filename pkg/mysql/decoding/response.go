@@ -182,7 +182,10 @@ func (m *ResponseDecoder) DecodeBinaryResult(b *bytes.Buffer) error {
 		if nullMap.IsNull(i) {
 			r[i] = nil
 		} else {
-			val, err := readType(b, col.TypeInfo.FieldTypes)
+			val, err := readType(
+				b, col.TypeInfo.FieldTypes,
+				col.TypeInfo.FieldDetail&structure.DETAIL_UNSIGNED != 0,
+			)
 			if err != nil {
 				return errors.Wrap(err, fmt.Sprintf(
 					"decode-binary-result: field(%s.%s %s) nullmap %#v",

@@ -117,7 +117,7 @@ func (m *RequestDecoder) decodeExecute(p []byte) (int, error) {
 				}
 			}
 			for n := uint16(0); n < paramCount; n++ {
-				val, err := readType(buf, params[n].FieldType)
+				val, err := readType(buf, params[n].FieldType, params[n].ParamFlag&128 != 0)
 				if err != nil {
 					return 0, errors.Wrap(err, "decode-execute")
 				}
