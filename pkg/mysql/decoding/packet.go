@@ -131,20 +131,7 @@ func readType(buf *bytes.Buffer, fieldType structure.FieldType) (interface{}, er
 			return nil, errors.Wrap(err, "read-longlong")
 		}
 		return val, nil
-	case structure.INT24:
-		// FIXME: need to determine if this is signed.
-		data := [INT24Width]byte{}
-		if n, err := buf.Read(data[:]); err != nil {
-			if n < INT24Width {
-				return nil, errors.Wrap(errRequestTooFewBytes, "reading int24 for execute")
-			}
-			return nil, errors.Wrap(err, "read-int24")
-		}
-		val, _ := binary.Varint(data[:])
-		// FIXME: do I need to deal with endianness now?
-		return val, nil
-
-	case structure.LONG:
+	case structure.INT24, structure.LONG:
 		// FIXME: need to determine if this is signed.
 		// probably in ParamFlag, need to figure out exactly what to pick out.
 		var val int32
