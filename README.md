@@ -1,9 +1,7 @@
 # pcap2mysql-log
 
-This is a work in progress and doesn't do anything too much yet.
-
-The intention is to take a packet capture file and turn it into some sort of
-text based human & machine readable transcript of MySQL communications.
+This program takes a packet capture file and turns it into a json transcript of
+the MySQL communications.
 
     pcap2mysql-log test/captures/dump00.pcap --server-ports 3306
 
@@ -54,6 +52,13 @@ Note that the `--server-ports` option is useful for narrowing down the traffic
 the program process from the packet capture.  If you've captured web traffic as
 well as MySQL you can speed it up and ensure it won't get confused by the other
 traffic.
+
+## Known issues
+
+* Memory usage can be quite high.  The code is very much not optimised.
+* Lots of features haven't been implemented.
+* The output format is very clunky.  It largely matches the actual data
+  structures it encounters and can take a fair amount of effort to interpret.
 
 ## General notes
 
