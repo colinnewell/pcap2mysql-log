@@ -1,0 +1,9 @@
+USE demo;
+CREATE TABLE dates (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    created DATE,
+    updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    start TIME,
+    endYear YEAR(4),
+    y2k YEAR
+);
