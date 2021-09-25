@@ -109,7 +109,6 @@ func TestLargeTable(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer stmt.Close()
-	stmt.Exec(33)
 	rows, err := stmt.Query()
 	if err != nil {
 		t.Fatal(err)
@@ -219,6 +218,78 @@ func TestLargeTable(t *testing.T) {
 			&v[98],
 			&v[99],
 			&v[100],
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("%#v\n", v)
+	}
+	err = rows.Err()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestNumericTypes(t *testing.T) {
+	db := connection(t)
+	defer db.Close()
+
+	insert, err := db.Prepare(`
+	INSERT INTO demo.dbtypes
+		(tiny, med, small, basic, big, utiny, umed, usmall, ubasic, ubig, salary, floater, doubled, bits)
+	VALUES
+		(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer insert.Close()
+	insert.Exec(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 3.4567, 3.33, 4.44, 3)
+	insert.Exec(
+		127,
+		8388607,
+		32767,
+		2147483647,
+		9223372036854775807,
+
+		255,
+		16777215,
+		30000,                       //65535,                        // usmall
+		2147483647,                  // 4294967295,                   // ubasic
+		uint64(9223372036854775807), //uint64(18446744073709551615), // ubig
+		3.4567, 3.33, 4.44, 3,
+	)
+	insert.Exec(-1, -2, -3, -4, -5, 6, 7, 8, 9, 10, 3.4567, 3.33, 4.44, 3)
+	// FIXME: insert some maximums
+
+	stmt, err := db.Prepare("SELECT * FROM demo.dbtypes")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		v := [15]interface{}{}
+		err := rows.Scan(
+			&v[0],
+			&v[1],
+			&v[2],
+			&v[3],
+			&v[4],
+			&v[5],
+			&v[6],
+			&v[7],
+			&v[8],
+			&v[9],
+			&v[10],
+			&v[11],
+			&v[12],
+			&v[13],
+			&v[14],
 		)
 		if err != nil {
 			t.Fatal(err)
