@@ -4,4 +4,3 @@ CREATE TABLE peeps (
     name VARCHAR(70),
     age int
 );
-

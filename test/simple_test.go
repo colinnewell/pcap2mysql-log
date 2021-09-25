@@ -71,19 +71,23 @@ func TestLargeTable(t *testing.T) {
 	insert, err := db.Prepare(`
 	INSERT INTO demo.lots
 		(Neque_tempore_est_expedita_omn,
+		 Enim_rem_consequuntur_ipsum_na,
+		 Similique_et_molestias_modi_si,
+		 Eligendi_sed_placeat_nihil_vol,
+		 Voluptatum_possimus_sint_venia,
 		 Incidunt_deleniti_sunt_ea_reru,
 		 Labore_distinctio_cum_vero_mol,
 		 Aut_suscipit_nihil_voluptatum_,
 		 Corporis_et_facere_voluptatem,
 		 Minus_sunt_ut_repudiandae,
 		 Sed_dolor_est_reprehenderit_a_)
-	VALUES ( ?, ?, ?, ?, ?, ?, ? )`)
+	VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer insert.Close()
-	insert.Exec("person2", "foo", "blah", "booo", "dskaods", "mdsamdskm", 4)
-	insert.Exec("person3", nil, "oo", "a", "b", "c", 5)
+	insert.Exec("person2", 1, 2, 3, 4, "foo", "blah", "booo", "dskaods", "mdsamdskm", 4)
+	insert.Exec("person3", 1, 2, 3, 4, nil, "oo", "a", "b", "c", 5)
 	var sb strings.Builder
 	for i := 0; i < 1500; i++ {
 		sb.WriteString(fmt.Sprintf("this is another long line of text line %d\n", i))
@@ -91,10 +95,11 @@ func TestLargeTable(t *testing.T) {
 
 	insert.Exec(
 		"foo",
+		1, 2, 3, 4,
 		"ksmlkmdsalmdlsamdlmsamdskmad lksmsakdma slkmd lsamdkmals da",
 		"mdksamkdsmd msakdmskam dsa",
-		"ksmlkmdsalmdlsamdlmsamdskmad lksmsakdma slkmd lsamdkmals da",
-		"ksmlkmdsalmdlsamdlmsamdskmad lksmsakdma slkmd lsamdkmals da",
+		sb.String(),
+		sb.String(),
 		sb.String(),
 		6,
 	)
