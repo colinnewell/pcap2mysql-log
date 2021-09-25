@@ -1,0 +1,1086 @@
+[
+  {
+    "Address": "127.0.0.1:42230 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
+          "Collation": 8,
+          "Protocol": 10,
+          "Version": "5.7.25",
+          "Type": "Greeting"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.554916Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Login",
+          "ClientCapabilities": "696973: CLIENT_MYSQL|LONG_FLAG|CONNECT_WITH_DB|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PLUGIN_AUTH",
+          "Collation": 45,
+          "ExtendedCapabilities": 0,
+          "MaxPacketSize": 0,
+          "Username": "site"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.554955Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 0,
+          "LastInsertID": 0,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.555063Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Prepare",
+          "Query": "\n\tINSERT INTO demo.dbtypes\n\t\t(tiny, med, small, basic, big, utiny, umed, usmall, ubasic, ubig, salary, floater, doubled, bits)\n\tVALUES\n\t\t(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n\t"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.555108Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "PREPARE_OK",
+          "StatementID": 1,
+          "NumColumns": 0,
+          "NumParams": 14,
+          "Warnings": 0,
+          "Params": [
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "",
+              "Table": "",
+              "Schema": "",
+              "Column": "",
+              "ColumnAlias": "?",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 0,
+                "FieldTypes": "MYSQL_TYPE_VAR_STRING",
+                "FieldDetail": "BINARY_COLLATION",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.560008Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 1,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": {
+            "Data": "AAA=",
+            "Width": 7,
+            "Params": 14
+          },
+          "Params": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            3.4567,
+            3.33,
+            4.44,
+            3
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.560157Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 1,
+          "LastInsertID": 1,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 1,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.566479Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 1,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": {
+            "Data": "AAA=",
+            "Width": 7,
+            "Params": 14
+          },
+          "Params": [
+            127,
+            8388607,
+            32767,
+            2147483647,
+            9223372036854775807,
+            255,
+            16777215,
+            65535,
+            4294967295,
+            18446744073709551615,
+            3.4567,
+            3.33,
+            4.44,
+            3
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.566588Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 1,
+          "LastInsertID": 2,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 1,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.570904Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 1,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": {
+            "Data": "AAA=",
+            "Width": 7,
+            "Params": 14
+          },
+          "Params": [
+            -1,
+            -2,
+            -3,
+            -4,
+            -5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            3.4567,
+            3.33,
+            4.44,
+            3
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.570986Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 1,
+          "LastInsertID": 3,
+          "ServerStatus": "2: SERVER_STATUS_AUTOCOMMIT",
+          "WarningCount": 1,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579161Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Prepare",
+          "Query": "SELECT * FROM demo.dbtypes"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579228Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "PREPARE_OK",
+          "StatementID": 2,
+          "NumColumns": 15,
+          "NumParams": 0,
+          "Warnings": 0,
+          "Columns": [
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "id",
+              "ColumnAlias": "id",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 11,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "tiny",
+              "ColumnAlias": "tiny",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 4,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "med",
+              "ColumnAlias": "med",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 9,
+                "FieldTypes": "MYSQL_TYPE_INT24",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "small",
+              "ColumnAlias": "small",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 6,
+                "FieldTypes": "MYSQL_TYPE_SHORT",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "basic",
+              "ColumnAlias": "basic",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 11,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "big",
+              "ColumnAlias": "big",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 20,
+                "FieldTypes": "MYSQL_TYPE_LONGLONG",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "utiny",
+              "ColumnAlias": "utiny",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 3,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "umed",
+              "ColumnAlias": "umed",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 8,
+                "FieldTypes": "MYSQL_TYPE_INT24",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "usmall",
+              "ColumnAlias": "usmall",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 5,
+                "FieldTypes": "MYSQL_TYPE_SHORT",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "ubasic",
+              "ColumnAlias": "ubasic",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 10,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "ubig",
+              "ColumnAlias": "ubig",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 20,
+                "FieldTypes": "MYSQL_TYPE_LONGLONG",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "salary",
+              "ColumnAlias": "salary",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 7,
+                "FieldTypes": "MYSQL_TYPE_NEWDECIMAL",
+                "FieldDetail": "",
+                "Decimals": 2,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "floater",
+              "ColumnAlias": "floater",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 12,
+                "FieldTypes": "MYSQL_TYPE_FLOAT",
+                "FieldDetail": "",
+                "Decimals": 31,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "doubled",
+              "ColumnAlias": "doubled",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 22,
+                "FieldTypes": "MYSQL_TYPE_DOUBLE",
+                "FieldDetail": "",
+                "Decimals": 31,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "bits",
+              "ColumnAlias": "bits",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 3,
+                "FieldTypes": "MYSQL_TYPE_BIT",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579397Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Execute",
+          "StatementID": 2,
+          "Flags": 0,
+          "IterationCount": 1,
+          "NullMap": null,
+          "Params": null
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579515Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "SQL results",
+          "Columns": [
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "id",
+              "ColumnAlias": "id",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 11,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "NOT_NULL|PRIMARY_KEY|AUTO_INCREMENT|PART_KEY_FLAG",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "tiny",
+              "ColumnAlias": "tiny",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 4,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "med",
+              "ColumnAlias": "med",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 9,
+                "FieldTypes": "MYSQL_TYPE_INT24",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "small",
+              "ColumnAlias": "small",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 6,
+                "FieldTypes": "MYSQL_TYPE_SHORT",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "basic",
+              "ColumnAlias": "basic",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 11,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "big",
+              "ColumnAlias": "big",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 20,
+                "FieldTypes": "MYSQL_TYPE_LONGLONG",
+                "FieldDetail": "",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "utiny",
+              "ColumnAlias": "utiny",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 3,
+                "FieldTypes": "MYSQL_TYPE_TINY",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "umed",
+              "ColumnAlias": "umed",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 8,
+                "FieldTypes": "MYSQL_TYPE_INT24",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "usmall",
+              "ColumnAlias": "usmall",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 5,
+                "FieldTypes": "MYSQL_TYPE_SHORT",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "ubasic",
+              "ColumnAlias": "ubasic",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 10,
+                "FieldTypes": "MYSQL_TYPE_LONG",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "ubig",
+              "ColumnAlias": "ubig",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 20,
+                "FieldTypes": "MYSQL_TYPE_LONGLONG",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "salary",
+              "ColumnAlias": "salary",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 7,
+                "FieldTypes": "MYSQL_TYPE_NEWDECIMAL",
+                "FieldDetail": "",
+                "Decimals": 2,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "floater",
+              "ColumnAlias": "floater",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 12,
+                "FieldTypes": "MYSQL_TYPE_FLOAT",
+                "FieldDetail": "",
+                "Decimals": 31,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "doubled",
+              "ColumnAlias": "doubled",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 22,
+                "FieldTypes": "MYSQL_TYPE_DOUBLE",
+                "FieldDetail": "",
+                "Decimals": 31,
+                "Unused": 0
+              }
+            },
+            {
+              "Catalog": "def",
+              "TableAlias": "dbtypes",
+              "Table": "dbtypes",
+              "Schema": "demo",
+              "Column": "bits",
+              "ColumnAlias": "bits",
+              "TypeInfo": {
+                "LengthOfFixedFields": 12,
+                "CharacterSetNumber": 63,
+                "MaxColumnSize": 3,
+                "FieldTypes": "MYSQL_TYPE_BIT",
+                "FieldDetail": "UNSIGNED",
+                "Decimals": 0,
+                "Unused": 0
+              }
+            }
+          ],
+          "Results": [
+            [
+              1,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              {
+                "Text": "3.46"
+              },
+              3.33,
+              4.44,
+              {
+                "Base64": "Aw=="
+              }
+            ],
+            [
+              2,
+              127,
+              8388607,
+              32767,
+              2147483647,
+              9223372036854775807,
+              255,
+              16777215,
+              65535,
+              4294967295,
+              18446744073709551615,
+              {
+                "Text": "3.46"
+              },
+              3.33,
+              4.44,
+              {
+                "Base64": "Aw=="
+              }
+            ],
+            [
+              3,
+              -1,
+              -2,
+              -3,
+              -4,
+              -5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              {
+                "Text": "3.46"
+              },
+              3.33,
+              4.44,
+              {
+                "Base64": "Aw=="
+              }
+            ]
+          ]
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579688Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "MYSQL_STMT_CLOSE"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579895Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "MYSQL_STMT_CLOSE"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579958Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "QUIT"
+        },
+        "Seen": [
+          "2021-09-25T17:06:17.579981Z"
+        ]
+      }
+    ]
+  }
+]
