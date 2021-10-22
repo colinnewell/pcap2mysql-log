@@ -93,7 +93,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 
 		if m.Emit.ConnectionBuilder().PreviousRequestType() == "Execute" {
 			if err := m.DecodeBinaryResult(b); err != nil {
-				return 0, errors.Wrap(err, "response-write")
+				return 0, errors.Wrap(err, "response-write execute data (binary)")
 			}
 			break
 		}
@@ -107,7 +107,10 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			r[i], err = readLenEncString(b)
 
 			if err != nil {
-				return 0, errors.Wrap(err, "response-write")
+				return 0, errors.Wrap(
+					err,
+					fmt.Sprintf("response-write data field (string) %d", i),
+				)
 			}
 		}
 		m.Results = append(m.Results, r)
@@ -140,7 +143,7 @@ func (m *ResponseDecoder) Write(p []byte) (int, error) {
 			s, err := readLenEncString(buf)
 
 			if err != nil {
-				return 0, errors.Wrap(err, "response-write")
+				return 0, errors.Wrap(err, "response-write fieldinfo")
 			}
 
 			*val = s
@@ -259,7 +262,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 		}
 		return errors.Wrap(
 			errRequestTooFewBytes,
-			fmt.Sprintf("only read %d bytes", b.Len()),
+			fmt.Sprintf("decodeGreeting capabilityBytes only read %d bytes", b.Len()),
 		)
 	}
 	collation, err := b.ReadByte()
@@ -272,7 +275,7 @@ func (m *ResponseDecoder) decodeGreeting(p []byte) error {
 		}
 		return errors.Wrap(
 			errRequestTooFewBytes,
-			fmt.Sprintf("only read %d bytes", b.Len()),
+			fmt.Sprintf("decodeGreeting capabilityBytes part 2 only read %d bytes", b.Len()),
 		)
 	}
 	// FIXME: not sure if this is the best way to decode the capability info

@@ -15,7 +15,8 @@ var errRequestTooManyBytes = errors.New("requesting more bytes than are in the p
 var errRequestTooFewBytes = errors.New("not enough bytes")
 
 func readLenEncString(buf *bytes.Buffer) (string, error) {
-	count, err := buf.ReadByte()
+	count, err := readLenEncInt(buf)
+	// NOTE: this isn't ideal, we return "" for null.
 
 	if err != nil {
 		return "", errors.Wrap(err, "read-len-enc-string")
@@ -27,7 +28,7 @@ func readLenEncString(buf *bytes.Buffer) (string, error) {
 		return "",
 			errors.Wrap(
 				errRequestTooFewBytes,
-				fmt.Sprintf("only read %d bytes", len(s)),
+				fmt.Sprintf("readLenEncString only read %d bytes of %d: %s", len(s), count, s),
 			)
 	}
 
