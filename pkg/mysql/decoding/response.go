@@ -301,7 +301,7 @@ func (m *ResponseDecoder) decodeOK(p []byte) error {
 	}
 	b := bytes.NewBuffer(p)
 	for _, val := range []*uint64{&ok.AffectedRows, &ok.LastInsertID} {
-		v, err := readLenEncInt(b)
+		v, _, err := readLenEncInt(b)
 		if err != nil {
 			return errors.Wrap(err, "decode-ok")
 		}

@@ -15,8 +15,8 @@ var errRequestTooManyBytes = errors.New("requesting more bytes than are in the p
 var errRequestTooFewBytes = errors.New("not enough bytes")
 
 func readLenEncString(buf *bytes.Buffer) (*string, error) {
-	count, err := readLenEncInt(buf)
-	if count == 0 {
+	count, null, err := readLenEncInt(buf)
+	if null {
 		return nil, nil
 	}
 
@@ -46,9 +46,13 @@ func readNulString(buf *bytes.Buffer) (string, error) {
 }
 
 func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
-	length, err := readLenEncInt(buf)
+	length, null, err := readLenEncInt(buf)
 	if err != nil {
 		return []byte(nil), errors.Wrap(err, "read-len-enc-bytes")
+	}
+
+	if null {
+		return []byte(nil), nil
 	}
 
 	if length > uint64(buf.Len()) {
@@ -66,39 +70,39 @@ func readLenEncBytes(buf *bytes.Buffer) ([]byte, error) {
 	return data, err
 }
 
-func readLenEncInt(buf io.Reader) (uint64, error) {
+func readLenEncInt(buf io.Reader) (uint64, bool, error) {
 	var first [1]byte
 	if _, err := buf.Read(first[:]); err != nil {
-		return 0, errors.Wrap(err, "read-len-enc-int")
+		return 0, false, errors.Wrap(err, "read-len-enc-int")
 	}
 	l := first[0]
 
 	switch l {
 	case encodedNull:
 		// FIXME: actually null, not sure how to express this.
-		return 0, nil
+		return 0, true, nil
 	case encodedInNext2Bytes:
 		var val uint16
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return 0, errors.Wrap(err, "read-len-enc-int")
+			return 0, false, errors.Wrap(err, "read-len-enc-int")
 		}
-		return uint64(val), nil
+		return uint64(val), false, nil
 	case encodedInNext3Bytes:
 		//nolint:gomnd
 		chunk := make([]byte, 4)
 		if _, err := buf.Read(chunk[:3]); err != nil {
-			return 0, errors.Wrap(err, "read-len-enc-int")
+			return 0, false, errors.Wrap(err, "read-len-enc-int")
 		}
 		val := binary.LittleEndian.Uint32(chunk)
-		return uint64(val), nil
+		return uint64(val), false, nil
 	case encodedInNext8Bytes:
 		var val uint64
 		if err := binary.Read(buf, binary.LittleEndian, &val); err != nil {
-			return 0, errors.Wrap(err, "read-len-enc-int")
+			return 0, false, errors.Wrap(err, "read-len-enc-int")
 		}
-		return val, nil
+		return val, false, nil
 	default:
-		return uint64(l), nil
+		return uint64(l), false, nil
 	}
 }
 
