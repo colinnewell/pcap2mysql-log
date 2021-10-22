@@ -14,25 +14,27 @@ import (
 var errRequestTooManyBytes = errors.New("requesting more bytes than are in the packet")
 var errRequestTooFewBytes = errors.New("not enough bytes")
 
-func readLenEncString(buf *bytes.Buffer) (string, error) {
+func readLenEncString(buf *bytes.Buffer) (*string, error) {
 	count, err := readLenEncInt(buf)
-	// NOTE: this isn't ideal, we return "" for null.
+	if count == 0 {
+		return nil, nil
+	}
 
 	if err != nil {
-		return "", errors.Wrap(err, "read-len-enc-string")
+		return nil, errors.Wrap(err, "read-len-enc-string")
 	}
 
 	s := string(buf.Next(int(count)))
 
 	if len(s) < int(count) {
-		return "",
+		return nil,
 			errors.Wrap(
 				errRequestTooFewBytes,
 				fmt.Sprintf("readLenEncString only read %d bytes of %d: %s", len(s), count, s),
 			)
 	}
 
-	return s, nil
+	return &s, nil
 }
 
 func readNulString(buf *bytes.Buffer) (string, error) {

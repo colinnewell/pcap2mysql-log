@@ -108,6 +108,11 @@ func TestDecodeReponse(t *testing.T) {
 
 	r.FlushResponse()
 
+	tr := []string{"1", "name", "username"}
+	results := [3]interface{}{}
+	for i := range tr {
+		results[i] = &tr[i]
+	}
 	expected := []interface{}{
 		structure.ResultSetResponse{
 			Type: "SQL results",
@@ -160,7 +165,7 @@ func TestDecodeReponse(t *testing.T) {
 					},
 				},
 			},
-			Results: [][]interface{}{{"1", "name", "username"}},
+			Results: [][]interface{}{results[:]},
 		},
 	}
 
