@@ -37,6 +37,8 @@ func (c *Splitter) Write(p []byte) (int, error) {
 	if err != nil && errors.Is(err, ErrIncompletePacket) {
 		c.incompletePacket = true
 		err = nil
+	} else {
+		c.incompletePacket = false
 	}
 	return n, err
 }
