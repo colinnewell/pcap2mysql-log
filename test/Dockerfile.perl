@@ -4,6 +4,6 @@ FROM perl
 RUN cpanm DBD::mysql
 RUN cpanm Test2::V0;
 
-COPY simple.t /
+COPY *.t /
 
-CMD prove simple.t
+CMD prove *.t
