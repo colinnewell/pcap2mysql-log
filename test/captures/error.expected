@@ -1,0 +1,56 @@
+[
+  {
+    "Address": "127.0.0.1:45444 - 127.0.0.1:3306",
+    "Items": [
+      {
+        "Data": {
+          "Capabilities": "196607: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|NO SCHEMA|COMPRESS|ODBC|LOCAL_FILES|IGNORE_SPACE|CLIENT_PROTOCOL_41|CLIENT_INTERACTIVE|SSL|TRANSACTIONS|SECURE_CONNECTION|UNKNOWN|UNKNOWN|MULTI_RESULTS",
+          "Collation": 8,
+          "Protocol": 10,
+          "Version": "5.7.25",
+          "Type": "Greeting"
+        },
+        "Seen": [
+          "2021-10-23T09:52:09.989823Z"
+        ]
+      },
+      {
+        "Data": {
+          "Type": "Login",
+          "ClientCapabilities": "12493487: CLIENT_MYSQL|FOUND_ROWS|LONG_FLAG|CONNECT_WITH_DB|COMPRESS|LOCAL_FILES|CLIENT_PROTOCOL_41|SECURE_CONNECTION|UNKNOWN|MULTI_RESULTS|PS_MULTI_RESULTS|PLUGIN_AUTH|CONNECT_ATTRS|PLUGIN_AUTH_LENENC_CLIENT_DATA|CLIENT_SESSION_TRACK",
+          "Collation": 8,
+          "ExtendedCapabilities": 0,
+          "MaxPacketSize": 1073741824,
+          "Username": "site"
+        },
+        "Seen": [
+          "2021-10-23T09:52:09.989867Z"
+        ]
+      },
+      {
+        "Data": {
+          "AffectedRows": 0,
+          "LastInsertID": 0,
+          "ServerStatus": "4002: SERVER_STATUS_AUTOCOMMIT|SERVER_SESSION_STATE_CHANGED",
+          "WarningCount": 0,
+          "Type": "OK",
+          "Info": ""
+        },
+        "Seen": [
+          "2021-10-23T09:52:09.990034Z"
+        ]
+      },
+      {
+        "Data": {
+          "Code": 1064,
+          "Type": "Error",
+          "State": "42000",
+          "Message": "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '  )' at line 13"
+        },
+        "Seen": [
+          "2021-10-23T09:52:09.999549Z"
+        ]
+      }
+    ]
+  }
+]
