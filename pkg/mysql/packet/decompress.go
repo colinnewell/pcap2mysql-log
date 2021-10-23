@@ -50,5 +50,8 @@ func (w *MySQLPacketDecompressor) Write(data []byte) (int, error) {
 	}
 
 	n, err := Copy(bytes.NewBuffer(enflated), w.Receiver)
-	return n + compressedHeaderLen, err
+	if n > 0 {
+		n += compressedHeaderLen
+	}
+	return n, err
 }
