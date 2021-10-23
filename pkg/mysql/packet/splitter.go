@@ -44,3 +44,7 @@ func (c *Splitter) Write(p []byte) (int, error) {
 func (c *Splitter) IncompletePacket() bool {
 	return c.incompletePacket
 }
+
+func (c *Splitter) Bytes() []byte {
+	return c.buf.Bytes()
+}

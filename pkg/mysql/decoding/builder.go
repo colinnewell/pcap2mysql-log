@@ -223,8 +223,40 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		b.requestBuffer = nil
 		b.responseBuffer = nil
 	}
-	// FIXME: perhaps check splitters to see if there is an incomplete
-	// packet in the pipe
+	if resSplitter.IncompletePacket() {
+		err := packet.ErrIncompletePacket
+		p := &packet.Packet{
+			Data: resSplitter.Bytes(),
+		}
+		resd.Emit.Transmission("DECODE_ERROR",
+			structure.DecodeError{
+				CompressionOn:       b.compressed,
+				DecodeError:         err,
+				DecodeErrorString:   err.Error(),
+				DecoderState:        "",
+				Direction:           "Response",
+				Packet:              p,
+				PreviousRequestType: b.previousRequestType,
+			},
+		)
+	}
+	if reqSplitter.IncompletePacket() {
+		err := packet.ErrIncompletePacket
+		p := &packet.Packet{
+			Data: reqSplitter.Bytes(),
+		}
+		rqd.Emit.Transmission("DECODE_ERROR",
+			structure.DecodeError{
+				CompressionOn:       b.compressed,
+				DecodeError:         err,
+				DecodeErrorString:   err.Error(),
+				DecoderState:        "",
+				Direction:           "Request",
+				Packet:              p,
+				PreviousRequestType: b.previousRequestType,
+			},
+		)
+	}
 }
 
 func (b *MySQLConnectionBuilder) PreviousRequestType() string {
