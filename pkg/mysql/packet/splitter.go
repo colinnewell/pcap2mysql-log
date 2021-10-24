@@ -15,6 +15,7 @@ type Splitter struct {
 	buf              bytes.Buffer
 	writer           io.Writer
 	incompletePacket bool
+	compressed       bool
 }
 
 func NewSplitter(wrt io.Writer) *Splitter {
@@ -24,15 +25,31 @@ func NewSplitter(wrt io.Writer) *Splitter {
 }
 
 func (c *Splitter) CompressionDetected() {
-	c.writer = &MySQLPacketDecompressor{Receiver: c.writer}
+	c.compressed = true
 }
 
 func (c *Splitter) Write(p []byte) (int, error) {
-	c.buf.Write(p)
+	var compressedRead int
+	if c.compressed {
+		unwrapped, n, err := decompressPacket(p)
+		if err != nil && errors.Is(err, ErrIncompletePacket) {
+			c.incompletePacket = true
+			err = nil
+			return 0, nil
+		}
+		compressedRead = n
+		c.buf.Write(unwrapped)
+	} else {
+		c.buf.Write(p)
+	}
 	n, err := c.writer.Write(c.buf.Bytes())
 	if n > 0 {
 		// suck up the data
 		c.buf.Next(n)
+		// if it was compressed we potentially
+		// read a different number of bytes so use
+		// the uncompressed block size for reporting.
+		n = compressedRead
 	}
 	if err != nil && errors.Is(err, ErrIncompletePacket) {
 		c.incompletePacket = true
