@@ -223,7 +223,10 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 		b.requestBuffer = nil
 		b.responseBuffer = nil
 	}
-	if resSplitter.IncompletePacket() {
+	// only emit the incomplete packets if we're after raw data.
+	// for things that aren't MySQL we end up basically emitting all
+	// the data as an incomplete packet which spams the transcript.
+	if b.Readers.RawData && resSplitter.IncompletePacket() {
 		err := packet.ErrIncompletePacket
 		p := &packet.Packet{
 			Data: resSplitter.Bytes(),
@@ -240,7 +243,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			},
 		)
 	}
-	if reqSplitter.IncompletePacket() {
+	if b.Readers.RawData && reqSplitter.IncompletePacket() {
 		err := packet.ErrIncompletePacket
 		p := &packet.Packet{
 			Data: reqSplitter.Bytes(),
