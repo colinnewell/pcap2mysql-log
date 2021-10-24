@@ -5,6 +5,8 @@ import (
 	"compress/zlib"
 	"io"
 	"io/ioutil"
+
+	"github.com/pkg/errors"
 )
 
 type MySQLPacketDecompressor struct {
@@ -14,44 +16,85 @@ type MySQLPacketDecompressor struct {
 const compressedHeaderLen = 7
 
 func (w *MySQLPacketDecompressor) Write(data []byte) (int, error) {
-	if len(data) < compressedHeaderLen {
-		return 0, ErrIncompletePacket
+	// FIXME: there can be mutliple compressed packets
+	// that make up a single uncompressed packet
+	// we need a certain amount of state management to deal with
+	// that.
+	var err error
+	var copied int
+	b := bytes.NewBuffer(data)
+	var decompressed bytes.Buffer
+	for {
+		var n int
+		err = decompressPacket(b, &decompressed)
+		if err != nil {
+			return copied, err
+		}
+		if decompressed.Len() > 0 {
+			n, err = Copy(&decompressed, w.Receiver)
+			copied += n
+			if err == io.EOF {
+				// this is fine.
+				err = nil
+			}
+		}
+		if b.Len() == 0 {
+			// nothing left to do
+			break
+		}
+		if err != nil && !errors.Is(err, ErrIncompletePacket) {
+			return copied, err
+		}
+	}
+	return copied, err
+}
+
+func decompressPacket(b *bytes.Buffer, decompressed *bytes.Buffer) error {
+	if b.Len() < compressedHeaderLen {
+		return ErrIncompletePacket
 	}
 
-	compLength := mySQLPacketLength(data[:3])
-	unCompLength := mySQLPacketLength(data[4:6])
+	header := [compressedHeaderLen]byte{}
 
-	if len(data) < compressedHeaderLen+int(compLength) {
-		return 0, ErrIncompletePacket
+	if _, err := b.Read(header[:]); err != nil {
+		return err
+	}
+	compLength := mySQLPacketLength(header[:3])
+	unCompLength := mySQLPacketLength(header[4:6])
+
+	if b.Len() < int(compLength) {
+		return ErrIncompletePacket
 	}
 
-	dataBlock := data[compressedHeaderLen : compressedHeaderLen+compLength]
 	if unCompLength == 0 {
-		// not compressed, just strip off the extra header
-		n, err := w.Receiver.Write(dataBlock)
-		return n + compressedHeaderLen, err
+		// move the data we want into the decompressPacket buffer
+		if _, err := decompressed.Write(b.Next(int(compLength))); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
-	b := bytes.NewBuffer(dataBlock)
+	compressedData := bytes.NewBuffer(b.Next(int(compLength)))
 
 	// this is confusing, looking at the docs since MySQL mentioned
 	// RFC 1951, and Go mentions 1950 with this library, but
 	// also has flate which mentioned 1951, you'd expect that was the
 	// library to use.  In practice this seems to be the correct
 	// one however.
-	zr, err := zlib.NewReader(b)
+	zr, err := zlib.NewReader(compressedData)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	defer zr.Close()
 	enflated, err := ioutil.ReadAll(zr)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	n, err := Copy(bytes.NewBuffer(enflated), w.Receiver)
-	if n > 0 {
-		n += compressedHeaderLen
+	if _, err := decompressed.Write(enflated); err != nil {
+		return err
 	}
-	return n, err
+
+	return nil
 }

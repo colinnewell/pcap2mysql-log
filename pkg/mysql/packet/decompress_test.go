@@ -97,7 +97,15 @@ func TestMultiplePacketsDecompress(t *testing.T) {
 }
 
 func TestMultiplePacketsDecompressBug(t *testing.T) {
-	expected := [][]byte{}
+	expected := [][]byte{
+		{
+			0x18, 0x0, 0x0, 0x0, 0x3, 0x53, 0x45, 0x4c, 0x45,
+			0x43, 0x54, 0x20, 0x2a, 0x20, 0x46, 0x52, 0x4f,
+			0x4d, 0x20, 0x64, 0x65, 0x6d, 0x6f, 0x2e, 0x6c,
+			0x6f, 0x74, 0x73,
+		},
+		{0x1, 0x0, 0x0, 0x0, 0x1},
+	}
 
 	input := []byte{
 		0xa1, 0x01, 0x00, 0x00, 0x00, 0x20, 0x00, 0x78,
@@ -257,7 +265,9 @@ func TestMultiplePacketsDecompressBug(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(s.packets, expected); diff != "" {
-		t.Fatalf("Decompressed version doesn't match (-got +expected):\n%s\n", diff)
+		t.Logf("%#v\n", s.packets)
+		t.Logf("%s\n", s.packets)
+		t.Fatalf("Decompressed data doesn't match (-got +expected):\n%s\n", diff)
 	}
 
 }
