@@ -34,7 +34,6 @@ func (c *Splitter) Write(p []byte) (int, error) {
 		unwrapped, n, err := decompressPacket(p)
 		if err != nil && errors.Is(err, ErrIncompletePacket) {
 			c.incompletePacket = true
-			err = nil
 			return 0, nil
 		}
 		compressedRead = n
