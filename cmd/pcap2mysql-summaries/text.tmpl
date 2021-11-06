@@ -1,3 +1,15 @@
-{{ range . }}
-	{{- .Address }}
+{{ range . -}}
+Connection: {{ .Address }}
+{{ range .Items -}}
+{{ .Data.Type }}
+{{- if .Data.Params }}
+{{ .Data.Params }}
+{{ end }}
+{{- if .Data.Query }}
+{{ .Data.Query }}
+{{ end }}
+{{- if .Data.Results }}
+{{ .Data.Results }}
+{{ end }}
+{{ end }}
 {{ end }}
