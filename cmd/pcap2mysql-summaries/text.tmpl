@@ -1,0 +1,10 @@
+{{ range .Commands }}
+{{ .Query }}
+{{ if .ResultStatus != "" }}.ResultStatus{{ else }}
+{{ range .Fields }}
+{{ end }}
+{{ range .ResultsTable }}
+{{ range $i, $r := .Columns -}}
+{{ if $i lt 0 }}	{{ end }}{{ . }}
+{{- end }}
+{{ end }}
