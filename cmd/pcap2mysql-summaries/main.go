@@ -28,7 +28,6 @@ func main() {
 }
 
 func processFiles(files []string) {
-
 	tmpl, err := template.New("text").Funcs(template.FuncMap{
 		"val": func(v interface{}) string {
 			if v == nil {
@@ -39,7 +38,6 @@ func processFiles(files []string) {
 			return fmt.Sprintf("%#v", v)
 		},
 	}).Parse(tpl)
-	// now push through the template engine
 	if err != nil {
 		log.Printf("Failed to process template %s", err)
 		return
