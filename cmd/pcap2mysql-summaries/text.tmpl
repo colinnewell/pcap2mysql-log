@@ -1,10 +1,12 @@
 {{ range . -}}
 Connection: {{ .Address }}
 {{ range .Items -}}
+{{ if ne .Data.Type "PREPARE_OK" }}
 Type: {{ .Data.Type }}
 {{ range $i, $v := .Data.Params -}}
 {{- if ne $i 0 }}, {{ end }}{{- val $v -}}
 {{ end -}}
+{{ end }}
 {{- if .Data.Query -}}
 {{ .Data.Query }}
 {{- end -}}
