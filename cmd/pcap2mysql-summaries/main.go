@@ -17,7 +17,7 @@ var tpl string
 
 // TODO:
 // * allow template to be specified.
-// * allow read from stdin
+// * provide help/version info
 
 func main() {
 	pflag.Parse()
