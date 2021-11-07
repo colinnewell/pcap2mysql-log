@@ -33,7 +33,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("Specify pcap2mysql-log files to process")
+	processTemplate(os.Stdin, os.Stdout, tmpl)
 }
 
 func setupTemplate() (*template.Template, error) {
