@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"text/template"
@@ -45,20 +46,25 @@ func processFiles(files []string) {
 	}
 
 	for _, file := range files {
-
 		rdr, err := os.Open(file)
 		if err != nil {
 			log.Printf("Failed to read %s: %s", file, err)
 			continue
 		}
 		defer rdr.Close()
-		v := []map[string]interface{}{}
-		d := json.NewDecoder(rdr)
-		d.UseNumber()
-		if err := d.Decode(&v); err != nil {
-			log.Printf("Failed to decode %s: %s", file, err)
+		if err := processTemplate(rdr, os.Stdout, tmpl); err != nil {
+			log.Printf("Failed to process %s: %s", file, err)
 			continue
 		}
-		err = tmpl.Execute(os.Stdout, v)
 	}
+}
+
+func processTemplate(rdr io.Reader, output io.Writer, tmpl *template.Template) error {
+	v := []map[string]interface{}{}
+	d := json.NewDecoder(rdr)
+	d.UseNumber()
+	if err := d.Decode(&v); err != nil {
+		return fmt.Errorf("decode failure %s", err)
+	}
+	return tmpl.Execute(output, v)
 }
