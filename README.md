@@ -15,6 +15,14 @@ processes them in the order they appeared on the wire.  That does mean it holds
 onto large chunks of data in memory.  Very large capture files may be a
 struggle to process.
 
+There is also a quick tool for turning the data from the tool into a quick
+summary.
+
+    pcap2mysql-log test/captures/big-data.pcap | pcap2mysql-summaries
+
+This embeds a go template that translates the json output to something more
+textual.  This is rather rough right now.
+
 ## Building
 
 This program requires libpcap to build and run.  On Linux you typically install
