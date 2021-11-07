@@ -1,7 +1,10 @@
 VERSION  := $(shell git describe --tags 2>/dev/null || git rev-parse --short HEAD)
 DC := docker-compose -f test/docker-compose.yml
 
-all: pcap2mysql-log
+all: pcap2mysql-log pcap2mysql-summaries
+
+pcap2mysql-summaries: cmd/pcap2mysql-summaries/*.go
+	go build -o pcap2mysql-summaries -ldflags "-X main.Version=$(VERSION)" cmd/pcap2mysql-summaries/*.go
 
 pcap2mysql-log: cmd/pcap2mysql-log/*.go internal/*/* pkg/*/* pkg/*/*/*
 	go build -o pcap2mysql-log -ldflags "-X main.Version=$(VERSION)" cmd/pcap2mysql-log/*.go
@@ -23,10 +26,10 @@ e2e-test: pcap2mysql-log
 .force:
 
 clean:
-	rm pcap2mysql-log
+	rm pcap2mysql-log pcap2mysql-summaries
 
-install: pcap2mysql-log
-	cp pcap2mysql-log /usr/local/bin
+install: pcap2mysql-log pcap2mysql-summaries
+	cp pcap2mysql-log pcap2mysql-summaries /usr/local/bin
 
 lint:
 	golangci-lint run
