@@ -13,6 +13,7 @@ import (
 )
 
 //go:embed text.tmpl
+//nolint:gochecknoglobals
 var tpl string
 
 // TODO:
@@ -33,7 +34,9 @@ func main() {
 		return
 	}
 
-	processTemplate(os.Stdin, os.Stdout, tmpl)
+	if err := processTemplate(os.Stdin, os.Stdout, tmpl); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func setupTemplate() (*template.Template, error) {
@@ -71,7 +74,7 @@ func processTemplate(rdr io.Reader, output io.Writer, tmpl *template.Template) e
 	d := json.NewDecoder(rdr)
 	d.UseNumber()
 	if err := d.Decode(&v); err != nil {
-		return fmt.Errorf("decode failure %s", err)
+		return fmt.Errorf("decode failure %w", err)
 	}
 	return tmpl.Execute(output, v)
 }
