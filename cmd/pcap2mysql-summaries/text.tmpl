@@ -1,18 +1,16 @@
 {{ range . -}}
 Connection: {{ .Address }}
 {{ range .Items -}}
-{{ .Data.Type }}
-{{ range $i, $v := .Data.Params }}
+Type: {{ .Data.Type }}
+{{ range $i, $v := .Data.Params -}}
 {{- if ne $i 0 }}, {{ end }}{{- val $v -}}
-{{ end }}
-{{- if .Data.Query }}
+{{ end -}}
+{{- if .Data.Query -}}
 {{ .Data.Query }}
-{{ end }}
-{{- if .Data.Results }}
+{{- end -}}
 {{ range .Data.Results }}
 {{ range $i, $v := . }}
 {{- if ne $i 0 }}, {{ end }}{{- val $v -}}
-{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}
