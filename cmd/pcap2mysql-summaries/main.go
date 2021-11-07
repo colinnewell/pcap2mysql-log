@@ -15,19 +15,28 @@ import (
 //go:embed text.tmpl
 var tpl string
 
+// TODO:
+// * allow template to be specified.
+// * allow read from stdin
+
 func main() {
 	pflag.Parse()
 	files := pflag.Args()
 
+	tmpl, err := setupTemplate()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if len(files) > 0 {
-		processFiles(files)
+		processFiles(tmpl, files)
 		return
 	}
 
 	fmt.Println("Specify pcap2mysql-log files to process")
 }
 
-func processFiles(files []string) {
+func setupTemplate() (*template.Template, error) {
 	tmpl, err := template.New("text").Funcs(template.FuncMap{
 		"val": func(v interface{}) string {
 			if v == nil {
@@ -38,11 +47,11 @@ func processFiles(files []string) {
 			return fmt.Sprintf("%#v", v)
 		},
 	}).Parse(tpl)
-	if err != nil {
-		log.Printf("Failed to process template %s", err)
-		return
-	}
 
+	return tmpl, err
+}
+
+func processFiles(tmpl *template.Template, files []string) {
 	for _, file := range files {
 		rdr, err := os.Open(file)
 		if err != nil {
