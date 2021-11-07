@@ -41,25 +41,37 @@ func main() {
 
 func processFiles(files []string) {
 
+	tmpl, err := template.New("text").Funcs(template.FuncMap{
+		"val": func(v interface{}) string {
+			if v == nil {
+				return "null"
+			}
+			// then switch through the types, kinda like a sprintf but a little
+			// more tweaked for SQL
+			return fmt.Sprintf("%#v", v)
+		},
+	}).Parse(tpl)
+	// now push through the template engine
+	if err != nil {
+		log.Printf("Failed to process template %s", err)
+		return
+	}
+
 	for _, file := range files {
 
-		data, err := os.ReadFile(file)
+		rdr, err := os.Open(file)
 		if err != nil {
 			log.Printf("Failed to read %s: %s", file, err)
 			continue
 		}
+		defer rdr.Close()
 		v := []map[string]interface{}{}
-		if err := json.Unmarshal(data, &v); err != nil {
+		d := json.NewDecoder(rdr)
+		d.UseNumber()
+		if err := d.Decode(&v); err != nil {
 			log.Printf("Failed to decode %s: %s", file, err)
 			continue
 		}
-		// now push through the template engine
-		tmpl, err := template.New("text").Parse(tpl)
-		if err != nil {
-			log.Printf("Failed to process template %s", err)
-			continue
-		}
-
 		err = tmpl.Execute(os.Stdout, v)
 	}
 	// load in the json
