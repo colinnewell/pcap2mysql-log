@@ -15,5 +15,8 @@ Type: {{ .Data.Type }}
 {{- if ne $i 0 }}, {{ end }}{{- val $v -}}
 {{ end }}
 {{ end }}
+{{- if eq .Data.Type "Error" -}}
+{{- .Data.State }}: {{ .Data.Message }}
+{{- end }}
 {{ end }}
 {{ end }}
