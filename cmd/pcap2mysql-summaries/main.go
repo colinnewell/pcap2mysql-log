@@ -21,7 +21,9 @@ var tpl string
 
 func main() {
 	var displayVersion bool
+	var templateFile string
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
+	pflag.StringVar(&templateFile, "template", "", "Template to summarise with")
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage %s [files]\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "\nWith no files reads stdin.\n")
@@ -45,7 +47,15 @@ func main() {
 
 	files := pflag.Args()
 
-	tmpl, err := setupTemplate()
+	templateContents := tpl
+	if templateFile != "" {
+		b, err := os.ReadFile(templateFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		templateContents = string(b)
+	}
+	tmpl, err := setupTemplate(templateContents)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,7 +70,7 @@ func main() {
 	}
 }
 
-func setupTemplate() (*template.Template, error) {
+func setupTemplate(templateContents string) (*template.Template, error) {
 	tmpl, err := template.New("text").Funcs(template.FuncMap{
 		"val": func(v interface{}) string {
 			if v == nil {
@@ -70,7 +80,7 @@ func setupTemplate() (*template.Template, error) {
 			// more tweaked for SQL
 			return fmt.Sprintf("%#v", v)
 		},
-	}).Parse(tpl)
+	}).Parse(templateContents)
 
 	return tmpl, err
 }
