@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"runtime/debug"
 	"text/template"
 
 	"github.com/spf13/pflag"
@@ -15,13 +16,29 @@ import (
 //go:embed text.tmpl
 //nolint:gochecknoglobals
 var tpl string
+var displayVersion bool
 
 // TODO:
 // * allow template to be specified.
 // * provide help/version info
 
 func main() {
+	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
 	pflag.Parse()
+
+	if displayVersion {
+		buildVersion := "unknown"
+		if bi, ok := debug.ReadBuildInfo(); ok {
+			// NOTE: right now this probably always returns (devel).  Hopefully
+			// will improve with new versions of Go.  It might be neat to add
+			// dep info too at some point since that's part of the build info.
+			buildVersion = bi.Main.Version
+		}
+
+		fmt.Printf("Version: %s %s\n", Version, buildVersion)
+		return
+	}
+
 	files := pflag.Args()
 
 	tmpl, err := setupTemplate()
