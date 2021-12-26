@@ -14,15 +14,13 @@ import (
 )
 
 //go:embed text.tmpl
-//nolint:gochecknoglobals
 var tpl string
-var displayVersion bool
 
 // TODO:
 // * allow template to be specified.
-// * provide help/version info
 
 func main() {
+	var displayVersion bool
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage %s [files]\n", os.Args[0])
