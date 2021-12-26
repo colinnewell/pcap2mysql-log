@@ -24,6 +24,12 @@ var displayVersion bool
 
 func main() {
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
+	pflag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage %s [files]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "\nWith no files reads stdin.\n")
+		pflag.PrintDefaults()
+	}
+
 	pflag.Parse()
 
 	if displayVersion {
