@@ -1,0 +1,47 @@
+<html>
+{{ range . -}}
+{{ if .Items }}
+<div>
+    <dl>
+        <dt>Connection:</dt><dd>{{ .Address }}</dd>
+{{ range .Items -}}
+    {{ if ne .Data.Type "PREPARE_OK" }}
+        <dt>Type:</dt><dd>{{ .Data.Type }}</dd>
+
+        {{ if .Data.Params }}
+            <h3>Params</h3>
+            <table>
+            <tr><td>{{ range $i, $v := .Data.Params -}}
+            {{- if ne $i 0 }}</td><td>{{ end }}<code>{{- val $v -}}</code>
+            {{ end -}}</td></tr>
+            </table>
+        {{ end }}
+    {{ end }}
+    {{- if .Data.Query -}}
+        <pre>
+        {{ .Data.Query }}
+        </pre>
+    {{- end -}}
+    {{ if .Data.Results }}
+        <h3>Results</h3>
+        <table>
+        {{ range .Data.Results }}
+            <tr><td>
+        {{ range $i, $v := . }}
+            {{- if ne $i 0 }}</td><td>{{ end }}<code>{{- val $v -}}</code>
+        {{ end }}
+        </td></tr>
+        {{ end }}
+        </table>
+    {{ end }}
+    {{- if eq .Data.Type "Error" -}}
+        <div class="error">
+        {{- .Data.State }}: {{ .Data.Message }}
+        </div>
+    {{- end }}
+{{ end }}
+</div>
+<hr>
+{{ end }}
+{{ end }}
+</html>
