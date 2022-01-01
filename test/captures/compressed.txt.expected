@@ -1,0 +1,21 @@
+Connection: 127.0.0.1:52998 - 127.0.0.1:3306
+
+Type: Greeting
+
+
+Type: Login
+
+
+Type: OK
+
+
+Type: Query
+SELECT * FROM peeps
+
+Type: SQL results
+
+
+Type: QUIT
+
+
+

@@ -1,0 +1,73 @@
+Connection: 127.0.0.1:33534 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33532 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33530 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33528 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33526 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33522 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33518 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33516 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33514 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33510 - 127.0.0.1:3306
+
+Connection: 127.0.0.1:33536 - 127.0.0.1:3306
+
+Type: Greeting
+
+
+Connection: 127.0.0.1:33538 - 127.0.0.1:3306
+
+Type: Greeting
+
+
+Type: Login
+
+
+Type: OK
+
+
+Type: Query
+INSERT INTO test VALUES ( 2, 'TEST' )
+
+Type: Error
+42S02: Table 'demo.test' doesn't exist
+
+Type: QUIT
+
+
+Connection: 127.0.0.1:33540 - 127.0.0.1:3306
+
+Type: Greeting
+
+
+Type: Login
+
+
+Type: OK
+
+
+Type: Prepare
+INSERT INTO peeps (name, age) VALUES ( ?, ? )
+
+
+Type: Execute
+"person", "33"
+
+Type: OK
+
+
+Type: MYSQL_STMT_CLOSE
+
+
+Type: QUIT
+
+
+

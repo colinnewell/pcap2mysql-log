@@ -5,11 +5,17 @@ do
     FILE=test/captures/$(basename -s.pcap "$f")
     echo Testing $f
     TZ= ./pcap2mysql-log $f > $FILE.actual
+    ./pcap2mysql-summaries $FILE.actual > $FILE.txt.actual
     if [ ! -f $FILE.expected ]
     then
         cp $FILE.actual $FILE.expected
     fi
+    if [ ! -f $FILE.txt.expected ]
+    then
+        cp $FILE.txt.actual $FILE.txt.expected
+    fi
     diff -q $FILE.expected $FILE.actual || (echo Failed diff $FILE.expected $FILE.actual && exit 1)
+    diff -q $FILE.txt.expected $FILE.txt.actual || (echo Failed diff $FILE.txt.expected $FILE.txt.actual && exit 1)
 done
 
 

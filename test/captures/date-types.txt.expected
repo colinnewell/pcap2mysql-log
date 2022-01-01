@@ -1,0 +1,48 @@
+Connection: 127.0.0.1:42416 - 127.0.0.1:3306
+
+Type: Greeting
+
+
+Type: Login
+
+
+Type: OK
+
+
+Type: Prepare
+
+	INSERT INTO demo.dates
+		(created, start, endYear, y2k)
+	VALUES
+		(?, ?, ?, ?)
+	
+
+
+Type: Execute
+"2013-03-04", "20:33", "2021", "97"
+
+Type: OK
+
+
+Type: Prepare
+SELECT * FROM demo.dates
+
+
+Type: Execute
+
+
+Type: SQL results
+
+"1", "2013-03-04", "2021-09-25 17:21:23", map[string]interface {}{"Date":"0", "Hour":"20", "Length":"8", "Minutes":"33", "Negative":"0", "Seconds":"0"}, "2021", "1997"
+
+
+Type: MYSQL_STMT_CLOSE
+
+
+Type: MYSQL_STMT_CLOSE
+
+
+Type: QUIT
+
+
+

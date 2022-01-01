@@ -1,0 +1,64 @@
+Connection: 127.0.0.1:42230 - 127.0.0.1:3306
+
+Type: Greeting
+
+
+Type: Login
+
+
+Type: OK
+
+
+Type: Prepare
+
+	INSERT INTO demo.dbtypes
+		(tiny, med, small, basic, big, utiny, umed, usmall, ubasic, ubig, salary, floater, doubled, bits)
+	VALUES
+		(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	
+
+
+Type: Execute
+"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "3.4567", "3.33", "4.44", "3"
+
+Type: OK
+
+
+Type: Execute
+"127", "8388607", "32767", "2147483647", "9223372036854775807", "255", "16777215", "65535", "4294967295", "18446744073709551615", "3.4567", "3.33", "4.44", "3"
+
+Type: OK
+
+
+Type: Execute
+"-1", "-2", "-3", "-4", "-5", "6", "7", "8", "9", "10", "3.4567", "3.33", "4.44", "3"
+
+Type: OK
+
+
+Type: Prepare
+SELECT * FROM demo.dbtypes
+
+
+Type: Execute
+
+
+Type: SQL results
+
+"1", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", map[string]interface {}{"Text":"3.46"}, "3.33", "4.44", map[string]interface {}{"Base64":"Aw=="}
+
+"2", "127", "8388607", "32767", "2147483647", "9223372036854775807", "255", "16777215", "65535", "4294967295", "18446744073709551615", map[string]interface {}{"Text":"3.46"}, "3.33", "4.44", map[string]interface {}{"Base64":"Aw=="}
+
+"3", "-1", "-2", "-3", "-4", "-5", "6", "7", "8", "9", "10", map[string]interface {}{"Text":"3.46"}, "3.33", "4.44", map[string]interface {}{"Base64":"Aw=="}
+
+
+Type: MYSQL_STMT_CLOSE
+
+
+Type: MYSQL_STMT_CLOSE
+
+
+Type: QUIT
+
+
+
