@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"runtime/debug"
 
 	"github.com/google/gopacket"
@@ -92,12 +93,13 @@ func processHarFiles(
 
 	streamFactory.Wait()
 	c := r.GetConnections(noSort)
-	bytes, err := json.MarshalIndent(c, "", "  ")
+	e := json.NewEncoder(os.Stdout)
+	e.SetIndent("", "  ")
+	err := e.Encode(c)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println(string(bytes))
 }
 
 func allowPort(serverPorts []int32, packet *layers.TCP) bool {
