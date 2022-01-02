@@ -1,5 +1,3 @@
-{{ range . -}}
-{{- if .Items -}}
 Connection: {{ .Address }}
 {{ range .Items -}}
 {{ if ne .Data.Type "PREPARE_OK" }}
@@ -18,7 +16,5 @@ Type: {{ .Data.Type }}
 {{ end }}
 {{- if eq .Data.Type "Error" -}}
 {{- .Data.State }}: {{ .Data.Message }}
-{{- end }}
-{{ end }}
 {{- end }}
 {{ end }}

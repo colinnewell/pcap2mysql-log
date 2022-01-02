@@ -3,4 +3,3 @@ Connection: 127.0.0.1:56094 - 127.0.0.1:3306
 Type: Error
 <no value>: Host '127.0.0.1' is not allowed to connect to this MySQL server
 
-

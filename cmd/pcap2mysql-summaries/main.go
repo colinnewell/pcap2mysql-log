@@ -101,11 +101,29 @@ func processFiles(tmpl *template.Template, files []string) {
 }
 
 func processTemplate(rdr io.Reader, output io.Writer, tmpl *template.Template) error {
-	v := []map[string]interface{}{}
 	d := json.NewDecoder(rdr)
 	d.UseNumber()
-	if err := d.Decode(&v); err != nil {
-		return fmt.Errorf("decode failure %w", err)
+	t, err := d.Token()
+	if err == io.EOF {
+		return nil
 	}
-	return tmpl.Execute(output, v)
+	if err != nil {
+		return fmt.Errorf("failed to start reading ports json: %w", err)
+	}
+	// expecting delim to start
+	if d, ok := t.(json.Delim); !ok || d.String() != "[" {
+		return fmt.Errorf("unexpected start to the json")
+	}
+
+	for d.More() {
+		v := map[string]interface{}{}
+		if err := d.Decode(&v); err != nil {
+			return fmt.Errorf("decode failure %w", err)
+		}
+		if err := tmpl.Execute(output, v); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
