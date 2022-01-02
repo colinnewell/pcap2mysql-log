@@ -1,6 +1,5 @@
 #!/bin/sh
 list=$(gofmt -l -s .)
-echo $list
 if [ -n "$list" ]
 then
     echo "Files need to be gofmt'd."
