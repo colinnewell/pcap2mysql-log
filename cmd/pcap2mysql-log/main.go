@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -12,6 +11,7 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"github.com/google/gopacket/tcpassembly"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/pflag"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
@@ -93,6 +93,8 @@ func processHarFiles(
 
 	streamFactory.Wait()
 	c := r.GetConnections(noSort)
+
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	e := json.NewEncoder(os.Stdout)
 	e.SetIndent("", "  ")
 	err := e.Encode(c)
