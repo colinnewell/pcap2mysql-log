@@ -1,3 +1,4 @@
+//go:build capturetest
 // +build capturetest
 
 package main
