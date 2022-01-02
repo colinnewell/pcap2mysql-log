@@ -33,7 +33,7 @@ install: pcap2mysql-log pcap2mysql-summaries
 
 lint:
 	golangci-lint run
-	gofmt -l -s .
+	./ensure-gofmt.sh
 
 captures: go-captures perl-captures
 
