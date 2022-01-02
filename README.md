@@ -70,6 +70,8 @@ traffic.
 * Lots of features haven't been implemented.
 * The output format is very clunky.  It largely matches the actual data
   structures it encounters and can take a fair amount of effort to interpret.
+* The json output is indented, but not perfectly as the output is partly manual
+  for efficiency.
 
 ## General notes
 
