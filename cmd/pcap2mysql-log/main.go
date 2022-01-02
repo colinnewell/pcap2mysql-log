@@ -73,7 +73,11 @@ func processHarFiles(
 	profileInAction bool,
 ) {
 	if profileInAction {
-		defer profile.Start(profile.MemProfileHeap, profile.MemProfileRate(profile.DefaultMemProfileRate), profile.ProfilePath(".")).Stop()
+		defer profile.Start(
+			profile.MemProfileHeap,
+			profile.MemProfileRate(profile.DefaultMemProfileRate),
+			profile.ProfilePath("."),
+		).Stop()
 	}
 
 	completed := make(chan structure.Connection)
@@ -86,6 +90,7 @@ func processHarFiles(
 
 	for _, filename := range files {
 		if handle, err := pcap.OpenOffline(filename); err != nil {
+			//nolint:gocritic
 			log.Fatal(err)
 		} else {
 			defer handle.Close()
