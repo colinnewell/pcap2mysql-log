@@ -112,6 +112,7 @@ func processTemplate(rdr io.Reader, output io.Writer, tmpl *template.Template) e
 	}
 	// expecting delim to start
 	if d, ok := t.(json.Delim); !ok || d.String() != "[" {
+		//nolint:goerr113
 		return fmt.Errorf("unexpected start to the json")
 	}
 
