@@ -4,7 +4,13 @@ for f in test/captures/*.pcap
 do
     FILE=test/captures/$(basename -s.pcap "$f")
     echo Testing $f
-    TZ= ./pcap2mysql-log $f > $FILE.actual
+    if [[ "$f" == "test/captures/numeric-types.pcap" ]]
+    then
+        # avoid jq butchering the numbers
+        TZ= ./pcap2mysql-log $f > $FILE.actual
+    else
+        TZ= ./pcap2mysql-log $f | jq 'sort_by (.Address)' > $FILE.actual
+    fi
     ./pcap2mysql-summaries $FILE.actual > $FILE.txt.actual
     if [ ! -f $FILE.expected ]
     then
