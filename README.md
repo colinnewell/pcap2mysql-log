@@ -36,6 +36,9 @@ regular installer is sufficient, you shouldn't need the SDK.
 On Mac's/BSD the library bindings required should be there out of the box
 (no further action required).
 
+For tests `jq` is used.  See https://stedolan.github.io/jq/download/ for info
+on installing jq.
+
 Note that it's assumed you have Go installed, and also make (without make look
 at the commands in the Makefile, that is mostly being used for convenience
 rather than because things are particularly complex).
