@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 
 	"github.com/google/gopacket"
@@ -13,7 +14,8 @@ import (
 )
 
 func TestHTTPStreamRead(t *testing.T) {
-	r := decoding.New(false, false, false)
+	completed := make(chan structure.Connection)
+	r := decoding.New(false, false, false, false, completed)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}
@@ -34,10 +36,17 @@ func TestHTTPStreamRead(t *testing.T) {
 		}
 	}
 	assembler.FlushAll()
-	c := r.GetConnections(false)
+	go func() {
+		streamFactory.Wait()
+		close(completed)
+	}()
+	actual := 0
+	for range completed {
+		actual++
+	}
 	// FIXME: test in more detail.
 	expected := 29
-	if len(c) != expected {
-		t.Errorf("Should have read %d mysql connections: read %d", expected, len(c))
+	if actual != expected {
+		t.Errorf("Should have read %d mysql connections: read %d", expected, actual)
 	}
 }

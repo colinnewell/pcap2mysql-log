@@ -3,7 +3,6 @@ package decoding
 import (
 	"io"
 	"log"
-	"sort"
 	"sync"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
@@ -20,38 +19,26 @@ type MySQLConnectionReaders struct {
 	IntermediateData bool
 	RawData          bool
 	verbose          bool
+	noSort           bool
+	completed        chan structure.Connection
 }
 
-func New(intermediateData bool, rawData bool, verbose bool) *MySQLConnectionReaders {
+func New(
+	intermediateData bool,
+	rawData bool,
+	verbose bool,
+	noSort bool,
+	completed chan structure.Connection,
+) *MySQLConnectionReaders {
 	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
 		builders:         builders,
 		IntermediateData: intermediateData,
 		RawData:          rawData,
 		verbose:          verbose,
+		noSort:           noSort,
+		completed:        completed,
 	}
-}
-
-func (h *MySQLConnectionReaders) GetConnections(noSort bool) []structure.Connection {
-	connections := make([]structure.Connection, len(h.builders))
-	i := 0
-	for _, b := range h.builders {
-		connections[i] = b.Connection(noSort)
-		i++
-	}
-	if !noSort {
-		sort.Slice(connections, func(i, j int) bool {
-			switch {
-			case connections[i].FirstSeen().Before(connections[j].FirstSeen()):
-				return true
-			case connections[j].FirstSeen().Before(connections[i].FirstSeen()):
-				return false
-			default:
-				return connections[i].Address.String() > connections[j].Address.String()
-			}
-		})
-	}
-	return connections
 }
 
 func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) {
@@ -107,7 +94,7 @@ func (h *MySQLConnectionReaders) ConnectionBuilder(
 
 	b, ok := h.builders[address]
 	if !ok {
-		b = NewBuilder(address, h)
+		b = NewBuilder(address, h, h.noSort, h.completed)
 		h.builders[address] = b
 	}
 	return b

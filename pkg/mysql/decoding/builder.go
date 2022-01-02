@@ -35,12 +35,16 @@ type MySQLConnectionBuilder struct {
 	responseBuffer      *packet.Buffer
 	readsCompleted      int
 	decoded             bool
+	completed           chan structure.Connection
 	mu                  sync.Mutex
+	noSort              bool
 }
 
 func NewBuilder(
 	address structure.ConnectionAddress,
 	readers *MySQLConnectionReaders,
+	noSort bool,
+	completed chan structure.Connection,
 ) *MySQLConnectionBuilder {
 	return &MySQLConnectionBuilder{
 		Address:        address,
@@ -48,6 +52,8 @@ func NewBuilder(
 		requestBuffer:  &packet.Buffer{},
 		responseBuffer: &packet.Buffer{},
 		queryParams:    make(map[uint32]uint16),
+		noSort:         noSort,
+		completed:      completed,
 	}
 }
 
@@ -79,32 +85,6 @@ func (b *MySQLConnectionBuilder) AddToConnection(
 			prepare := item.(structure.PrepareOKResponse)
 			b.queryParams[prepare.StatementID] = prepare.NumParams
 		}
-	}
-}
-
-func (b *MySQLConnectionBuilder) Connection(noSort bool) structure.Connection {
-	b.DecodeConnection()
-
-	var items []structure.Transmission
-	items = append(items, b.Requests...)
-	items = append(items, b.Responses...)
-
-	if !noSort {
-		sort.Slice(items, func(i, j int) bool {
-			if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
-				return items[i].Seen[0].Before(items[j].Seen[0])
-			} else if len(items[i].Seen) > 0 {
-				return true
-			}
-			return false
-		})
-	}
-
-	return structure.Connection{
-		Address:            b.Address,
-		Items:              items,
-		RawRequestPackets:  b.requestBuffer,
-		RawResponsePackets: b.responseBuffer,
 	}
 }
 
@@ -259,6 +239,28 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 				PreviousRequestType: b.previousRequestType,
 			},
 		)
+	}
+
+	var items []structure.Transmission
+	items = append(items, b.Requests...)
+	items = append(items, b.Responses...)
+
+	if !b.noSort {
+		sort.Slice(items, func(i, j int) bool {
+			if len(items[i].Seen) > 0 && len(items[j].Seen) > 0 {
+				return items[i].Seen[0].Before(items[j].Seen[0])
+			} else if len(items[i].Seen) > 0 {
+				return true
+			}
+			return false
+		})
+	}
+
+	b.completed <- structure.Connection{
+		Address:            b.Address,
+		Items:              items,
+		RawRequestPackets:  b.requestBuffer,
+		RawResponsePackets: b.responseBuffer,
 	}
 }
 

@@ -12,16 +12,19 @@ import (
 	"github.com/google/gopacket/pcap"
 	"github.com/google/gopacket/tcpassembly"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/profile"
 	"github.com/spf13/pflag"
 
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding"
+	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 )
 
 func main() {
-	var assemblyDebug, displayVersion, intermediateData, noSort, rawData, verbose bool
+	var assemblyDebug, displayVersion, intermediateData, noSort, rawData, verbose, profileInAction bool
 	var serverPorts []int32
 
+	pflag.BoolVar(&profileInAction, "profile", false, "Profile the program in use")
 	pflag.BoolVar(&assemblyDebug, "assembly-debug", false, "Debug log from the tcp assembly")
 	pflag.BoolVar(&displayVersion, "version", false, "Display program version")
 	pflag.BoolVar(&intermediateData, "intermediate-data", false, "Emit the data before processing")
@@ -53,7 +56,7 @@ func main() {
 	files := pflag.Args()
 
 	if len(files) > 0 {
-		processHarFiles(serverPorts, files, intermediateData, noSort, rawData, verbose)
+		processHarFiles(serverPorts, files, intermediateData, noSort, rawData, verbose, profileInAction)
 		return
 	}
 
@@ -61,9 +64,20 @@ func main() {
 }
 
 func processHarFiles(
-	serverPorts []int32, files []string, intermediateData bool, noSort bool, rawData bool, verbose bool,
+	serverPorts []int32,
+	files []string,
+	intermediateData bool,
+	noSort bool,
+	rawData bool,
+	verbose bool,
+	profileInAction bool,
 ) {
-	r := decoding.New(intermediateData, rawData, verbose)
+	if profileInAction {
+		defer profile.Start(profile.MemProfileHeap, profile.MemProfileRate(profile.DefaultMemProfileRate), profile.ProfilePath(".")).Stop()
+	}
+
+	completed := make(chan structure.Connection)
+	r := decoding.New(intermediateData, rawData, verbose, noSort, completed)
 	streamFactory := &tcp.StreamFactory{
 		Reader: r,
 	}
@@ -91,17 +105,29 @@ func processHarFiles(
 
 	assembler.FlushAll()
 
-	streamFactory.Wait()
-	c := r.GetConnections(noSort)
-
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	e := json.NewEncoder(os.Stdout)
-	e.SetIndent("", "  ")
-	err := e.Encode(c)
-	if err != nil {
-		log.Println(err)
-		return
+	e.SetIndent("  ", "  ")
+	go func() {
+		streamFactory.Wait()
+		close(completed)
+	}()
+	fmt.Print("[\n  ")
+	first := true
+	for c := range completed {
+		if first {
+			first = false
+		} else {
+			// this sucks.
+			fmt.Printf("  ,\n  ")
+		}
+		err := e.Encode(c)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 	}
+	fmt.Println("]")
 }
 
 func allowPort(serverPorts []int32, packet *layers.TCP) bool {
