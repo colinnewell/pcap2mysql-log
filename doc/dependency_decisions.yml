@@ -1,19 +1,25 @@
 ---
 - - :permit
   - MIT
-  - :who:
-    :why:
+  - :who: 
+    :why: 
     :versions: []
     :when: 2021-06-02 19:25:15.311744123 Z
 - - :permit
   - New BSD
-  - :who:
-    :why:
+  - :who: 
+    :why: 
     :versions: []
     :when: 2021-06-02 19:25:21.910652667 Z
 - - :permit
   - Simplified BSD
-  - :who:
-    :why:
+  - :who: 
+    :why: 
     :versions: []
     :when: 2021-06-02 19:25:27.413639360 Z
+- - :permit
+  - Apache 2.0
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-01-02 14:13:27.845959145 Z
