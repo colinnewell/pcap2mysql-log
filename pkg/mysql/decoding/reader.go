@@ -47,7 +47,6 @@ func (h *MySQLConnectionReaders) ReadStream(
 	r tcp.Stream, a, b gopacket.Flow,
 	completed chan interface{},
 ) {
-
 	t := tcp.NewTimeCaptureReader(r)
 	src, dest := b.Endpoints()
 
