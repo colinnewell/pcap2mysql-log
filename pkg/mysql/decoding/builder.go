@@ -35,7 +35,7 @@ type MySQLConnectionBuilder struct {
 	responseBuffer      *packet.Buffer
 	readsCompleted      int
 	decoded             bool
-	completed           chan structure.Connection
+	completed           chan interface{}
 	mu                  sync.Mutex
 	noSort              bool
 }
@@ -44,7 +44,7 @@ func NewBuilder(
 	address structure.ConnectionAddress,
 	readers *MySQLConnectionReaders,
 	noSort bool,
-	completed chan structure.Connection,
+	completed chan interface{},
 ) *MySQLConnectionBuilder {
 	return &MySQLConnectionBuilder{
 		Address:        address,
@@ -114,7 +114,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	resd := &ResponseDecoder{Emit: resE}
 	responseDecoder = resd
 
-	if b.Readers.RawData {
+	if *b.Readers.RawData {
 		requestDecoder, rqd.Emit = SetupRawDataEmitter(rqd.Emit, requestDecoder)
 		responseDecoder, resd.Emit = SetupRawDataEmitter(resd.Emit, responseDecoder)
 	}
@@ -198,7 +198,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	}
 	resd.FlushResponse()
 	b.decoded = true
-	if !b.Readers.IntermediateData {
+	if !*b.Readers.IntermediateData {
 		// don't need to hang onto these.
 		b.requestBuffer = nil
 		b.responseBuffer = nil
@@ -206,7 +206,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 	// only emit the incomplete packets if we're after raw data.
 	// for things that aren't MySQL we end up basically emitting all
 	// the data as an incomplete packet which spams the transcript.
-	if b.Readers.RawData && resSplitter.IncompletePacket() {
+	if *b.Readers.RawData && resSplitter.IncompletePacket() {
 		err := packet.ErrIncompletePacket
 		p := &packet.Packet{
 			Data: resSplitter.Bytes(),
@@ -223,7 +223,7 @@ func (b *MySQLConnectionBuilder) DecodeConnection() {
 			},
 		)
 	}
-	if b.Readers.RawData && reqSplitter.IncompletePacket() {
+	if *b.Readers.RawData && reqSplitter.IncompletePacket() {
 		err := packet.ErrIncompletePacket
 		p := &packet.Packet{
 			Data: reqSplitter.Bytes(),

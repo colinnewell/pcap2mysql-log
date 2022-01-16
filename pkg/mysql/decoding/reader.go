@@ -5,9 +5,9 @@ import (
 	"log"
 	"sync"
 
+	"github.com/colinnewell/pcap-cli/tcp"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
-	"github.com/colinnewell/pcap2mysql-log/pkg/tcp"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly/tcpreader"
@@ -16,19 +16,17 @@ import (
 type MySQLConnectionReaders struct {
 	mu               sync.Mutex
 	builders         map[structure.ConnectionAddress]*MySQLConnectionBuilder
-	IntermediateData bool
-	RawData          bool
-	verbose          bool
-	noSort           bool
-	completed        chan structure.Connection
+	IntermediateData *bool
+	RawData          *bool
+	verbose          *bool
+	noSort           *bool
 }
 
 func New(
-	intermediateData bool,
-	rawData bool,
-	verbose bool,
-	noSort bool,
-	completed chan structure.Connection,
+	intermediateData *bool,
+	rawData *bool,
+	verbose *bool,
+	noSort *bool,
 ) *MySQLConnectionReaders {
 	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
@@ -37,7 +35,6 @@ func New(
 		RawData:          rawData,
 		verbose:          verbose,
 		noSort:           noSort,
-		completed:        completed,
 	}
 }
 
@@ -46,7 +43,11 @@ func drain(spr io.Reader, _ *tcp.TimeCaptureReader, _, _ gopacket.Flow) {
 }
 
 // ReadStream tries to read tcp connections and extract MySQL connections.
-func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
+func (h *MySQLConnectionReaders) ReadStream(
+	r tcp.Stream, a, b gopacket.Flow,
+	completed chan interface{},
+) {
+
 	t := tcp.NewTimeCaptureReader(r)
 	src, dest := b.Endpoints()
 
@@ -59,7 +60,7 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 		address = structure.ConnectionAddress{IP: a, Port: b}
 	}
 
-	builder := h.ConnectionBuilder(address)
+	builder := h.ConnectionBuilder(address, completed)
 	var buf *packet.Buffer
 	if response {
 		buf = builder.ResponsePacketBuffer(t)
@@ -74,7 +75,7 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 			if err == io.EOF {
 				break
 			}
-			if h.verbose {
+			if *h.verbose {
 				log.Printf("Error on response: %s\n", err)
 			}
 			drain(t, nil, a, b)
@@ -88,13 +89,14 @@ func (h *MySQLConnectionReaders) ReadStream(r tcp.Stream, a, b gopacket.Flow) {
 
 func (h *MySQLConnectionReaders) ConnectionBuilder(
 	address structure.ConnectionAddress,
+	completed chan interface{},
 ) *MySQLConnectionBuilder {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
 	b, ok := h.builders[address]
 	if !ok {
-		b = NewBuilder(address, h, h.noSort, h.completed)
+		b = NewBuilder(address, h, *h.noSort, completed)
 		h.builders[address] = b
 	}
 	return b

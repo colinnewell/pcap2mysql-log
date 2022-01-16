@@ -7,7 +7,7 @@ pcap2mysql-summaries: cmd/pcap2mysql-summaries/*
 	go build -o pcap2mysql-summaries -ldflags "-X main.Version=$(VERSION)" cmd/pcap2mysql-summaries/*.go
 
 pcap2mysql-log: cmd/pcap2mysql-log/*.go internal/*/* pkg/*/* pkg/*/*/*
-	go build -o pcap2mysql-log -ldflags "-X main.Version=$(VERSION)" cmd/pcap2mysql-log/*.go
+	go build -o pcap2mysql-log -ldflags "-X github.com/colinnewell/pcap-cli/cli.Version=$(VERSION)" cmd/pcap2mysql-log/*.go
 
 test: pcap2mysql-log pcap2mysql-summaries go-test e2e-test
 
