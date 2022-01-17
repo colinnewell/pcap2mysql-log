@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/colinnewell/pcap-cli/tcp"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 )
@@ -23,7 +24,7 @@ type ConnectionBuilder interface {
 }
 
 type MySQLConnectionBuilder struct {
-	Address             structure.ConnectionAddress
+	Address             tcp.ConnectionAddress
 	Readers             *MySQLConnectionReaders
 	Requests            []structure.Transmission
 	Responses           []structure.Transmission
@@ -41,7 +42,7 @@ type MySQLConnectionBuilder struct {
 }
 
 func NewBuilder(
-	address structure.ConnectionAddress,
+	address tcp.ConnectionAddress,
 	readers *MySQLConnectionReaders,
 	noSort bool,
 	completed chan interface{},

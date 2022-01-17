@@ -7,7 +7,6 @@ import (
 
 	"github.com/colinnewell/pcap-cli/tcp"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
-	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/structure"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly/tcpreader"
@@ -15,7 +14,7 @@ import (
 
 type MySQLConnectionReaders struct {
 	mu               sync.Mutex
-	builders         map[structure.ConnectionAddress]*MySQLConnectionBuilder
+	builders         map[tcp.ConnectionAddress]*MySQLConnectionBuilder
 	IntermediateData *bool
 	RawData          *bool
 	verbose          *bool
@@ -28,7 +27,7 @@ func New(
 	verbose *bool,
 	noSort *bool,
 ) *MySQLConnectionReaders {
-	builders := make(map[structure.ConnectionAddress]*MySQLConnectionBuilder)
+	builders := make(map[tcp.ConnectionAddress]*MySQLConnectionBuilder)
 	return &MySQLConnectionReaders{
 		builders:         builders,
 		IntermediateData: intermediateData,
@@ -51,12 +50,12 @@ func (h *MySQLConnectionReaders) ReadStream(
 	src, dest := b.Endpoints()
 
 	var response bool
-	var address structure.ConnectionAddress
+	var address tcp.ConnectionAddress
 	if src.LessThan(dest) {
-		address = structure.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
+		address = tcp.ConnectionAddress{IP: a.Reverse(), Port: b.Reverse()}
 		response = true
 	} else {
-		address = structure.ConnectionAddress{IP: a, Port: b}
+		address = tcp.ConnectionAddress{IP: a, Port: b}
 	}
 
 	builder := h.ConnectionBuilder(address, completed)
@@ -87,7 +86,7 @@ func (h *MySQLConnectionReaders) ReadStream(
 }
 
 func (h *MySQLConnectionReaders) ConnectionBuilder(
-	address structure.ConnectionAddress,
+	address tcp.ConnectionAddress,
 	completed chan interface{},
 ) *MySQLConnectionBuilder {
 	h.mu.Lock()

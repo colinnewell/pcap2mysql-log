@@ -6,28 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/colinnewell/pcap-cli/tcp"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/decoding/bitmap"
 	"github.com/colinnewell/pcap2mysql-log/pkg/mysql/packet"
-	"github.com/google/gopacket"
 )
 
-type ConnectionAddress struct {
-	IP, Port gopacket.Flow
-}
-
-func (c ConnectionAddress) MarshalJSON() ([]byte, error) {
-	return json.Marshal(c.String())
-}
-
-func (c ConnectionAddress) String() string {
-	src, dest := c.IP.Endpoints()
-	sPort, dPort := c.Port.Endpoints()
-
-	return fmt.Sprintf("%s:%s - %s:%s", src, sPort, dest, dPort)
-}
-
 type Connection struct {
-	Address            ConnectionAddress
+	Address            tcp.ConnectionAddress
 	Items              []Transmission
 	RawRequestPackets  *packet.Buffer `json:"RawRequestPackets,omitempty"`
 	RawResponsePackets *packet.Buffer `json:"RawResponsePackets,omitempty"`
