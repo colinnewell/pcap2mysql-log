@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/spf13/pflag"
 
 	"github.com/colinnewell/pcap-cli/cli"
@@ -17,5 +19,5 @@ func main() {
 	pflag.BoolVar(&verbose, "verbose", false, "Verbose about things errors")
 
 	r := decoding.New(&intermediateData, &rawData, &verbose, &noSort)
-	cli.Main("", r)
+	cli.Main("", r, cli.SimpleJSONOutput(os.Stdout))
 }
