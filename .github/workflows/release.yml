@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install libpcap
-        if: ${{ matrix.platform == 'ubuntu-latest' }}
         run: sudo apt-get install libpcap-dev
 
       - name: Build binaries
