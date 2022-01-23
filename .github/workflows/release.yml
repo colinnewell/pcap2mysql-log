@@ -1,0 +1,50 @@
+on:
+  release:
+    types: [published]
+name: Upload Release Asset
+jobs:
+  release:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.x
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install libpcap
+        if: ${{ matrix.platform == 'ubuntu-latest' }}
+        run: sudo apt-get install libpcap-dev
+
+      - name: Build binaries
+        run: |
+          go build -o "pcap2mysql-log-$(git describe --tags)" -ldflags "-X github.com/colinnewell/pcap-cli/cli.Version=$(git describe --tags)" cmd/pcap2mysql-log/*.go
+
+      - name: Upload release artifacts
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require("fs").promises;
+            const { repo: { owner, repo }, sha } = context;
+
+            const release = await github.repos.getReleaseByTag({
+              owner, repo,
+              tag: process.env.GITHUB_REF.replace("refs/tags/", ""),
+            });
+            console.log("Release:", { release });
+
+            for (let file of await fs.readdir(".")) {
+              if (!file.startsWith("pcap2mysql-log-")) continue;
+              console.log("Uploading", file);
+              await github.repos.uploadReleaseAsset({
+                owner, repo,
+                release_id: release.data.id,
+                name: file,
+                data: await fs.readFile(file),
+              });
+            }
+
