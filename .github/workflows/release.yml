@@ -21,6 +21,7 @@ jobs:
       - name: Build binaries
         run: |
           go build -o "pcap2mysql-log-$(git describe --tags)" -ldflags "-X github.com/colinnewell/pcap-cli/cli.Version=$(git describe --tags)" cmd/pcap2mysql-log/*.go
+          CGO_ENABLED=0 go build -o "pcap2mysql-summaries-$(git describe --tags)" -ldflags "-X github.com/colinnewell/pcap-cli/cli.Version=$(git describe --tags)" cmd/pcap2mysql-summaries/*.go
 
       - name: Upload release artifacts
         uses: actions/github-script@v3
@@ -37,7 +38,7 @@ jobs:
             console.log("Release:", { release });
 
             for (let file of await fs.readdir(".")) {
-              if (!file.startsWith("pcap2mysql-log-")) continue;
+              if (!file.startsWith("pcap2mysql-")) continue;
               console.log("Uploading", file);
               await github.repos.uploadReleaseAsset({
                 owner, repo,
