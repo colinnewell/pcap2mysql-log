@@ -93,7 +93,7 @@ func (h *MySQLConnectionReaders) ConnectionBuilder(
 	defer h.mu.Unlock()
 
 	b, ok := h.builders[address]
-	if !ok {
+	if !ok || b.decoded {
 		b = NewBuilder(address, h, *h.noSort, completed)
 		h.builders[address] = b
 	}
