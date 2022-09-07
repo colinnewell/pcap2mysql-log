@@ -3,7 +3,7 @@ package packet
 import (
 	"bytes"
 	"compress/zlib"
-	"io/ioutil"
+	"io"
 )
 
 const compressedHeaderLen = 7
@@ -37,7 +37,7 @@ func decompressPacket(data []byte) ([]byte, int, error) {
 		return []byte(nil), 0, err
 	}
 	defer zr.Close()
-	enflated, err := ioutil.ReadAll(zr)
+	enflated, err := io.ReadAll(zr)
 
 	return enflated, int(compressedHeaderLen + compLength), err
 }
