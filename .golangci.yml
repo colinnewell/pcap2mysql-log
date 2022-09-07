@@ -3,7 +3,6 @@ linters:
   enable:
     - asciicheck
     - bodyclose
-    - deadcode
     - depguard
     - dogsled
     - dupl
@@ -34,15 +33,12 @@ linters:
     - revive
     - rowserrcheck
     - staticcheck
-    - structcheck
-    - structcheck
     - stylecheck
       #- testpackage
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
 
   # come back to this.  might be useful later.
