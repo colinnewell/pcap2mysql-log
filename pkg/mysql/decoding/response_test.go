@@ -61,7 +61,7 @@ func init() {
 type testOneSidedConnectionBuilder struct{}
 
 func (b *testOneSidedConnectionBuilder) AddToConnection(
-	request bool, seen []time.Time, typeName string, item interface{}) {
+	_ bool, _ []time.Time, _ string, _ interface{}) {
 }
 
 func (b *testOneSidedConnectionBuilder) PreviousRequestType() string {
@@ -76,7 +76,7 @@ func (b *testOneSidedConnectionBuilder) JustSeenGreeting() bool {
 	return false
 }
 
-func (b *testOneSidedConnectionBuilder) ParamsForQuery(query uint32) uint16 {
+func (b *testOneSidedConnectionBuilder) ParamsForQuery(_ uint32) uint16 {
 	return 0
 }
 
@@ -85,7 +85,7 @@ type testEmitter struct {
 	Builder       decoding.ConnectionBuilder
 }
 
-func (t *testEmitter) Transmission(typeName string, i interface{}) {
+func (t *testEmitter) Transmission(_ string, i interface{}) {
 	t.transmissions = append(t.transmissions, i)
 }
 
@@ -254,7 +254,7 @@ type prevRequestBuilder struct {
 }
 
 func (b *prevRequestBuilder) AddToConnection(
-	request bool, seen []time.Time, typeName string, item interface{}) {
+	_ bool, _ []time.Time, _ string, _ interface{}) {
 }
 
 func (b *prevRequestBuilder) PreviousRequestType() string {
@@ -275,7 +275,7 @@ func (b *prevRequestBuilder) JustSeenGreeting() bool {
 	return false
 }
 
-func (b *prevRequestBuilder) ParamsForQuery(query uint32) uint16 {
+func (b *prevRequestBuilder) ParamsForQuery(_ uint32) uint16 {
 	return b.Params
 }
 
